@@ -19,6 +19,12 @@ steps:
     versionSpec: '16.x'
   displayName: 'Install Node.js'
 
+- script: |
+    cd client
+    npm install
+    npm run build
+  displayName: 'npm install and build'
+
 - task: AzureStaticWebApp@0
   inputs:
     app_location: 'src' # App source code path relative to cwd
@@ -26,4 +32,4 @@ steps:
     skip_api_build: true # Don't build the API - there isn't one yet
     output_location: 'public' # Built app content directory relative to app_location - optional
     cwd: '$(System.DefaultWorkingDirectory)/client' # Working directory - optional
-    azure_static_web_apps_api_token: $(deployment_token)
+    azure_static_web_apps_api_token: $(swa_deploy_token)
