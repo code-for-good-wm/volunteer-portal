@@ -27,9 +27,10 @@ steps:
 
 - task: AzureStaticWebApp@0
   inputs:
-    app_location: 'src' # App source code path relative to cwd
+    app_location: 'build' # App built files cwd
     api_location: 'api' # Api source code path relative to cwd
     skip_api_build: true # Don't build the API - there isn't one yet
-    output_location: 'public' # Built app content directory relative to app_location - optional
+    skip_app_build: true # handled by react in script step
+    output_location: '' # empty because we're skipping the app build
     cwd: '$(System.DefaultWorkingDirectory)/client' # Working directory - optional
     azure_static_web_apps_api_token: $(swa_deploy_token)
