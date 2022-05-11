@@ -19,9 +19,10 @@ function App() {
   };
 
   // Build button
+  // Note: This is currently only used for Microsoft and GitHub accounts
   const authButton = isAuthenticated ? (
     <button type="button" onClick={() => signOut(instance)}>
-      Sign In
+      Sign Out
     </button>
   ) : (
     <button type="button" onClick={() => signIn(instance)}>
