@@ -6,7 +6,7 @@ const Dashboard = () => {
   return (
     <PageLayout>
       <div className="viewContainer">
-        Yo!
+        Dashboard
       </div>
     </PageLayout>
   );

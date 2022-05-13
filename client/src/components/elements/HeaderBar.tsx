@@ -2,14 +2,13 @@ import React from 'react';
 
 import { useMsal } from '@azure/msal-react';
 import { AuthenticatedTemplate } from '@azure/msal-react';
-import { IPublicClientApplication } from '@azure/msal-browser';
 
 import TransparentLogo from '../../assets/images/logo-transparent.png';
 
 const HeaderBar = () => {
   const { instance } = useMsal();
 
-  const signOut = (instance: IPublicClientApplication) => {
+  const handleSignOut = () => {
     instance.logoutRedirect().catch((e) => console.error(e));
   };
 
@@ -20,7 +19,7 @@ const HeaderBar = () => {
       </div>
       <div className="signOutButtonContainer">
         <AuthenticatedTemplate>
-          <button type="button" className="signOutButton" onClick={() => signOut(instance)}>
+          <button type="button" className="signOutButton" onClick={handleSignOut}>
             Sign Out
           </button>
         </AuthenticatedTemplate>
