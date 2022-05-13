@@ -5,10 +5,10 @@
  */
 export const msalConfig = {
   auth: {
-    clientId: process.env.REACT_APP_MSAL_CLIENT_ID as string,
-    authority: process.env.REACT_APP_MSAL_AUTHORITY as string, // This is a URL (e.g. https://login.microsoftonline.com/{your tenant ID})
-    redirectUri: process.env.REACT_APP_SIGN_IN_REDIRECT as string,
-    postLogoutRedirectUri: process.env.REACT_APP_SIGN_OUT_REDIRECT as string,
+    clientId: process.env.REACT_APP_MSAL_CLIENT_ID ?? '',
+    authority: process.env.REACT_APP_MSAL_AUTHORITY ?? '', // This is a URL (e.g. https://login.microsoftonline.com/{your tenant ID})
+    redirectUri: process.env.REACT_APP_SIGN_IN_REDIRECT ?? '',
+    postLogoutRedirectUri: process.env.REACT_APP_SIGN_OUT_REDIRECT ?? '',
   },
   cache: {
     cacheLocation: 'sessionStorage', // This configures where your cache will be stored
