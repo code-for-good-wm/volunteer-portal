@@ -4,7 +4,7 @@ import { useMsal } from '@azure/msal-react';
 import { AuthenticatedTemplate } from '@azure/msal-react';
 import { IPublicClientApplication } from '@azure/msal-browser';
 
-import TransparentLogo from '../../../assets/images/transparent-logo.png';
+import TransparentLogo from '../../assets/images/logo-transparent.png';
 
 const HeaderBar = () => {
   const { instance } = useMsal();
