@@ -1,0 +1,35 @@
+* {
+  box-sizing: border-box; /* Ensures padding is not included for width calculations */
+  margin: 0; /* Kill default values defined by the browser */
+  padding: 0; /* Kill default values defined by the browser */
+  font-family: inherit;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, main, section {
+  display: block;
+}
+
+/* No default list style for lists */
+ol, ul {
+  list-style: none;
+}
+
+/* No default spacing for table cells */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Kill default values for a tags */
+a { 
+  font-weight: normal;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Add pointer for buttons */
+button {
+  cursor: pointer;
+}
