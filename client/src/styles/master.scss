@@ -1,0 +1,57 @@
+/* Structural Styles */
+
+html {
+  min-height: 100%; /* Is this the right approach? */
+  min-width: 375px; /* Up for debate; could arguably be 350px */
+}
+
+body {
+  height: 100%;
+  background-color: $white;
+  font-size: 1rem;
+  line-height: 1.4rem;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+#root {
+  height: 100%;
+}
+
+/* Header Bar */
+
+.headerBar {
+  height: 59px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14);
+
+  .logoContainer {
+    height: 40px;
+    width: 100px;
+
+    img {
+      height: 100%;
+    }
+  }
+
+  .signOutButtonContainer {
+    width: 100px;
+    display: flex;
+    justify-content: flex-end;
+
+    .signOutButton {
+      color: $primaryDark;
+      font-weight: 700;
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    height: 89px;
+
+    .logoContainer {
+      height: 60px;
+    }
+  }
+
+}

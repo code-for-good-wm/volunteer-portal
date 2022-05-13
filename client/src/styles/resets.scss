@@ -3,6 +3,7 @@
   margin: 0; /* Kill default values defined by the browser */
   padding: 0; /* Kill default values defined by the browser */
   font-family: inherit;
+  font-size: inherit;
 }
 
 /* HTML5 display-role reset for older browsers */
@@ -29,7 +30,13 @@ a {
   color: inherit;
 }
 
-/* Add pointer for buttons */
+/* Kill default values for buttons */
 button {
+  background-color: transparent;
+  border: none;
+}
+
+/* Add pointer for links and buttons */
+a, button {
   cursor: pointer;
 }
