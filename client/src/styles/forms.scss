@@ -1,0 +1,29 @@
+@mixin inputStyles {
+  height: 56px;
+  border: 1px solid rbga(0, 0, 0, 0.23);
+  border-radius: 4px;
+  background-color: transparent;
+  padding: 0 $gutterSmall;
+}
+
+@mixin inputFont {
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.formItem {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+
+  label {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 600;
+  }
+
+  input {
+    @include inputStyles;
+    @include inputFont;
+    width: 100%;
+  }
+}
