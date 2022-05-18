@@ -3,13 +3,17 @@ import React from 'react';
 import { useMsal } from '@azure/msal-react';
 import { AuthenticatedTemplate } from '@azure/msal-react';
 
+import { getAuth, signOut } from 'firebase/auth';
+
 import TransparentLogo from '../../assets/images/logo-transparent.png';
+import TextButton from '../buttons/TextButton';
 
 const HeaderBar = () => {
-  const { instance } = useMsal();
+  const auth = getAuth();
+  const { currentUser } = auth;
 
   const handleSignOut = () => {
-    instance.logoutRedirect().catch((e) => console.error(e));
+    signOut(auth).catch((e) => console.error(e));
   };
 
   return (
@@ -18,11 +22,13 @@ const HeaderBar = () => {
         <img src={TransparentLogo} alt="Logo" />
       </div>
       <div className="signOutButtonContainer">
-        <AuthenticatedTemplate>
-          <button type="button" className="signOutButton" onClick={handleSignOut}>
-            Sign Out
-          </button>
-        </AuthenticatedTemplate>
+        {currentUser && (
+          <TextButton 
+            type="button" 
+            handler={handleSignOut}
+            label="Sign Out"
+          />
+        )}
       </div>
     </header>
   );
