@@ -1,12 +1,9 @@
-import React, { useState, FormEvent } from 'react';
-
-import { useMsal } from '@azure/msal-react';
-import { loginRequest } from '../../../authConfig';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 
 import PageLayout from '../../../layouts/PageLayout';
 import StandardButton from '../../../components/buttons/StandardButton';
 
-import { Button } from '@mui/material';
+import { Checkbox, FormControl, FormControlLabel, TextField } from '@mui/material';
 
 type SignInForm = {
   email: string,
@@ -20,12 +17,42 @@ const SignIn = () => {
     password: '',
   });
 
-  const { instance } = useMsal();
+  // Handlers
+  const handleEmail = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setForm((prevState) => ({
+      ...prevState,
+      email: value
+    }));
+  };
+
+  const handlePassword = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setForm((prevState) => ({
+      ...prevState,
+      password: value
+    }));
+  };
+
+  const handleNewUser = () => {
+    setNewUser(prevState => !prevState);
+  };
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    instance.loginRedirect(loginRequest).catch((e) => console.error(e));
+    // TODO: Attempt sign in OR create new user
   };
+
+  const newUserCheckbox = (
+    <Checkbox
+      checked={newUser}
+      color="primary"
+      id="newUser"
+      onChange={handleNewUser}
+    />
+  );
+
+  const buttonLabel = newUser ? 'Create Account' : 'Sign In';
 
   return (
     <PageLayout>
@@ -35,14 +62,51 @@ const SignIn = () => {
             Welcome!
           </h1>
           <form className="signInForm" onSubmit={handleSubmit}>
-
-            <div className="buttonContainer">
+            <TextField
+              variant="outlined"
+              fullWidth
+              margin="dense"
+              size="medium"
+              id="email"
+              name="email"
+              color="primary"
+              type="email"
+              label="Email"
+              value={form.email}
+              onChange={handleEmail}
+            />
+            <TextField
+              variant="outlined"
+              fullWidth
+              margin="dense"
+              size="medium"
+              id="password"
+              name="password"
+              color="primary"
+              type="password"
+              label="Password"
+              value={form.password}
+              onChange={handlePassword}
+            />
+            <FormControl
+              fullWidth
+              margin="dense"
+            >
+              <FormControlLabel
+                control={newUserCheckbox}
+                label="I am a new user"
+              />
+            </FormControl>
+            <FormControl
+              fullWidth
+              margin="dense"
+            >
               <StandardButton
                 type="submit"
                 theme="primary"
-                label="Sign In"
+                label={buttonLabel}
               />
-            </div>
+            </FormControl>
           </form>
         </div>
       </div>

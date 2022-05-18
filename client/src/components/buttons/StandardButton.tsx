@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { Button, ThemeProvider } from '@mui/material';
-import { muiTheme } from '../../material/theme';
+import { Button } from '@mui/material';
 
 type StandardButtonProps = {
   type?: 'submit' | 'button',
@@ -20,22 +19,19 @@ const StandardButton = (props: StandardButtonProps) => {
   const buttonLabel = label || 'Button';
 
   return (
-    <ThemeProvider theme={muiTheme}>
-      <Button
-        type={buttonType}
-        color={buttonTheme}
-        disableElevation
-        fullWidth
-        variant="contained"
-        disabled={disabled}
-        onClick={buttonType === 'submit' ? undefined : handleButton}
-      >
-        <span className="standardButtonText">
-          {buttonLabel}
-        </span>
-      </Button>
-    </ThemeProvider>
-
+    <Button
+      type={buttonType}
+      color={buttonTheme}
+      disableElevation
+      fullWidth
+      variant="contained"
+      disabled={disabled}
+      onClick={buttonType === 'submit' ? undefined : handleButton}
+    >
+      <span className="standardButtonText">
+        {buttonLabel}
+      </span>
+    </Button>
   );
 };
 
