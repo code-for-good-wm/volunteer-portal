@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { capitalizeFirstLetter } from '../../helpers/functions';
+import { Button, ThemeProvider } from '@mui/material';
+import { muiTheme } from '../../material/theme';
 
 type StandardButtonProps = {
   type?: 'submit' | 'button',
@@ -18,13 +19,23 @@ const StandardButton = (props: StandardButtonProps) => {
   const handleButton = handler ? handler : () => console.log('Button clicked!');
   const buttonLabel = label || 'Button';
 
-  // Build button
-  const buttonClass = `standardButton${capitalizeFirstLetter(buttonTheme)}`;
-
   return (
-    <button type={disabled ? 'button' : buttonType} onClick={buttonType === 'submit' || disabled ? undefined : handleButton} className={buttonClass}>
-      {buttonLabel}
-    </button>
+    <ThemeProvider theme={muiTheme}>
+      <Button
+        type={buttonType}
+        color={buttonTheme}
+        disableElevation
+        fullWidth
+        variant="contained"
+        disabled={disabled}
+        onClick={buttonType === 'submit' ? undefined : handleButton}
+      >
+        <span className="standardButtonText">
+          {buttonLabel}
+        </span>
+      </Button>
+    </ThemeProvider>
+
   );
 };
 
