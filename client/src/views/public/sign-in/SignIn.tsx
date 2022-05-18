@@ -1,22 +1,52 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 
 import PageLayout from '../../../layouts/PageLayout';
 import StandardButton from '../../../components/buttons/StandardButton';
 import TextButton from '../../../components/buttons/TextButton';
 
-import { Checkbox, FormControl, FormControlLabel, TextField } from '@mui/material';
+import { Alert, Checkbox, CssBaseline, FormControl, FormControlLabel, TextField } from '@mui/material';
+import { testEmail, testPassword } from '../../../helpers/validation';
 
 type SignInForm = {
   email: string,
   password: string,
 }
 
+type FormAlert = {
+  show: boolean,
+  text: string,
+  severity?: 'error' | 'warning' | 'info' | 'success'
+}
+
 const SignIn = () => {
   const [newUser, setNewUser] = useState(false);
+  const [submitDisabled, setSubmitDisabled] = useState(true);
   const [form, setForm] = useState<SignInForm>({
     email: '',
     password: '',
   });
+  const [alert, setAlert] = useState<FormAlert>({
+    show: false,
+    text: '',
+  });
+
+  useEffect(() => {
+    // Test for form validity
+    const emailTrimmed = form.email.trim();
+    const passwordTrimmed = form.password.trim();
+    if (testEmail(emailTrimmed) && passwordTrimmed) {
+      setSubmitDisabled(false);
+    } else {
+      setSubmitDisabled(true);
+    }
+  }, [form]);
+
+  const resetAlert = () => {
+    setAlert({
+      show: false,
+      text: '',
+    });
+  };
 
   // Handlers
   const handleEmail = (event: ChangeEvent<HTMLInputElement>) => {
@@ -25,6 +55,9 @@ const SignIn = () => {
       ...prevState,
       email: value
     }));
+    if (alert.show) {
+      resetAlert();
+    }
   };
 
   const handlePassword = (event: ChangeEvent<HTMLInputElement>) => {
@@ -33,6 +66,9 @@ const SignIn = () => {
       ...prevState,
       password: value
     }));
+    if (alert.show) {
+      resetAlert();
+    }
   };
 
   const handleNewUser = () => {
@@ -41,7 +77,36 @@ const SignIn = () => {
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    // TODO: Attempt sign in OR create new user
+    const emailTrimmed = form.email.trim();
+    const passwordTrimmed = form.password.trim();
+
+    if (newUser) {
+      // Test password
+      if (!testPassword(passwordTrimmed)) {
+        setAlert({
+          show: true,
+          text: 'Please enter a password six characters or greater.',
+          severity: 'error'
+        });
+        return;
+      }
+      // TODO: Create new user
+    } else {
+      // TODO: Attempt sign in
+    }
+  };
+
+  const handleForgotPassword = () => {
+    const emailTrimmed = form.email.trim();
+    if (!testEmail(emailTrimmed)) {
+      setAlert({
+        show: true,
+        text: 'Please enter a valid email.',
+        severity: 'error'
+      });
+      return;
+    }
+    // TODO: Send password reset email
   };
 
   const newUserCheckbox = (
@@ -68,6 +133,17 @@ const SignIn = () => {
   );
 
   const buttonLabel = newUser ? 'Create Account' : 'Sign In';
+
+  const formAlert = (
+    <FormControl
+      fullWidth
+      margin="dense"
+    >
+      <Alert severity={alert.severity}>
+        {alert.text}
+      </Alert>
+    </FormControl>
+  );
 
   return (
     <PageLayout>
@@ -120,6 +196,7 @@ const SignIn = () => {
                 type="submit"
                 theme="primary"
                 label={buttonLabel}
+                disabled={submitDisabled}
               />
             </FormControl>
             <FormControl
@@ -129,8 +206,10 @@ const SignIn = () => {
               <TextButton
                 type="button"
                 label="Forgot Your Password?"
+                handler={handleForgotPassword}
               />
             </FormControl>
+            { alert.show && formAlert}
           </form>
         </div>
       </div>

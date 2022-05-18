@@ -18,6 +18,6 @@ export const muiTheme = createTheme({
           height: 36
         }
       }
-    }
-  }
+    },
+  },
 });
