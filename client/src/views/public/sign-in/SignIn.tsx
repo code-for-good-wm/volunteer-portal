@@ -4,7 +4,9 @@ import PageLayout from '../../../layouts/PageLayout';
 import StandardButton from '../../../components/buttons/StandardButton';
 import TextButton from '../../../components/buttons/TextButton';
 
-import { Alert, Checkbox, CssBaseline, FormControl, FormControlLabel, TextField } from '@mui/material';
+import { Alert, Checkbox, FormControl, FormControlLabel, TextField } from '@mui/material';
+
+import { signInUser, createNewUser } from '../../../services/auth';
 import { testEmail, testPassword } from '../../../helpers/validation';
 
 type SignInForm = {
@@ -29,6 +31,7 @@ const SignIn = () => {
     show: false,
     text: '',
   });
+  const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
     // Test for form validity
@@ -80,6 +83,18 @@ const SignIn = () => {
     const emailTrimmed = form.email.trim();
     const passwordTrimmed = form.password.trim();
 
+    const submissionSuccess = () => {
+      setProcessing(false);
+    };
+
+    const submissionFailure = (message: string) => {
+      setAlert({
+        show: true,
+        text: message,
+        severity: 'error'
+      });
+    };
+
     if (newUser) {
       // Test password
       if (!testPassword(passwordTrimmed)) {
@@ -90,9 +105,23 @@ const SignIn = () => {
         });
         return;
       }
-      // TODO: Create new user
+      // Attempt new user creation
+      setProcessing(true);
+      createNewUser({
+        email: emailTrimmed,
+        password: passwordTrimmed,
+        success: submissionSuccess,
+        failure: submissionFailure,
+      });
     } else {
-      // TODO: Attempt sign in
+      // Attempt sign in
+      setProcessing(true);
+      signInUser({
+        email: emailTrimmed,
+        password: passwordTrimmed,
+        success: submissionSuccess,
+        failure: submissionFailure,
+      });
     }
   };
 
