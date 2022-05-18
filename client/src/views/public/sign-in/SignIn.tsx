@@ -2,6 +2,7 @@ import React, { useState, ChangeEvent, FormEvent } from 'react';
 
 import PageLayout from '../../../layouts/PageLayout';
 import StandardButton from '../../../components/buttons/StandardButton';
+import TextButton from '../../../components/buttons/TextButton';
 
 import { Checkbox, FormControl, FormControlLabel, TextField } from '@mui/material';
 
@@ -52,6 +53,20 @@ const SignIn = () => {
     />
   );
 
+  const buildInputLabel = (label: string) => {
+    return (
+      <span className="inputLabel">
+        {label}
+      </span>
+    );
+  };
+
+  const newUserCheckboxLabel = (
+    <span className="checkboxLabel">
+      I am a new user
+    </span>
+  );
+
   const buttonLabel = newUser ? 'Create Account' : 'Sign In';
 
   return (
@@ -71,7 +86,7 @@ const SignIn = () => {
               name="email"
               color="primary"
               type="email"
-              label="Email"
+              label={buildInputLabel('Email')}
               value={form.email}
               onChange={handleEmail}
             />
@@ -84,7 +99,7 @@ const SignIn = () => {
               name="password"
               color="primary"
               type="password"
-              label="Password"
+              label={buildInputLabel('Password')}
               value={form.password}
               onChange={handlePassword}
             />
@@ -94,7 +109,7 @@ const SignIn = () => {
             >
               <FormControlLabel
                 control={newUserCheckbox}
-                label="I am a new user"
+                label={newUserCheckboxLabel}
               />
             </FormControl>
             <FormControl
@@ -105,6 +120,15 @@ const SignIn = () => {
                 type="submit"
                 theme="primary"
                 label={buttonLabel}
+              />
+            </FormControl>
+            <FormControl
+              fullWidth
+              margin="dense"
+            >
+              <TextButton
+                type="button"
+                label="Forgot Your Password?"
               />
             </FormControl>
           </form>
