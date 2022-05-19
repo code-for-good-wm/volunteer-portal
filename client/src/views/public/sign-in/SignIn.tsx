@@ -6,7 +6,7 @@ import TextButton from '../../../components/buttons/TextButton';
 
 import { Alert, Checkbox, FormControl, FormControlLabel, TextField } from '@mui/material';
 
-import { signInUser, createNewUser } from '../../../services/auth';
+import { signInUser, createNewUser, recoverPassword } from '../../../services/auth';
 import { testEmail, testPassword } from '../../../helpers/validation';
 
 type SignInForm = {
@@ -88,6 +88,7 @@ const SignIn = () => {
     };
 
     const submissionFailure = (message: string) => {
+      setProcessing(false);
       setAlert({
         show: true,
         text: message,
@@ -135,7 +136,33 @@ const SignIn = () => {
       });
       return;
     }
-    // TODO: Send password reset email
+
+    // Build callbacks
+    const success = () => {
+      setProcessing(false);
+      setAlert({
+        show: true,
+        text: 'A password recovery email was sent successfully.',
+        severity: 'success'
+      });
+    };
+
+    const failure = (message: string) => {
+      setProcessing(false);
+      setAlert({
+        show: true,
+        text: message,
+        severity: 'error'
+      });
+    };
+
+    // Attempt sign in
+    setProcessing(true);
+    recoverPassword({
+      email: emailTrimmed,
+      success,
+      failure,
+    });
   };
 
   const newUserCheckbox = (
@@ -225,7 +252,7 @@ const SignIn = () => {
                 type="submit"
                 theme="primary"
                 label={buttonLabel}
-                disabled={submitDisabled}
+                disabled={submitDisabled || processing}
               />
             </FormControl>
             <FormControl
@@ -236,6 +263,7 @@ const SignIn = () => {
                 type="button"
                 label="Forgot Your Password?"
                 handler={handleForgotPassword}
+                disabled={processing}
               />
             </FormControl>
             { alert.show && formAlert}
