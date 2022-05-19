@@ -1,8 +1,5 @@
 import React from 'react';
 
-import { useMsal } from '@azure/msal-react';
-import { AuthenticatedTemplate } from '@azure/msal-react';
-
 import { getAuth, signOut } from 'firebase/auth';
 
 import TransparentLogo from '../../assets/images/logo-transparent.png';

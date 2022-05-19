@@ -14,4 +14,4 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const fbApp = initializeApp(firebaseConfig);
-const fbAuth = getAuth(fbApp);
+const fbAuth = getAuth(fbApp); // eslint-disable-line
