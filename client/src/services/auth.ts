@@ -1,17 +1,41 @@
 import { FirebaseError } from '@firebase/util';
-import { createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword, User } from 'firebase/auth';
+import { SignInParams, RecoverPasswordParams } from '../types/services';
+import { store } from '../store/store';
+import { updateAuth } from '../store/authSlice';
 
-type SignInParams = {
-  email: string,
-  password: string,
-  success?: () => void,
-  failure?: (message: string) => void,
-};
+export const handleAuthStateChange = (fbUser: User | null) => {
+  const appState = store.getState();
+  const { signedIn, updating, user } = appState.auth;
 
-type RecoverPasswordParams = {
-  email: string,
-  success?: () => void,
-  failure?: (message: string) => void,
+  if (fbUser) {
+    console.log('User is logged in: ', fbUser);
+
+    // Update auth state if necessary
+    if (!signedIn) {
+      store.dispatch(
+        updateAuth({
+          signedIn: true,
+        })
+      );
+    }
+
+    if (!updating && !user) {
+      // TODO: Pull data for this user from our database
+      // Set updating to true while pulling data; show loader in UI
+    }
+  } else {
+    console.log('User has signed out.');
+
+    // Update auth state if necessary
+    if (signedIn) {
+      store.dispatch(
+        updateAuth({
+          signedIn: false,
+        })
+      );
+    }
+  }
 };
 
 export const signInUser = async (params: SignInParams) => {

@@ -3,12 +3,20 @@ import { User } from '../types/user';
 import { RootState } from './store';
 
 interface AuthState {
+  signedIn: boolean;
+  updating: boolean; // Used to prevent multiple pulls of data
+  user: User | null;
+}
+
+interface AuthUpdate {
   signedIn?: boolean;
+  updating?: boolean;
   user?: User | null;
 }
 
 const initialState: AuthState = {
   signedIn: false,
+  updating: false,
   user: null,
 };
 
@@ -22,9 +30,12 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    updateAuth: (draftState, action: PayloadAction<AuthState>) => {
+    updateAuth: (draftState, action: PayloadAction<AuthUpdate>) => {
       if (action.payload.signedIn !== undefined) {
         draftState.signedIn = action.payload.signedIn;
+      }
+      if (action.payload.updating !== undefined) {
+        draftState.updating = action.payload.updating;
       }
       if (action.payload.user !== undefined) {
         draftState.user = action.payload.user;
