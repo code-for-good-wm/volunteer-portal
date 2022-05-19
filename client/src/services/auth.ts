@@ -9,8 +9,6 @@ export const handleAuthStateChange = (fbUser: User | null) => {
   const { signedIn, updating, user } = appState.auth;
 
   if (fbUser) {
-    console.log('User is logged in: ', fbUser);
-
     // Update auth state if necessary
     if (!signedIn) {
       store.dispatch(
@@ -25,8 +23,6 @@ export const handleAuthStateChange = (fbUser: User | null) => {
       // Set updating to true while pulling data; show loader in UI
     }
   } else {
-    console.log('User has signed out.');
-
     // Update auth state if necessary
     if (signedIn) {
       store.dispatch(
