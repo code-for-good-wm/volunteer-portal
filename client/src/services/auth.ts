@@ -26,10 +26,20 @@ export const signInUser = async (params: SignInParams) => {
     }
   } catch (error) {
     const authError = error as FirebaseError;
-    const { message, code } = authError;
-    console.error('Error signing in: ', authError);
+    const { code } = authError;
 
-    // TODO: Build custom messaging based on code
+    // Build custom error messaging
+    let message = 'Could not sign in at this time.  Check your network connection and try again later.';
+    if (code === 'auth/user-not-found' || code === 'auth/wrong-password') {
+      message = 'Could not sign in with these credentials.  Check your information and try again.';
+    } else if (code === 'auth/email-invalid') {
+      message = 'The email address is invalid and cannot be used.';
+    } else if (code === 'auth/user-disabled') {
+      message = 'This account has been disabled; please contact the admin team for assistance.';
+    } else if (code === 'auth/too-many-requests') {
+      message = 'This device has made too many consecutive authorization requests and, due to security concerns, has been temporarily disabled.  Please try again later.';
+    }
+
     if (failure) {
       failure(message);
     }
@@ -55,10 +65,17 @@ export const createNewUser = async (params: SignInParams) => {
     }
   } catch (error) {
     const authError = error as FirebaseError;
-    const { message, code } = authError;
-    console.error('Error creating new user: ', authError);
+    const { code } = authError;
 
-    // TODO: Build custom messaging based on code
+    // Build custom error messaging
+    let message =
+      'Could not create account at this time.  Check your network connection and try again later.';
+    if (code === 'auth/email-already-in-use') {
+      message = 'An account already exists for this email address.';
+    } else if (code === 'auth/invalid-email') {
+      message = 'The email address is invalid and cannot be used to create an account.';
+    }
+
     if (failure) {
       failure(message);
     }
