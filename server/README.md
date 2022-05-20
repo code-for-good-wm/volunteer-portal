@@ -5,7 +5,9 @@ This is an Azure Functions project using Node and TypeScript.  You may interact 
 
 We're using Node 16 for this project.  [Learn how to use a Node Version Manager.](https://npm.github.io/installation-setup-docs/installing/using-a-node-version-manager.html)
 
-If you're using the command line, [this documentation](https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-node?tabs=azure-cli%2Cbrowser) will be helpful as you create new HTTP Trigger functions and run them locally for testing.  However, because we're using TypeScript, there are some gotchas.
+If you're using the command line, [this documentation](https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-node?tabs=azure-cli%2Cbrowser) will be helpful as you create new [HTTP Trigger functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger?tabs=in-process%2Cfunctionsv2&pivots=programming-language-javascript) and run them locally for testing.  However, because we're using TypeScript, there are some gotchas.
 
 - After building your code, execute `npm run build` from the root project directory.  This will transpile the code into a `dist` folder.
 - Use `npm run start` (or `func start`) to begin local emulation of the functions.
+
+When running locally, a function's `authLevel` is ignored (unless containerized).  In production, [the function should be secured using some sort of authentication](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger?tabs=in-process%2Cfunctionsv2&pivots=programming-language-javascript#secure-an-http-endpoint-in-production).
