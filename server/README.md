@@ -1,0 +1,11 @@
+# Serverless functions
+## Powered by Azure
+
+This is an Azure Functions project using Node and TypeScript.  You may interact with this code in a number of ways:  through a VS Code extension, or using the Azure CLI.  [Check out the docs](https://docs.microsoft.com/en-us/azure/azure-functions/functions-develop-local) to configure your local environment.
+
+We're using Node 16 for this project.  [Learn how to use a Node Version Manager.](https://npm.github.io/installation-setup-docs/installing/using-a-node-version-manager.html)
+
+If you're using the command line, [this documentation](https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-node?tabs=azure-cli%2Cbrowser) will be helpful as you create new HTTP Trigger functions and run them locally for testing.  However, because we're using TypeScript, there are some gotchas.
+
+- After building your code, execute `npm run build` from the root project directory.  This will transpile the code into a `dist` folder.
+- Use `npm run start` (or `func start`) to begin local emulation of the functions.
