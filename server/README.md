@@ -7,6 +7,7 @@ We're using Node 16 for this project.  [Learn how to use a Node Version Manager.
 
 If you're using the command line, [this documentation](https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-node?tabs=azure-cli%2Cbrowser) will be helpful as you create new [HTTP Trigger functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger?tabs=in-process%2Cfunctionsv2&pivots=programming-language-javascript) and run them locally for testing.  However, because we're using TypeScript, there are some gotchas.
 
+- If you've just cloned the repo, be sure to run `npm install` in the root project directory to install dependencies (ie TypeScript).
 - After building your code, execute `npm run build` from the root project directory.  This will transpile the code into a `dist` folder.
 - Use `npm run start` (or `func start`) to begin local emulation of the functions.
 
