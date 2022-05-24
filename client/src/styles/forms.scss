@@ -1,3 +1,12 @@
+.form {
+  /* TODO: Investigate adding this globally using Material UI */
+  /* https://mui.com/material-ui/customization/typography/ */
+  input {
+    @include AvenirRoman;
+    letter-spacing: 0.15px;
+  }
+}
+
 .inputLabel {
   @include AvenirRoman;
   letter-spacing: 0.15px;

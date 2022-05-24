@@ -14,6 +14,23 @@ h1 {
   }
 }
 
+.paragraph {
+  letter-spacing: 0.5px;
+
+  @media screen and (min-width: 768px) {
+    letter-spacing: 0.15px;
+  }
+}
+
+.highlight {
+  @include AvenirHeavy;
+  color: $primaryMain;
+}
+
+.center {
+  text-align: center;
+}
+
 /* Structural Styles */
 
 html {
@@ -26,9 +43,16 @@ body {
   height: 100%;
   background-color: $grayPale;
   font-size: 1rem;
-  line-height: 1.4rem;
+  line-height: 1.5rem;
+  letter-spacing: 0.5px;
   font-weight: 400;
   color: rgba(0, 0, 0, 0.87);
+
+  @media screen and (min-width: 768px) {
+    font-size: 1.25rem;
+    line-height: normal;
+    letter-spacing: 0.15px;
+  }
 }
 
 #root {
@@ -49,6 +73,20 @@ body {
   @media screen and (min-width: 768px) {
     padding-left: $gutterMedium;
     padding-right: $gutterMedium;
+  }
+}
+
+/* Content Card */
+
+.contentCard {
+  padding: $gutterMedium $gutterSmall;
+  margin: 0 auto;
+  border-radius: 5px;
+  box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 3px -2px rgba(0, 0, 0, 0.12), 0 3px 4px 0 rgba(0, 0, 0, 0.14);
+  margin-bottom: $gutterMedium;
+
+  @media screen and (min-width: 768px) {
+    padding: $gutterMedium;
   }
 }
 

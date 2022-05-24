@@ -29,4 +29,5 @@
 @import './forms.scss';
 
 /* Import view-specific stylesheets */
-@import '../views//public//sign-in/SignIn.scss';
+@import '../views/public/sign-in/SignIn.scss';
+@import '../views/private/dashboard/Dashboard.scss';

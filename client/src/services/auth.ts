@@ -35,6 +35,7 @@ export const handleAuthStateChange = (fbUser: User | null) => {
       store.dispatch(
         updateAuth({
           signedIn: false,
+          user: null,
         })
       );
     }

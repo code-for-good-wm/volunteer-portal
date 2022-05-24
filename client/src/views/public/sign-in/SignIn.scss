@@ -1,18 +1,3 @@
-.signInForm {
-  padding: $gutterMedium $gutterSmall;
+.signInCard {
   max-width: 380px;
-  margin: 0 auto;
-  border-radius: 5px;
-  box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 3px -2px rgba(0, 0, 0, 0.12), 0 3px 4px 0 rgba(0, 0, 0, 0.14);
-
-  @media screen and (min-width: 768px) {
-    padding: $gutterMedium;
-  }
-
-  /* TODO: Investigate adding this globally using Material UI */
-  /* https://mui.com/material-ui/customization/typography/ */
-  input {
-    @include AvenirRoman;
-    letter-spacing: 0.15px;
-  }
 }
