@@ -1,10 +1,32 @@
-/* TODO: Import fonts */
+/* Fonts */
+@import './fonts.scss';
+
+@mixin AvenirMedium {
+  font-family: 'Avenir-Medium', Arial, Helvetica, sans-serif;
+}
+
+@mixin AvenirBlack {
+  font-family: 'Avenir-Black', Arial, Helvetica, sans-serif;
+}
+
+@mixin AvenirBook {
+  font-family: 'Avenir-Book', Arial, Helvetica, sans-serif;
+}
+
+@mixin AvenirRoman {
+  font-family: 'Avenir-Roman', Arial, Helvetica, sans-serif;
+}
+
+@mixin AvenirHeavy {
+  font-family: 'Avenir-Heavy', Arial, Helvetica, sans-serif;
+}
 
 /* Import global stylesheets */
 @import './resets.scss';
 @import './colors.scss';
 @import './variables.scss';
 @import './master.scss';
+@import './forms.scss';
 
 /* Import view-specific stylesheets */
 @import '../views//public//sign-in/SignIn.scss';

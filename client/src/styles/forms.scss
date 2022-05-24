@@ -1,29 +1,11 @@
-@mixin inputStyles {
-  height: 56px;
-  border: 1px solid rbga(0, 0, 0, 0.23);
-  border-radius: 4px;
-  background-color: transparent;
-  padding: 0 $gutterSmall;
+.inputLabel {
+  @include AvenirRoman;
+  letter-spacing: 0.15px;
 }
 
-@mixin inputFont {
-  color: rgba(0, 0, 0, 0.87);
-}
-
-.formItem {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 16px;
-
-  label {
-    font-size: 0.75rem;
-    line-height: 1rem;
-    font-weight: 600;
-  }
-
-  input {
-    @include inputStyles;
-    @include inputFont;
-    width: 100%;
-  }
+.checkboxLabel {
+  @include AvenirBook;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  letter-spacing: 0.5px;
 }
