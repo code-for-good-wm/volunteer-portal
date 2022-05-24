@@ -24,3 +24,20 @@ export interface UserSkill {
   code: SkillCode;
   level: 0 | 1 | 2 | 3 | 4;
 }
+
+export interface Profile {
+  currentSection: string; // e.g. 'gettingStarted'
+  lastUpdate: string; // ISO date
+  completionDate: string; // ISO date
+  roles: Role[];
+  linkedInUrl: string;
+  websiteUrl: string;
+  portfolioUrl: string;
+  previousVolunteer?: boolean; // Likely we will remove this later
+  shirtSize: ShirtSize;
+  dietaryRestrictions: DietaryRestriction[];
+  accessibilityRequirements: string;
+  agreements: Agreements[];
+  skills: UserSkill[];
+  additionalSkills: string;
+}

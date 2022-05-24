@@ -8,14 +8,46 @@ import { useAppSelector } from '../../../store/hooks';
 
 const Dashboard = () => {
   const userData = useAppSelector(user);
-  // TODO: Test userData and determine if registration is complete.
-  // If so, we want to allow the user to edit their registration and show different content.
+  const profile = userData?.profile;
 
   const navigate = useNavigate();
 
   const handleButton = () => {
     navigate('/profile');
   };
+
+  // Build UI
+  const contentCard = (
+    <div className="contentCard dashboardCard">
+      { profile?.completionDate ? (
+        <>
+          <p className="paragraph center">
+            Thank you for registering as a volunteer for Code for Good.
+          </p>
+          <p className="paragraph center">
+            We&apos;re super excited to have you!
+          </p>
+          <p className="paragraph center">
+            Mash the button below to update your profile.
+          </p>
+        </>
+      ) : (
+        <>
+          <p className="paragraph center">
+            Are you here to register as a volunteer for Code for Good?
+          </p>
+          <p className="paragraph center">
+            Well, you&apos;ve come to the right place.
+          </p>
+          <p className="paragraph center">
+            Mash the button below to get started.
+          </p>
+        </>
+      )}
+    </div>
+  );
+
+  const buttonLabel = profile?.completionDate ? 'Update my info' : 'Let\'s do this!';
 
   return (
     <PageLayout>
@@ -24,20 +56,10 @@ const Dashboard = () => {
           <h1>
             This is the <span className="highlight">dashboard</span>.
           </h1>
-          <div className="contentCard dashboardCard">
-            <p className="paragraph center">
-              Are you here to register as a volunteer for Code for Good?
-            </p>
-            <p className="paragraph center">
-              Well, you&apos;ve come to the right place.
-            </p>
-            <p className="paragraph center">
-              Mash the button below to get started.
-            </p>
-          </div>
+          {contentCard}
           <div className="dashboardButtonContainer">
             <StandardButton
-              label="Let's do this!"
+              label={buttonLabel}
               handler={handleButton}
             />
           </div>
