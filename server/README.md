@@ -1,0 +1,16 @@
+# Serverless functions
+## Powered by Azure
+
+This is an Azure Functions project using Node and TypeScript.  You may interact with this code in a number of ways:  through a Visual Studio Code extension, or using the Azure CLI.  [Check out the docs](https://docs.microsoft.com/en-us/azure/azure-functions/functions-develop-local) to configure your local environment.
+
+We're using Node 16 for this project.  [Learn how to use a Node Version Manager.](https://npm.github.io/installation-setup-docs/installing/using-a-node-version-manager.html)
+
+We're using ESLint.  If you're using Visual Studio Code, be sure to install and enable the [ESLint extension for VS Code](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint).
+
+If you're using the command line, [this documentation](https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-node?tabs=azure-cli%2Cbrowser) will be helpful as you create new [HTTP Trigger functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger?tabs=in-process%2Cfunctionsv2&pivots=programming-language-javascript) and run them locally for testing.  However, because we're using TypeScript, there are some gotchas.
+
+- If you've just cloned the repo, be sure to run `npm install` in the root project directory to install dependencies (ie TypeScript, ESLint, et cetera).
+- After building your code, execute `npm run build` from the root project directory.  This will transpile the code into a `dist` folder.
+- Use `npm run start` (or `func start`) to begin local emulation of the functions.
+
+When running locally, a function's `authLevel` is ignored (unless containerized).  In production, [the function should be secured using some sort of authentication](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger?tabs=in-process%2Cfunctionsv2&pivots=programming-language-javascript#secure-an-http-endpoint-in-production).
