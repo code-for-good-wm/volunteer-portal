@@ -21,25 +21,25 @@ const Dashboard = () => {
     <div className="contentCard dashboardCard">
       { profile?.completionDate ? (
         <>
-          <p className="paragraph center">
+          <p className="center">
             Thank you for registering as a volunteer for Code for Good.
           </p>
-          <p className="paragraph center">
+          <p className="center">
             We&apos;re super excited to have you!
           </p>
-          <p className="paragraph center">
+          <p className="center">
             Mash the button below to update your profile.
           </p>
         </>
       ) : (
         <>
-          <p className="paragraph center">
+          <p className="center">
             Are you here to register as a volunteer for Code for Good?
           </p>
-          <p className="paragraph center">
+          <p className="center">
             Well, you&apos;ve come to the right place.
           </p>
-          <p className="paragraph center">
+          <p className="center">
             Mash the button below to get started.
           </p>
         </>

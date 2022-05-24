@@ -14,14 +14,6 @@ h1 {
   }
 }
 
-.paragraph {
-  letter-spacing: 0.5px;
-
-  @media screen and (min-width: 768px) {
-    letter-spacing: 0.15px;
-  }
-}
-
 .highlight {
   @include AvenirHeavy;
   color: $primaryMain;
