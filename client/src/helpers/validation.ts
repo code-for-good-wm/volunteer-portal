@@ -3,7 +3,7 @@
  * @param {string} email 
  * @returns {boolean}
  */
-export const testEmail = (email) => {
+export const testEmail = (email: string) => {
   // eslint-disable-next-line
   const emailRegEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return emailRegEx.test(email);
@@ -14,7 +14,7 @@ export const testEmail = (email) => {
  * @param {string} password 
  * @returns {boolean}
  */
-export const testPassword = (password) => {
+export const testPassword = (password: string) => {
   if (password.length < 6) {
     return false;
   } else {
@@ -27,7 +27,7 @@ export const testPassword = (password) => {
  * @param {string} phone 
  * @returns {boolean}
  */
-export const testPhone = (phone) => {
+export const testPhone = (phone: string) => {
   const phoneRegEx = /^[0-9]{10}$/;
   return phoneRegEx.test(phone);
 };

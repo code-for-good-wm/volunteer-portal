@@ -1,6 +1,6 @@
 export type Role = 'designer' | 'developer' | 'support' | 'lead';
 
-export type ShirtSize = 'small' | 'medium' | 'large' | 'xl' | 'xxl';
+export type ShirtSize = 'small' | 'medium' | 'large' | 'xl' | 'xxl' | '';
 
 export type DietaryRestriction = 'vegan' | 'vegetarian' | 'dairy' | 'gluten' | 'kosher' | 'nuts' | 'fish' | 'eggs'; // Soy? Corn?
 
