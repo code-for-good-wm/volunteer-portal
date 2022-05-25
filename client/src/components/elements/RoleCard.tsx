@@ -4,13 +4,16 @@ import Designer from '../../assets/images/coffee-mug.png';
 import Developer from '../../assets/images/coffee-chemex.png';
 import Support from '../../assets/images/coffee-cup.png';
 import Lead from '../../assets/images/coffee-pot.png';
+
+import { Role } from '../../types/profile';
+
 import { Checkbox } from '@mui/material';
 
 type RoleCardProps = {
   theme?: 'designer' | 'developer' | 'support' | 'lead'
   selected?: boolean,
   label?: string,
-  handler?: () => void,
+  handler?: (role?: Role) => void,
 };
 
 const RoleCard = (props: RoleCardProps) => {
@@ -18,7 +21,7 @@ const RoleCard = (props: RoleCardProps) => {
   const checked = !!selected;
   const labelText = label ?? '';
   const handleCard = handler ? handler : () => console.log('Card selected.');
-  
+
   // Choose image
   let image: string | undefined;
   let imageAlt: string;
@@ -45,7 +48,7 @@ const RoleCard = (props: RoleCardProps) => {
   }
 
   return (
-    <div className="roleCard" onClick={handleCard}>
+    <div className="roleCard" onClick={() => handleCard(theme)}>
       <div className="checkboxContainer">
         { checked && <Checkbox checked={checked} /> }
       </div>

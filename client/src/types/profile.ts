@@ -41,3 +41,8 @@ export interface Profile {
   skills: UserSkill[];
   additionalSkills: string;
 }
+
+export interface RoleData {
+  id: Role;
+  description: string;
+}
