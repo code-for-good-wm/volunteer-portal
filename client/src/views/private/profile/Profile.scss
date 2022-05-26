@@ -1,3 +1,27 @@
+
+
 .profileContentContainer {
   padding: $gutterSmall;
+
+  .controls {
+    display: flex;
+    flex-direction: column;
+
+    .buttonContainer {
+      width: 100%;
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    padding: 0;
+
+    .controls {
+      flex-direction: row-reverse;
+      justify-content: space-between;
+  
+      .buttonContainer {
+        width: 110px;
+      }
+    }
+  }
 }

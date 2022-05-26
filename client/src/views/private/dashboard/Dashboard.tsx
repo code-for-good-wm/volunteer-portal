@@ -1,10 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import StandardButton from '../../../components/buttons/StandardButton';
 
 import PageLayout from '../../../layouts/PageLayout';
+
 import { user } from '../../../store/authSlice';
 import { useAppSelector } from '../../../store/hooks';
+
+import StandardButton from '../../../components/buttons/StandardButton';
 
 const Dashboard = () => {
   const userData = useAppSelector(user);

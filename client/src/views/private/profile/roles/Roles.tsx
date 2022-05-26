@@ -82,11 +82,13 @@ const Roles = () => {
             {roleCards}
           </div>
         </div>
-        <div className="profileSubmitButtonContainer">
-          <StandardButton
-            label="Next"
-            handler={handleButton}
-          />
+        <div className="controls">
+          <div className="buttonContainer">
+            <StandardButton
+              label="Next"
+              handler={handleButton}
+            />
+          </div>
         </div>
       </div>
     </ProfileLayout>

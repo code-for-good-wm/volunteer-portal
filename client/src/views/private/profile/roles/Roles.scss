@@ -28,6 +28,8 @@
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: stretch;
+  max-width: 440px;
+  margin: 0 auto;
 
   .roleCard {
     width: 48.5%;
