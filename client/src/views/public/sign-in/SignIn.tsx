@@ -208,66 +208,68 @@ const SignIn = () => {
           <h1>
             Welcome!
           </h1>
-          <form className="signInForm" onSubmit={handleSubmit}>
-            <TextField
-              variant="outlined"
-              fullWidth
-              margin="dense"
-              size="medium"
-              id="email"
-              name="email"
-              color="primary"
-              type="email"
-              label={buildInputLabel('Email')}
-              value={form.email}
-              onChange={handleEmail}
-            />
-            <TextField
-              variant="outlined"
-              fullWidth
-              margin="dense"
-              size="medium"
-              id="password"
-              name="password"
-              color="primary"
-              type="password"
-              label={buildInputLabel('Password')}
-              value={form.password}
-              onChange={handlePassword}
-            />
-            <FormControl
-              fullWidth
-              margin="dense"
-            >
-              <FormControlLabel
-                control={newUserCheckbox}
-                label={newUserCheckboxLabel}
+          <div className="contentCard signInCard">
+            <form className="form" onSubmit={handleSubmit}>
+              <TextField
+                variant="outlined"
+                fullWidth
+                margin="dense"
+                size="medium"
+                id="email"
+                name="email"
+                color="primary"
+                type="email"
+                label={buildInputLabel('Email')}
+                value={form.email}
+                onChange={handleEmail}
               />
-            </FormControl>
-            <FormControl
-              fullWidth
-              margin="dense"
-            >
-              <StandardButton
-                type="submit"
-                theme="primary"
-                label={buttonLabel}
-                disabled={submitDisabled || processing}
+              <TextField
+                variant="outlined"
+                fullWidth
+                margin="dense"
+                size="medium"
+                id="password"
+                name="password"
+                color="primary"
+                type="password"
+                label={buildInputLabel('Password')}
+                value={form.password}
+                onChange={handlePassword}
               />
-            </FormControl>
-            <FormControl
-              fullWidth
-              margin="dense"
-            >
-              <TextButton
-                type="button"
-                label="Forgot Your Password?"
-                handler={handleForgotPassword}
-                disabled={processing}
-              />
-            </FormControl>
-            { alert.show && formAlert}
-          </form>
+              <FormControl
+                fullWidth
+                margin="dense"
+              >
+                <FormControlLabel
+                  control={newUserCheckbox}
+                  label={newUserCheckboxLabel}
+                />
+              </FormControl>
+              <FormControl
+                fullWidth
+                margin="dense"
+              >
+                <StandardButton
+                  type="submit"
+                  theme="primary"
+                  label={buttonLabel}
+                  disabled={submitDisabled || processing}
+                />
+              </FormControl>
+              <FormControl
+                fullWidth
+                margin="dense"
+              >
+                <TextButton
+                  type="button"
+                  label="Forgot Your Password?"
+                  handler={handleForgotPassword}
+                  disabled={processing}
+                />
+              </FormControl>
+              { alert.show && formAlert}
+            </form>
+          </div>
         </div>
       </div>
     </PageLayout>

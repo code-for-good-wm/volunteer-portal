@@ -3,31 +3,39 @@ import { createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, signIn
 import { SignInParams, RecoverPasswordParams } from '../types/services';
 import { store } from '../store/store';
 import { updateAuth } from '../store/authSlice';
+import { testUserData } from '../helpers/constants';
 
 export const handleAuthStateChange = (fbUser: User | null) => {
   const appState = store.getState();
   const { signedIn, updating, user } = appState.auth;
 
   if (fbUser) {
-    // Update auth state if necessary
-    if (!signedIn) {
-      store.dispatch(
-        updateAuth({
-          signedIn: true,
-        })
-      );
-    }
-
     if (!updating && !user) {
       // TODO: Pull data for this user from our database
       // Set updating to true while pulling data; show loader in UI
+      store.dispatch(
+        updateAuth({
+          updating: true,
+        })
+      );
+      // TODO: Pull user data from database, then update store
+      store.dispatch(
+        updateAuth({
+          signedIn: true,
+          user: testUserData,
+          updating: false,
+        })
+      );
+    } else {
+      // Ignore other cases?
     }
   } else {
-    // Update auth state if necessary
+    // No active user; sign out if needed
     if (signedIn) {
       store.dispatch(
         updateAuth({
           signedIn: false,
+          user: null,
         })
       );
     }
@@ -84,6 +92,10 @@ export const createNewUser = async (params: SignInParams) => {
   
   try {
     await createUserWithEmailAndPassword(auth, email, password);
+    // TODO: We will also need to create a user document
+    // with the user's email and default settings
+    // Once complete, fire success
+
     // We'll use an auth listener to handle changes
     if (success) {
       success();
