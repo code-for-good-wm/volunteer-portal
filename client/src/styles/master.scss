@@ -14,6 +14,14 @@ h1 {
   }
 }
 
+h2 {
+  font-size: 1.25rem;
+  line-height: 1.5rem;
+  letter-spacing: 0.15px;
+  margin-bottom: 16px;
+  font-weight: 400;
+}
+
 .highlight {
   @include AvenirHeavy;
   color: $primaryMain;

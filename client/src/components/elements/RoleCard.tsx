@@ -47,8 +47,10 @@ const RoleCard = (props: RoleCardProps) => {
     imageAlt = '';
   }
 
+  const cardStyle = selected ? 'roleCard selected' : 'roleCard';
+
   return (
-    <div className="roleCard" onClick={() => handleCard(theme)}>
+    <div className={cardStyle} onClick={() => handleCard(theme)}>
       <div className="checkboxContainer">
         { checked && <Checkbox checked={checked} /> }
       </div>

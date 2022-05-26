@@ -70,17 +70,19 @@ const Roles = () => {
           Tell us a little about <span className="highlight">yourself</span>.
         </h1>
         <div className="contentCard profileCard">
-          <h2 className="roleCardHeading">
-            For my career or hobby, I am a...
-          </h2>
-          <p className="roleCardSubHeading">
-            {'Wonderful & Delightful'}
-          </p>
-          <div className="roleCards">
+          <div className="roleCardHeading">
+            <h2>
+              For my career or hobby, I am a...
+            </h2>
+            <p className="subHeading">
+              {'(Wonderful & Delightful)'}
+            </p>
+          </div>
+          <div className="roleCardSelections">
             {roleCards}
           </div>
         </div>
-        <div className="dashboardButtonContainer">
+        <div className="profileSubmitButtonContainer">
           <StandardButton
             label="Next"
             handler={handleButton}
