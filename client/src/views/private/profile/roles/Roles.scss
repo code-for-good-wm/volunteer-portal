@@ -1,4 +1,21 @@
-.roleCardHeading {
+.roleSelectContainer {
+  max-width: 600px;
+  margin: 0 auto;
+
+  .controls {
+    @media screen and (min-width: 768px) {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: space-between;
+
+      .buttonContainer {
+        width: 110px;
+      }
+    }
+  }
+}
+
+.roleSelectHeading {
   margin-bottom: 36px;
 
   h2 {
@@ -23,7 +40,7 @@
   }
 }
 
-.roleCardSelections {
+.roleSelections {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;

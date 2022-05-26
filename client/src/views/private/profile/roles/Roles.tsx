@@ -64,34 +64,36 @@ const Roles = () => {
   });
 
   return (
-    <ProfileLayout>
-      <div className="profileContentContainer">
-        <h1>
-          Tell us a little about <span className="highlight">yourself</span>.
+    <div className="viewContainer">
+      <div className="gutters">
+        <h1 className="profile">
+          Tell us a little about your <span className="highlight">skillsets</span>.
         </h1>
-        <div className="contentCard profileCard">
-          <div className="roleCardHeading">
-            <h2>
-              For my career or hobby, I am a...
-            </h2>
-            <p className="subHeading">
-              {'(Wonderful & Delightful)'}
-            </p>
+        <div className="roleSelectContainer">
+          <div className="contentCard">
+            <div className="roleSelectHeading">
+              <h2>
+                For my career or hobby, I am a...
+              </h2>
+              <p className="subHeading">
+                {'(Wonderful & Delightful)'}
+              </p>
+            </div>
+            <div className="roleSelections">
+              {roleCards}
+            </div>
           </div>
-          <div className="roleCardSelections">
-            {roleCards}
-          </div>
-        </div>
-        <div className="controls">
-          <div className="buttonContainer">
-            <StandardButton
-              label="Next"
-              handler={handleButton}
-            />
+          <div className="controls">
+            <div className="buttonContainer">
+              <StandardButton
+                label="Next"
+                handler={handleButton}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </ProfileLayout>
+    </div>
   );
 };
 

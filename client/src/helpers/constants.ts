@@ -43,12 +43,12 @@ export const roles: RoleData[] = [
 ];
 
 export const profileStructure: PrimaryProfileSection[] = [
-  {
-    id: 'roles',
-    type: 'primary',
-    description: 'Roles',
-    sections: []
-  },
+  // {
+  //   id: 'roles',
+  //   type: 'primary',
+  //   description: 'Roles',
+  //   sections: []
+  // },
   {
     id: 'getting-started',
     type: 'primary',
