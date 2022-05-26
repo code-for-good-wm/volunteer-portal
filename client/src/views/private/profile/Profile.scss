@@ -1,4 +1,72 @@
+.profileLayout {
+  @media screen and (min-width: 768px) {
+    display: flex;
+    justify-content: space-between;
+    padding-left: $gutterMedium;
+    padding-right: $gutterMedium;
+  }
+}
 
+.profileProgressContainer {
+  display: none;
+
+  .profileSection {
+    display: flex;
+    flex-direction: column;
+    padding-top: 8px;
+
+    .heading, .subHeading {
+      @include AvenirHeavy;
+      line-height: normal;
+      color: rgba(0, 0, 0, 0.25);
+    }
+
+    .heading {
+      font-size: 1.375rem;
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+
+      .icon {
+        height: 1.5rem;
+        margin-left: 8px;
+
+        img {
+          height: 100%;
+        }
+      }
+    }
+
+    .subSections {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 8px;
+
+      .subHeading {
+        font-size: 1.25rem;
+        margin-bottom: 12px;
+      }
+    }
+
+    .completed {
+      color: $primaryDark;
+      opacity: 0.66;
+    }
+
+    .current {
+      color: $primaryDark;
+      opacity: 1.0;
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    min-width: 220px;
+    margin-right: $gutterMedium;
+    padding-top: 16px;
+  }
+}
 
 .profileContentContainer {
   padding: $gutterSmall;

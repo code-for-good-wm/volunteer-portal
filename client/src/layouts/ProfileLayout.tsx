@@ -1,5 +1,7 @@
 import React from 'react';
 
+import ProfileProgress from '../components/elements/ProfileProgress';
+
 type PageLayoutProps = {
   children?: React.ReactNode
 };
@@ -9,7 +11,7 @@ const ProfileLayout = (props: PageLayoutProps) => {
 
   return (
     <div className="profileLayout">
-      {/* TODO: Add progress bar for desktop */}
+      <ProfileProgress />
       {children}
     </div>
   );

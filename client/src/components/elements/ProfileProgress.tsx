@@ -30,7 +30,7 @@ const ProfileProgress = () => {
     let additionalStyling;
     if (index === currentProfileIndex) {
       additionalStyling = 'current';
-    } else if (index > currentProfileIndex) {
+    } else if (index < currentProfileIndex) {
       additionalStyling = 'completed';
     }
 
@@ -52,7 +52,7 @@ const ProfileProgress = () => {
           <span className="text">
             {primarySection.description}
           </span>
-          {index > currentProfileIndex && (
+          {index < currentProfileIndex && (
             <span className="icon">
               <img src={Completed} alt="Checkmark in circle" />
             </span>
@@ -67,7 +67,11 @@ const ProfileProgress = () => {
     );
   });
 
-  return content;
+  return (
+    <div className="profileProgressContainer">
+      {content}
+    </div>
+  );
 };
 
 export default ProfileProgress;

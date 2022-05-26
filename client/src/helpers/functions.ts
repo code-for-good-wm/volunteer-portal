@@ -17,7 +17,7 @@ export const capitalizeFirstLetter = (string: string) => {
 export const getDisplayedProfileSections = (roles: Role[]) => {
   const sectionsToDisplay: PrimaryProfileSectionId[] = ['getting-started'];
   if (roles.includes('developer')) {
-    sectionsToDisplay.push('technical-skills');
+    sectionsToDisplay.push('roles', 'technical-skills');
   }
   if (roles.includes('designer')) {
     sectionsToDisplay.push('design-skills');

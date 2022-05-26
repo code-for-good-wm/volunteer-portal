@@ -10,7 +10,7 @@ export const testUserData: User = {
     currentSection: '',
     lastUpdate: '',
     completionDate: '',
-    roles: [],
+    roles: ['designer', 'developer'],
     linkedInUrl: '',
     websiteUrl: '',
     portfolioUrl: '',
