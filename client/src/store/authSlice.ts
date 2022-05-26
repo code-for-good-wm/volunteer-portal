@@ -38,6 +38,7 @@ export const authSlice = createSlice({
         draftState.updating = action.payload.updating;
       }
       if (action.payload.user !== undefined) {
+        console.log('We are updating the user data in the store: ', action.payload.user);
         draftState.user = action.payload.user;
       }
     },

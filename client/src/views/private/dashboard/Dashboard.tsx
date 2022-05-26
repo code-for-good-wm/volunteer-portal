@@ -3,25 +3,18 @@ import { useNavigate } from 'react-router-dom';
 
 import PageLayout from '../../../layouts/PageLayout';
 
+import { useAppSelector } from '../../../store/hooks';
 import { user } from '../../../store/authSlice';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import StandardButton from '../../../components/buttons/StandardButton';
-import { updateProfile } from '../../../store/profileSlice';
 
 const Dashboard = () => {
   const userData = useAppSelector(user);
   const profile = userData?.profile;
 
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const handleButton = () => {
-    dispatch(
-      updateProfile({
-        currentSection: 'roles',
-      })
-    );
     navigate('/profile');
   };
 
