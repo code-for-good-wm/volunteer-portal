@@ -2,12 +2,21 @@ import React from 'react';
 
 import { getAuth, signOut } from 'firebase/auth';
 
+import { useAppSelector } from '../../store/hooks';
+import { signedIn } from '../../store/authSlice';
+
 import TransparentLogo from '../../assets/images/logo-transparent.png';
 import TextButton from '../buttons/TextButton';
+import { useNavigate } from 'react-router-dom';
 
 const HeaderBar = () => {
   const auth = getAuth();
-  const { currentUser } = auth;
+  const isAuthenticated = useAppSelector(signedIn);
+  const navigate = useNavigate();
+
+  const handleLogoButton = () => {
+    navigate('/');
+  };
 
   const handleSignOut = () => {
     signOut(auth).catch((e) => console.error(e));
@@ -15,11 +24,13 @@ const HeaderBar = () => {
 
   return (
     <header className="headerBar">
-      <div className="logoContainer">
-        <img src={TransparentLogo} alt="Logo" />
+      <div className="logoButtonContainer">
+        <button type="button" onClick={handleLogoButton}>
+          <img src={TransparentLogo} alt="Logo" />
+        </button>
       </div>
       <div className="signOutButtonContainer">
-        {currentUser && (
+        {isAuthenticated && (
           <TextButton 
             type="button" 
             handler={handleSignOut}

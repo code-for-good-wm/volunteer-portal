@@ -102,11 +102,11 @@ body {
   margin-bottom: $gutterMedium;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14);
 
-  .logoContainer {
+  .logoButtonContainer {
     height: 40px;
     width: 100px;
 
-    img {
+    button, img {
       height: 100%;
     }
   }
@@ -127,7 +127,7 @@ body {
     padding: 0 $gutterMedium;
     margin-bottom: $gutterLarge;
 
-    .logoContainer {
+    .logoButtonContainer {
       height: 60px;
     }
   }
