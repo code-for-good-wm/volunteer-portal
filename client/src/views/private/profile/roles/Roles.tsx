@@ -4,12 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
 import { updateAuth, user } from '../../../../store/authSlice';
 
-import { Role } from '../../../../types/profile';
+import { Profile, Role } from '../../../../types/profile';
 
 import RoleCard from '../../../../components/elements/RoleCard';
 import StandardButton from '../../../../components/buttons/StandardButton';
 
 import { roles } from '../../../../helpers/constants';
+import { User } from '../../../../types/user';
 
 const Roles = () => {
   const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
@@ -22,7 +23,6 @@ const Roles = () => {
 
   // On mount, determine if any roles are associated with this user
   useEffect(() => {
-    console.log('Profile update: ', profile);
     const userRoles = profile?.roles ?? [];
     setSelectedRoles(userRoles);
   }, [profile]);
@@ -47,21 +47,16 @@ const Roles = () => {
 
   const handleButton = () => {
     // TODO: Replace with actual user update functionality
-    let userUpdate;
     if (userData) {
-      console.log('Updating user data...');
-      const profileUpdate = {
+      const profileUpdate: Profile = {
         ...userData.profile,
         roles: selectedRoles,
       };
-      userUpdate = {
+      const userUpdate: User = {
         ...userData,
-        ...profileUpdate,
+        profile: profileUpdate,
       };
-    }
 
-    if (userUpdate) {
-      console.log('Here is the update: ', userUpdate);
       dispatch(
         updateAuth({
           user: userUpdate,
