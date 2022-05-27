@@ -14,6 +14,7 @@ import { User } from '../../../../types/user';
 
 const Roles = () => {
   const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
+  const [processing, setProcessing] = useState(false);
 
   const userData = useAppSelector(user);
   const profile = userData?.profile;
@@ -81,6 +82,8 @@ const Roles = () => {
     );
   });
 
+  const submitDisabled = selectedRoles.length < 1;
+
   return (
     <div className="viewContainer">
       <div className="gutters">
@@ -106,6 +109,7 @@ const Roles = () => {
               <StandardButton
                 label="Next"
                 handler={handleButton}
+                disabled={submitDisabled || processing}
               />
             </div>
           </div>
