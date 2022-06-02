@@ -46,7 +46,7 @@ const Roles = () => {
     }
   };
 
-  const handleButton = () => {
+  const handleNext = () => {
     // TODO: Replace with actual user update functionality
     if (userData) {
       const profileUpdate: Profile = {
@@ -108,7 +108,7 @@ const Roles = () => {
             <div className="buttonContainer">
               <StandardButton
                 label="Next"
-                handler={handleButton}
+                handler={handleNext}
                 disabled={submitDisabled || processing}
               />
             </div>
