@@ -1,5 +1,7 @@
 .profileLayout {
   @media screen and (min-width: 768px) {
+    margin: 0 auto;
+    max-width: calc(220px + 600px + ($gutterMedium * 3)); /* Don't ask. */
     display: flex;
     justify-content: space-between;
     padding-left: $gutterMedium;
@@ -71,6 +73,10 @@
 .profileContentContainer {
   padding: $gutterSmall;
 
+  section.bottomPadding {
+    padding-bottom: 33px;
+  }
+
   .controls {
     display: flex;
     flex-direction: column;
@@ -81,7 +87,7 @@
   }
 
   @media screen and (min-width: 768px) {
-    padding: 0;
+    padding: 0; // Padding handled by profileLayout
 
     .controls {
       flex-direction: row-reverse;

@@ -14,7 +14,7 @@ export const getGettingStartedProfileData = () => {
   }
 
   // Pull profile and return data
-  const { name, email, phone, profile } = user;
+  const { name, phone, profile } = user;
   const {
     linkedInUrl,
     websiteUrl,
@@ -30,7 +30,6 @@ export const getGettingStartedProfileData = () => {
     {
       basicInfo: {
         name,
-        email,
         phone,
       },
       contactInfo: {
@@ -38,13 +37,17 @@ export const getGettingStartedProfileData = () => {
         websiteUrl,
         portfolioUrl,
       },
-      previousVolunteer: !!previousVolunteer, // Could be undefined
-      shirtSize,
-      dietaryRestrictions,
+      extraStuff: {
+        previousVolunteer: !!previousVolunteer, // Could be undefined
+        shirtSize,
+        dietaryRestrictions,
+      },
       accessibilityRequirements,
-      termsAndConditions: !!agreements?.termsAndConditions, // Convert to boolean
-      photoRelease: !!agreements?.photoRelease, // Convert to boolean
-      codeOfConduct: !!agreements?.codeOfConduct, // Convert to boolean
+      agreements: {
+        termsAndConditions: !!agreements?.termsAndConditions, // Convert to boolean
+        photoRelease: !!agreements?.photoRelease, // Convert to boolean
+        codeOfConduct: !!agreements?.codeOfConduct, // Convert to boolean
+      }
     }
   );
 };

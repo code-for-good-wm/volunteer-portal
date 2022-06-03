@@ -39,6 +39,15 @@ h2 {
   text-align: center;
 }
 
+.red {
+  color: $red;
+}
+
+div.divider {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  margin-bottom: $gutterSmall;
+}
+
 /* Structural Styles */
 
 html {
@@ -95,6 +104,18 @@ body {
 
   @media screen and (min-width: 768px) {
     padding: $gutterMedium;
+  }
+}
+
+.cardHeadingWithNote {
+  display: flex;
+  align-items: baseline;
+
+  .note {
+    font-size: .75rem;
+    line-height: 1rem;
+    letter-spacing: 0.4px;
+    margin-left: $gutterSmall;
   }
 }
 

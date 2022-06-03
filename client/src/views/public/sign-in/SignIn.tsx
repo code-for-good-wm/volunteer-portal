@@ -3,6 +3,7 @@ import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import PageLayout from '../../../layouts/PageLayout';
 import StandardButton from '../../../components/buttons/StandardButton';
 import TextButton from '../../../components/buttons/TextButton';
+import TextFieldLabel from '../../../components/elements/TextFieldLabel';
 
 import { Alert, Checkbox, FormControl, FormControlLabel, TextField } from '@mui/material';
 
@@ -174,14 +175,6 @@ const SignIn = () => {
     />
   );
 
-  const buildInputLabel = (label: string) => {
-    return (
-      <span className="inputLabel">
-        {label}
-      </span>
-    );
-  };
-
   const newUserCheckboxLabel = (
     <span className="checkboxLabel">
       I am a new user
@@ -219,7 +212,7 @@ const SignIn = () => {
                 name="email"
                 color="primary"
                 type="email"
-                label={buildInputLabel('Email')}
+                label={<TextFieldLabel label="Email" />}
                 value={form.email}
                 onChange={handleEmail}
               />
@@ -232,7 +225,7 @@ const SignIn = () => {
                 name="password"
                 color="primary"
                 type="password"
-                label={buildInputLabel('Password')}
+                label={<TextFieldLabel label="Password" />}
                 value={form.password}
                 onChange={handlePassword}
               />
