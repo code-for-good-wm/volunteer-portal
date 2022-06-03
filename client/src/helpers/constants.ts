@@ -1,4 +1,4 @@
-import { PrimaryProfileSection, RoleData } from '../types/profile';
+import { PrimaryProfileSection, RoleData, ShirtSizeData } from '../types/profile';
 import { User } from '../types/user';
 
 export const testUserData: User = {
@@ -41,13 +41,30 @@ export const roles: RoleData[] = [
   },
 ];
 
+export const shirtSizes: ShirtSizeData[] = [
+  {
+    id: 'small',
+    description: 'Small',
+  },
+  {
+    id: 'medium',
+    description: 'Medium',
+  },
+  {
+    id: 'large',
+    description: 'Large',
+  },
+  {
+    id: 'xl',
+    description: 'X-Large',
+  },
+  {
+    id: 'xxl',
+    description: 'XX-Large',
+  },
+];
+
 export const profileStructure: PrimaryProfileSection[] = [
-  // {
-  //   id: 'roles',
-  //   type: 'primary',
-  //   description: 'Roles',
-  //   sections: []
-  // },
   {
     id: 'getting-started',
     type: 'primary',

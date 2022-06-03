@@ -63,3 +63,8 @@ export interface RoleData {
   id: Role;
   description: string;
 }
+
+export interface ShirtSizeData {
+  id: ShirtSize;
+  description: string;
+}

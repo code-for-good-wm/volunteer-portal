@@ -118,6 +118,7 @@ const Roles = () => {
     }
   }, []);
 
+
   // Handlers
   const handleName = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -336,31 +337,43 @@ const Roles = () => {
             <h2>
               The Extra Stuff
             </h2>
-            <p className="profileQuestion" id="previousVolunteer">
-              <span className="question">
-                Have you volunteered with Code for Good before?<span className="red">*</span>
-              </span>
-            </p>
-            <FormControl>
-              <RadioGroup
-                aria-labelledby="previousVolunteer"
-                name="previousVolunteer"
-                row
-                value={extraStuff.previousVolunteer ? 'Yes' : 'No'}
-                onChange={handlePreviousVolunteer}
-              >
-                <FormControlLabel 
-                  value="No" 
-                  control={<Radio />} 
-                  label={<span className="radioLabel">No</span>} 
-                />
-                <FormControlLabel 
-                  value="Yes" 
-                  control={<Radio />} 
-                  label={<span className="radioLabel">Yes</span>} 
-                />
-              </RadioGroup>
-            </FormControl>
+            <div className="profileQuestionWrapper">
+              <p className="profileQuestion" id="previousVolunteer">
+                <span className="question">
+                  Have you volunteered with Code for Good before?<span className="red">*</span>
+                </span>
+              </p>
+              <FormControl>
+                <RadioGroup
+                  aria-labelledby="previousVolunteer"
+                  name="previousVolunteer"
+                  row
+                  value={extraStuff.previousVolunteer ? 'Yes' : 'No'}
+                  onChange={handlePreviousVolunteer}
+                >
+                  <FormControlLabel 
+                    value="No" 
+                    control={<Radio />} 
+                    label={<span className="radioLabel">No</span>} 
+                  />
+                  <FormControlLabel 
+                    value="Yes" 
+                    control={<Radio />} 
+                    label={<span className="radioLabel">Yes</span>} 
+                  />
+                </RadioGroup>
+              </FormControl>
+            </div>
+            <div className="profileQuestionWrapper">
+              <p className="profileQuestion">
+                <span className="question">
+                  What&apos;s your shirt size?<span className="red">*</span>
+                </span>
+                <span className="note">
+                  We use adult sizing only.
+                </span>
+              </p>
+            </div>
           </section>
         </div>
         <div className="controls">

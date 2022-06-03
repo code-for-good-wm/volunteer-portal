@@ -77,6 +77,14 @@
     padding-bottom: 33px;
   }
 
+  .profileQuestionWrapper {
+    padding-bottom: 8px;
+
+    @media screen and (min-width: 768px) {
+      padding-bottom: $gutterMedium;
+    }
+  }
+
   .controls {
     display: flex;
     flex-direction: column;
