@@ -7,7 +7,8 @@ import { updateProfile } from '../../../../store/profileSlice';
 import { DietaryRestriction, ShirtSize } from '../../../../types/profile';
 
 import ProfileLayout from '../../../../layouts/ProfileLayout';
-import { TextField } from '@mui/material';
+import { IconButton, InputAdornment, TextField } from '@mui/material';
+import { BadgeOutlined, LocalPhoneOutlined, LinkedIn, Link } from '@mui/icons-material';
 
 import StandardButton from '../../../../components/buttons/StandardButton';
 import { getGettingStartedProfileData } from '../../../../services/profile';
@@ -206,6 +207,15 @@ const Roles = () => {
                   label={<TextFieldLabel label="First and Last Name" required />}
                   value={basicInfoForm.name}
                   onChange={handleName}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconButton>
+                          <BadgeOutlined />
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
                 />
               </div>
               <div className="textFieldWrapperSmall">
@@ -218,9 +228,18 @@ const Roles = () => {
                   name="phone"
                   color="primary"
                   type="phone"
-                  label={<TextFieldLabel label="Phone" required />}
+                  label={<TextFieldLabel label="Phone Number" required />}
                   value={basicInfoForm.phone}
                   onChange={handlePhone}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconButton>
+                          <LocalPhoneOutlined />
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
                 />
               </div>
             </form>
@@ -230,45 +249,78 @@ const Roles = () => {
               Additional Contact Info
             </h2>
             <form className="profileForm">
-              <TextField
-                variant="outlined"
-                fullWidth
-                margin="dense"
-                size="medium"
-                id="linkedInUrl"
-                name="linkedInUrl"
-                color="primary"
-                type="text"
-                label={<TextFieldLabel label="LinkedIn" required />}
-                value={contactInfoForm.linkedInUrl}
-                onChange={handleLinkedInUrl}
-              />
-              <TextField
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                size="medium"
-                id="websiteUrl"
-                name="websiteUrl"
-                color="primary"
-                type="text"
-                label={<TextFieldLabel label="Website Link" />}
-                value={contactInfoForm.websiteUrl}
-                onChange={handleWebsiteUrl}
-              />
-              <TextField
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                size="medium"
-                id="portfolioUrl"
-                name="portfolioUrl"
-                color="primary"
-                type="text"
-                label={<TextFieldLabel label="Portfolio Link" />}
-                value={contactInfoForm.portfolioUrl}
-                onChange={handlePortfolioUrl}
-              />
+              <div className="textFieldWrapperMedium">
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  margin="dense"
+                  size="medium"
+                  id="linkedInUrl"
+                  name="linkedInUrl"
+                  color="primary"
+                  type="text"
+                  label={<TextFieldLabel label="LinkedIn" required />}
+                  value={contactInfoForm.linkedInUrl}
+                  onChange={handleLinkedInUrl}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconButton>
+                          <LinkedIn />
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </div>
+              <div className="textFieldWrapperMedium">
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  size="medium"
+                  id="websiteUrl"
+                  name="websiteUrl"
+                  color="primary"
+                  type="text"
+                  label={<TextFieldLabel label="Website Link" />}
+                  value={contactInfoForm.websiteUrl}
+                  onChange={handleWebsiteUrl}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconButton>
+                          <Link />
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </div>       
+              <div className="textFieldWrapperMedium">
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  size="medium"
+                  id="portfolioUrl"
+                  name="portfolioUrl"
+                  color="primary"
+                  type="text"
+                  label={<TextFieldLabel label="Portfolio Link" />}
+                  value={contactInfoForm.portfolioUrl}
+                  onChange={handlePortfolioUrl}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconButton>
+                          <Link />
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </div>
             </form>
           </section>
           <section>
