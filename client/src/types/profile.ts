@@ -27,9 +27,9 @@ export interface SecondaryProfileSection {
  * Agreements are ISO date strings, e.g. '2022-05-19T20:47:46.021Z'
  */
 export interface Agreements {
-  termsAndConditions: string;
-  photoRelease: string;
-  codeOfConduct: string;
+  termsAndConditions?: string;
+  photoRelease?: string;
+  codeOfConduct?: string;
 }
 
 export interface Skill {
@@ -54,7 +54,7 @@ export interface Profile {
   shirtSize: ShirtSize;
   dietaryRestrictions: DietaryRestriction[];
   accessibilityRequirements: string;
-  agreements: Agreements[];
+  agreements?: Agreements;
   skills: UserSkill[];
   additionalSkills: string;
 }

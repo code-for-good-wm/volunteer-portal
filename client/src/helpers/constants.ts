@@ -17,7 +17,6 @@ export const testUserData: User = {
     shirtSize: '',
     dietaryRestrictions: [],
     accessibilityRequirements: '',
-    agreements: [],
     skills: [],
     additionalSkills: '',
   }

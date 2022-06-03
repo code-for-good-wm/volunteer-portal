@@ -1,17 +1,49 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
 import { user } from '../../../../store/authSlice';
 import { updateProfile } from '../../../../store/profileSlice';
 
+import { DietaryRestriction, ShirtSize } from '../../../../types/profile';
+
 import ProfileLayout from '../../../../layouts/ProfileLayout';
 
 import StandardButton from '../../../../components/buttons/StandardButton';
+import { getGettingStartedProfileData } from '../../../../services/profile';
+
+type BasicInfoForm = {
+  name: string,
+  email: string,
+  phone: string,
+};
+
+type ContactInfoForm = {
+  linkedInUrl: string,
+  websiteUrl: string,
+  portfolioUrl: string,
+};
 
 const Roles = () => {
-  const userData = useAppSelector(user);
-  const profile = userData?.profile;
+  const [basicInfoForm, setBasicInfoForm] = useState<BasicInfoForm>({
+    name: '',
+    email: '',
+    phone: '',
+  });
+
+  const [contactInfoForm, setContactInfoForm] = useState<ContactInfoForm>({
+    linkedInUrl: '',
+    websiteUrl: '',
+    portfolioUrl: '',
+  });
+
+  const [previousVolunteer, setPreviousVolunteer] = useState(false);
+  const [shirtSize, setShirtSize] = useState<ShirtSize>('');
+  const [dietaryRestrictions, setDietaryRestrictions] = useState<DietaryRestriction[]>([]);
+  const [accessibilityRequirements, setAccessibilityRequirements] = useState('');
+  const [termsAndConditions, setTermsAndConditions] = useState(false);
+  const [photoRelease, setPhotoRelease] = useState(false);
+  const [codeOfConduct, setCodeOfConduct] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -24,6 +56,23 @@ const Roles = () => {
         currentSection: 'getting-started',
       })
     );
+  }, []);
+
+  // On mount, pull any current profile data and populate the forms
+  useEffect(() => {
+    const data = getGettingStartedProfileData();
+    if (data) {
+      const { basicInfo, contactInfo } = data;
+      setBasicInfoForm(basicInfo);
+      setContactInfoForm(contactInfo);
+      setPreviousVolunteer(data.previousVolunteer);
+      setShirtSize(data.shirtSize);
+      setDietaryRestrictions(data.dietaryRestrictions);
+      setAccessibilityRequirements(data.accessibilityRequirements);
+      setTermsAndConditions(data.termsAndConditions);
+      setPhotoRelease(data.photoRelease);
+      setCodeOfConduct(data.codeOfConduct);
+    }
   }, []);
 
   const handleNext = () => {
