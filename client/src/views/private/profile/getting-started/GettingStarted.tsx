@@ -7,7 +7,7 @@ import { updateProfile } from '../../../../store/profileSlice';
 import { DietaryRestriction, ShirtSize } from '../../../../types/profile';
 
 import ProfileLayout from '../../../../layouts/ProfileLayout';
-import { IconButton, InputAdornment, TextField } from '@mui/material';
+import { FormControl, FormControlLabel, IconButton, InputAdornment, Radio, RadioGroup, TextField } from '@mui/material';
 import { BadgeOutlined, LocalPhoneOutlined, LinkedIn, Link } from '@mui/icons-material';
 
 import StandardButton from '../../../../components/buttons/StandardButton';
@@ -163,6 +163,15 @@ const Roles = () => {
     setContactInfoForm((prevState) => ({
       ...prevState,
       portfolioUrl: value,
+    }));
+  };
+
+  const handlePreviousVolunteer = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    const previousVolunteer = (value === 'Yes');
+    setExtraStuff((prevState) => ({
+      ...prevState,
+      previousVolunteer,
     }));
   };
 
@@ -327,7 +336,31 @@ const Roles = () => {
             <h2>
               The Extra Stuff
             </h2>
-
+            <p className="profileQuestion" id="previousVolunteer">
+              <span className="question">
+                Have you volunteered with Code for Good before?<span className="red">*</span>
+              </span>
+            </p>
+            <FormControl>
+              <RadioGroup
+                aria-labelledby="previousVolunteer"
+                name="previousVolunteer"
+                row
+                value={extraStuff.previousVolunteer ? 'Yes' : 'No'}
+                onChange={handlePreviousVolunteer}
+              >
+                <FormControlLabel 
+                  value="No" 
+                  control={<Radio />} 
+                  label={<span className="radioLabel">No</span>} 
+                />
+                <FormControlLabel 
+                  value="Yes" 
+                  control={<Radio />} 
+                  label={<span className="radioLabel">Yes</span>} 
+                />
+              </RadioGroup>
+            </FormControl>
           </section>
         </div>
         <div className="controls">

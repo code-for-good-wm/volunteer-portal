@@ -19,6 +19,20 @@
   letter-spacing: 0.5px;
 }
 
+.radioLabel {
+  @include AvenirBook;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  letter-spacing: 0.25px;
+
+  @media screen and (min-width: 768px) {
+    @include AvenirBook;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    letter-spacing: 0.5px;
+  }
+}
+
 .textFieldWrapperSmall {
   @media screen and (min-width: 768px) {
     max-width: 234px;

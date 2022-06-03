@@ -13,6 +13,10 @@
   font-family: 'Avenir-Book', Arial, Helvetica, sans-serif;
 }
 
+@mixin AvenirBookOblique {
+  font-family: 'Avenir-BookOblique', Arial, Helvetica, sans-serif;
+}
+
 @mixin AvenirRoman {
   font-family: 'Avenir-Roman', Arial, Helvetica, sans-serif;
 }

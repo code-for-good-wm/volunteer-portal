@@ -99,3 +99,31 @@
     }
   }
 }
+
+.profileQuestion {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+
+  .question {
+    @include AvenirMedium;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    letter-spacing: 0.25px;
+  }
+
+  .note {
+    @include AvenirBookOblique;
+    margin-left: .5rem;
+    font-size: .75rem;
+    line-height: 1rem;
+    letter-spacing: 0.4px;
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  @media screen and (min-width: 768px) {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    letter-spacing: 0.15px;
+  }
+}
