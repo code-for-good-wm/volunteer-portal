@@ -7,7 +7,7 @@ import { updateProfile } from '../../../../store/profileSlice';
 import { DietaryRestriction, ShirtSize } from '../../../../types/profile';
 
 import ProfileLayout from '../../../../layouts/ProfileLayout';
-import { FormControl, FormControlLabel, IconButton, InputAdornment, Radio, RadioGroup, TextField } from '@mui/material';
+import { FormControl, FormControlLabel, IconButton, InputAdornment, OutlinedInput, Radio, RadioGroup, TextField } from '@mui/material';
 import { BadgeOutlined, LocalPhoneOutlined, LinkedIn, Link } from '@mui/icons-material';
 
 import StandardButton from '../../../../components/buttons/StandardButton';
@@ -215,6 +215,11 @@ const Roles = () => {
     }
   };
 
+  const handleAccessibilityRequirements = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setAccessibilityRequirements(value);
+  };
+
   const handleNext = () => {
     // TODO: Collect data and update user profile
     // TODO: Update user data with new roles
@@ -258,6 +263,9 @@ const Roles = () => {
         <h1>
           Tell us a little about <span className="highlight">yourself</span>.
         </h1>
+
+        {/* Basic Information */}
+
         <div className="contentCard profileCard basicInformationProfileCard">
           <div className="cardHeadingWithNote">
             <h2>
@@ -302,6 +310,9 @@ const Roles = () => {
                   variant="outlined"
                   fullWidth
                   margin="normal"
+                  sx={{
+                    marginBottom: 0
+                  }}
                   size="medium"
                   id="phone"
                   name="phone"
@@ -381,6 +392,9 @@ const Roles = () => {
                   variant="outlined"
                   fullWidth
                   margin="normal"
+                  sx={{
+                    marginBottom: 0
+                  }}
                   size="medium"
                   id="portfolioUrl"
                   name="portfolioUrl"
@@ -460,6 +474,36 @@ const Roles = () => {
               </div>
             </div>
           </section>
+        </div>
+
+        {/* Accessibility */}
+
+        <div className="contentCard profileCard">
+          <h2>
+            Accessibility
+          </h2>
+          <div className="divider" />
+          <form className="profileForm">
+            <p className="profileQuestion" id="accessibilityRequirements">
+              <span className="question">
+                Do you have any accessibility requirements you would like us to be aware of?
+              </span>
+            </p>
+            <TextField
+              margin="normal"
+              sx={{
+                marginBottom: 0
+              }}
+              fullWidth
+              aria-labelledby="accessibilityRequirements"
+              name="accessibilityRequirements"
+              value={accessibilityRequirements}
+              placeholder="Enter any personal accessibility requirements or considerations."
+              multiline={true}
+              rows={2}
+              onChange={handleAccessibilityRequirements}
+            />
+          </form>
         </div>
         <div className="controls">
           <div className="buttonContainer">

@@ -5,6 +5,18 @@
     @include AvenirRoman;
     letter-spacing: 0.15px;
   }
+
+  textarea {
+    @include AvenirRoman;
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+    letter-spacing: 0.13px;
+
+    @media screen and (min-width: 768px) {
+      font-size: 1rem;
+      letter-spacing: 0.15px;
+    }
+  }
 }
 
 .inputLabel {
