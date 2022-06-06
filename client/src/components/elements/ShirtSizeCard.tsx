@@ -15,7 +15,7 @@ type ShirtSizeCardProps = {
   theme?: ShirtSize,
   selected?: boolean,
   label?: string,
-  handler?: (role?: ShirtSize) => void,
+  handler?: (shirtSize?: ShirtSize) => void,
 };
 
 const ShirtSizeCard = (props: ShirtSizeCardProps) => {

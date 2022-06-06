@@ -11,9 +11,11 @@ import { FormControl, FormControlLabel, IconButton, InputAdornment, Radio, Radio
 import { BadgeOutlined, LocalPhoneOutlined, LinkedIn, Link } from '@mui/icons-material';
 
 import StandardButton from '../../../../components/buttons/StandardButton';
-import { getGettingStartedProfileData } from '../../../../services/profile';
 import TextFieldLabel from '../../../../components/elements/TextFieldLabel';
+import { shirtSizes } from '../../../../helpers/constants';
+import { getGettingStartedProfileData } from '../../../../services/profile';
 import { parsePhone } from '../../../../helpers/functions';
+import ShirtSizeCard from '../../../../components/elements/ShirtSizeCard';
 
 type BasicInfoForm = {
   name: string,
@@ -176,12 +178,34 @@ const Roles = () => {
     }));
   };
 
+  const handleShirtSizeCard = (shirtSize?: ShirtSize) => {
+    setExtraStuff((prevState) => ({
+      ...prevState,
+      shirtSize: shirtSize ?? '',
+    }));
+  };
+
   const handleNext = () => {
     // TODO: Collect data and update user profile
     // TODO: Update user data with new roles
     // TODO: Determine next section based on user roles
     navigate('/profile/technical-skills');
   };
+
+  // Build shirt sizes
+  const shirtSizeCards = shirtSizes.map((shirtSize) => {
+    const { id, description } = shirtSize;
+    const selected = extraStuff.shirtSize === id;
+    return (
+      <ShirtSizeCard
+        key={id}
+        theme={id}
+        selected={selected}
+        label={description}
+        handler={handleShirtSizeCard}
+      />
+    );
+  });
 
   return (
     <ProfileLayout>
@@ -373,6 +397,9 @@ const Roles = () => {
                   We use adult sizing only.
                 </span>
               </p>
+              <div className="shirtSizeSelections">
+                {shirtSizeCards}
+              </div>
             </div>
           </section>
         </div>
