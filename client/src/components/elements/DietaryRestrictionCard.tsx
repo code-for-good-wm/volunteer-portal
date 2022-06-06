@@ -69,13 +69,15 @@ const DietaryRestrictionCard = (props: DietaryRestrictionCardProps) => {
 
   const cardStyle = selected ? 'dietaryRestrictionCard selected' : 'dietaryRestrictionCard';
 
+  const checkboxContainerStyle = selected ? 'checkboxContainer checked' : 'checkboxContainer';
+
   return (
     <div className={cardStyle} onClick={() => handleCard(theme)}>
-      <div className="checkboxContainer">
-        { checked && <Checkbox checked={selected} /> }
+      <div className={checkboxContainerStyle}>
+        <Checkbox checked={checked} />
       </div>
       <div className="imageContainer">
-        { image && <img src={image} alt={imageAlt} /> }
+        { image && <img src={image} alt={imageAlt} className={theme} /> }
       </div>
       <span className="label">
         {labelText}

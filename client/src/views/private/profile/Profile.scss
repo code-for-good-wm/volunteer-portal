@@ -147,13 +147,15 @@
     height: 70px;
     border-radius: 4px;
     margin-bottom: 9px;
-    padding: 11px 10px 3px 10px;
+    padding-top: 4px;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
     position: relative; /* For absolutely positioned children */
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14);
     border: solid 1.3px transparent;
+    cursor: pointer;
 
     .radioContainer {
       position: absolute;
@@ -176,8 +178,8 @@
 
     .label {
       font-size: 0.875rem;
-      line-height: normal;
-      letter-spacing: .1px;
+      line-height: 1.5rem;
+      letter-spacing: 0.1px;
       text-align: center;
     }
   }
@@ -192,8 +194,145 @@
 
     .shirtSizeCard {
       width: 100px;
-      padding: 11px 10px 10px 10px;
       margin-right: 9px;
+      padding-top: 0;
+
+      .label {
+        font-size: 0.75rem;
+        line-height: 1rem;
+        letter-spacing: 0.4px;
+      }
     }
   }
 }
+
+.dietaryRestrictionSelections {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding-top: 19px;
+
+  .dietaryRestrictionCard {
+    height: 38px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative; /* For absolutely positioned children */
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14);
+    border: solid 1.3px transparent;
+    cursor: pointer;
+
+    .checkboxContainer {
+      margin-right: 8px;
+    }
+
+    .imageContainer {
+      margin-right: 8px;
+      display: flex;
+      align-items: center;
+
+      .vegan {
+        width: 20px;
+        height: 18px;
+      }
+
+      .vegetarian, .fish {
+        width: 20px;
+        height: 19px;
+      }
+
+      .dairy {
+        width: 20px;
+        height: 21px;
+      }
+
+      .gluten {
+        width: 20px;
+        height: 22px;
+      }
+
+      .kosher, .nuts, .eggs {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .label {
+      font-size: 0.875rem;
+      line-height: 1.25;
+      letter-spacing: .25px;
+      text-align: left;
+    }
+  }
+
+  .selected {
+    border: solid 1.3px $primaryDark;
+  }
+
+  @media screen and (min-width: 440px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding-top: $gutterSmall;
+
+    .dietaryRestrictionCard {
+      width: 100px;
+      height: 70px;
+      flex-direction: column;
+      justify-content: center;
+      margin-bottom: 9px;
+      margin-right: 9px;
+
+      .checkboxContainer {
+        display: none;
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+      }
+
+      .checked {
+        display: block;
+      }
+
+      .checkboxContainer > span {
+        padding: 3px; /* Material override */
+      }
+
+      .imageContainer {
+        margin: 0;
+
+        .vegan {
+          margin-bottom: 7px;
+        }
+
+        .vegetarian, .fish {
+          margin-bottom: 6px;
+        }
+
+        .dairy {
+          margin-bottom: 4px;
+        }
+
+        .gluten {
+          margin-bottom: 3px;
+        }
+
+        .kosher, .nuts, .eggs {
+          margin-bottom: 5px;
+        }
+      }
+
+      .label {
+        font-size: 0.75rem;
+        line-height: 1rem;
+        letter-spacing: 0.4px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+

@@ -58,7 +58,7 @@ const ShirtSizeCard = (props: ShirtSizeCardProps) => {
   return (
     <div className={cardStyle} onClick={() => handleCard(theme)}>
       <div className="radioContainer">
-        { checked && <Radio checked={selected} /> }
+        { checked && <Radio checked={checked} /> }
       </div>
       <div className="imageContainer">
         { image && <img src={image} alt={imageAlt} /> }
