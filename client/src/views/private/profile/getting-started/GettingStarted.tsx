@@ -7,7 +7,7 @@ import { updateProfile } from '../../../../store/profileSlice';
 import { DietaryRestriction, ShirtSize } from '../../../../types/profile';
 
 import ProfileLayout from '../../../../layouts/ProfileLayout';
-import { FormControl, FormControlLabel, IconButton, InputAdornment, OutlinedInput, Radio, RadioGroup, TextField } from '@mui/material';
+import { FormControl, FormControlLabel, IconButton, InputAdornment, Radio, RadioGroup, TextField } from '@mui/material';
 import { BadgeOutlined, LocalPhoneOutlined, LinkedIn, Link } from '@mui/icons-material';
 
 import StandardButton from '../../../../components/buttons/StandardButton';
@@ -505,6 +505,34 @@ const Roles = () => {
             />
           </form>
         </div>
+
+        {/* Terms & Conditions */}
+
+        <div className="contentCard profileCard">
+          <div className="cardHeadingWithNote">
+            <h2>
+              Terms &amp; Conditions
+            </h2>
+            <span className="note">
+              <span className="sup red">
+                *
+              </span>
+              Required
+            </span>
+          </div>
+          <div className="divider" />
+          <section>
+            <h3>
+              In-Person Event Covid-19 Terms &amp; Conditions
+            </h3>
+            <p>
+              Code for Good (CFG) is committed to the safety, good health,
+            </p>
+          </section>
+        </div>
+
+        {/* Button Controls */}
+
         <div className="controls">
           <div className="buttonContainer">
             <StandardButton
