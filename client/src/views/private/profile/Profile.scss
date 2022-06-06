@@ -140,24 +140,20 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: stretch;
-  padding-top: 8px;
+  padding-top: 9px;
 
   .shirtSizeCard {
     width: 48.5%;
+    height: 70px;
     border-radius: 4px;
     margin-bottom: 9px;
-    padding: 11px 8px 3px 8px;
+    padding: 11px 10px 3px 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative; /* For absolutely positioned children */
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14);
     border: solid 1.3px transparent;
-
-    @media screen and (min-width: 768px) {
-      margin-bottom: 18px;
-    }
 
     .radioContainer {
       position: absolute;
@@ -188,5 +184,16 @@
 
   .selected {
     border: solid 1.3px $primaryDark;
+  }
+
+  @media screen and (min-width: 440px) {
+    justify-content: flex-start;
+    padding-top: $gutterSmall;
+
+    .shirtSizeCard {
+      width: 100px;
+      padding: 11px 10px 10px 10px;
+      margin-right: 9px;
+    }
   }
 }
