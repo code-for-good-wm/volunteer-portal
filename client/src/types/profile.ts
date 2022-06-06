@@ -68,3 +68,8 @@ export interface ShirtSizeData {
   id: ShirtSize;
   description: string;
 }
+
+export interface DietaryRestrictionData {
+  id: DietaryRestriction;
+  description: string;
+}

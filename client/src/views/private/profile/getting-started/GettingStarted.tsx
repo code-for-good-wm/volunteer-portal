@@ -12,10 +12,11 @@ import { BadgeOutlined, LocalPhoneOutlined, LinkedIn, Link } from '@mui/icons-ma
 
 import StandardButton from '../../../../components/buttons/StandardButton';
 import TextFieldLabel from '../../../../components/elements/TextFieldLabel';
-import { shirtSizes } from '../../../../helpers/constants';
+import { dietaryRestrictions, shirtSizes } from '../../../../helpers/constants';
 import { getGettingStartedProfileData } from '../../../../services/profile';
 import { parsePhone } from '../../../../helpers/functions';
 import ShirtSizeCard from '../../../../components/elements/ShirtSizeCard';
+import DietaryRestrictionCard from '../../../../components/elements/DietaryRestrictionCard';
 
 type BasicInfoForm = {
   name: string,
@@ -179,10 +180,39 @@ const Roles = () => {
   };
 
   const handleShirtSizeCard = (shirtSize?: ShirtSize) => {
+    if (!shirtSize) {
+      return;
+    }
+
     setExtraStuff((prevState) => ({
       ...prevState,
-      shirtSize: shirtSize ?? '',
+      shirtSize: shirtSize,
     }));
+  };
+
+  const handleDietaryRestrictionCard = (dietaryRestriction?: DietaryRestriction) => {
+    if (!dietaryRestriction) {
+      return;
+    }
+
+    if (!extraStuff.dietaryRestrictions.includes(dietaryRestriction)) {
+      const newRestrictions = [
+        ...extraStuff.dietaryRestrictions,
+        dietaryRestriction,
+      ];
+      setExtraStuff((prevState) => ({
+        ...prevState,
+        dietaryRestrictions: newRestrictions,
+      }));
+    } else {
+      const newRestrictions = extraStuff.dietaryRestrictions.filter((restriction) => {
+        return restriction !== dietaryRestriction;
+      });
+      setExtraStuff((prevState) => ({
+        ...prevState,
+        dietaryRestrictions: newRestrictions,
+      }));
+    }
   };
 
   const handleNext = () => {
@@ -203,6 +233,21 @@ const Roles = () => {
         selected={selected}
         label={description}
         handler={handleShirtSizeCard}
+      />
+    );
+  });
+
+  // Build dietary restrictions
+  const dietaryRestrictionCards = dietaryRestrictions.map((restriction) => {
+    const { id, description } = restriction;
+    const selected = extraStuff.dietaryRestrictions.includes(id);
+    return (
+      <DietaryRestrictionCard
+        key={id}
+        theme={id}
+        selected={selected}
+        label={description}
+        handler={handleDietaryRestrictionCard}
       />
     );
   });
@@ -399,6 +444,19 @@ const Roles = () => {
               </p>
               <div className="shirtSizeSelections">
                 {shirtSizeCards}
+              </div>
+            </div>
+            <div className="profileQuestionWrapper">
+              <p className="profileQuestion">
+                <span className="question">
+                  Do you have any dietary restrictions?
+                </span>
+                <span className="note">
+                  Select as many as you need.
+                </span>
+              </p>
+              <div className="dietaryRestrictionSelections">
+                {dietaryRestrictionCards}
               </div>
             </div>
           </section>

@@ -1,4 +1,4 @@
-import { PrimaryProfileSection, RoleData, ShirtSizeData } from '../types/profile';
+import { DietaryRestrictionData, PrimaryProfileSection, RoleData, ShirtSizeData } from '../types/profile';
 import { User } from '../types/user';
 
 export const testUserData: User = {
@@ -61,6 +61,41 @@ export const shirtSizes: ShirtSizeData[] = [
   {
     id: 'xxl',
     description: 'XX-Large',
+  },
+];
+
+export const dietaryRestrictions: DietaryRestrictionData[] = [
+  {
+    id: 'vegan',
+    description: 'Vegan',
+  },
+  {
+    id: 'vegetarian',
+    description: 'Vegetarian',
+  },
+  {
+    id: 'dairy',
+    description: 'No Lactose / Dairy Free',
+  },
+  {
+    id: 'gluten',
+    description: 'No Gluten',
+  },
+  {
+    id: 'kosher',
+    description: 'Kosher',
+  },
+  {
+    id: 'nuts',
+    description: 'Nut Allergy',
+  },
+  {
+    id: 'fish',
+    description: 'Fish & Shellfish Allergy',
+  },
+  {
+    id: 'eggs',
+    description: 'Egg Allergy',
   },
 ];
 
