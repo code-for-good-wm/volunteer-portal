@@ -258,7 +258,7 @@ const Roles = () => {
         <h1>
           Tell us a little about <span className="highlight">yourself</span>.
         </h1>
-        <div className="contentCard profileCard">
+        <div className="contentCard profileCard basicInformationProfileCard">
           <div className="cardHeadingWithNote">
             <h2>
               Basic Information
@@ -446,7 +446,7 @@ const Roles = () => {
                 {shirtSizeCards}
               </div>
             </div>
-            <div className="profileQuestionWrapper">
+            <div>
               <p className="profileQuestion">
                 <span className="question">
                   Do you have any dietary restrictions?
