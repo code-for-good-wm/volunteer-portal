@@ -19,6 +19,8 @@ const AgreementFormItem = (props: AgreementFormItemProps) => {
   const checked = !!selected;
   const handleCheckbox = handler ? handler : () => console.log('Checkbox selected.');
 
+  // TODO: Need handler for external link button
+
   // Build UI
   let title: string;
   let content: React.ReactNode;

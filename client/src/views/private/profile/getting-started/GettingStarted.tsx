@@ -7,7 +7,7 @@ import { updateProfile } from '../../../../store/profileSlice';
 import { Agreement, DietaryRestriction, ShirtSize } from '../../../../types/profile';
 
 import ProfileLayout from '../../../../layouts/ProfileLayout';
-import { FormControl, FormControlLabel, IconButton, InputAdornment, Radio, RadioGroup, TextField } from '@mui/material';
+import { FormControl, FormControlLabel, InputAdornment, Radio, RadioGroup, TextField } from '@mui/material';
 import { BadgeOutlined, LocalPhoneOutlined, LinkedIn, Link } from '@mui/icons-material';
 
 import StandardButton from '../../../../components/buttons/StandardButton';
@@ -19,36 +19,29 @@ import AgreementFormItem from '../../../../components/elements/AgreementFormItem
 import { dietaryRestrictions, shirtSizes } from '../../../../helpers/constants';
 import { getGettingStartedProfileData } from '../../../../services/profile';
 import { parsePhone } from '../../../../helpers/functions';
+import { testPhone } from '../../../../helpers/validation';
 
 type BasicInfoForm = {
   name: string,
   phone: string,
-  showAlert: boolean,
-  alertText: string,
 };
 
 type ContactInfoForm = {
   linkedInUrl: string,
   websiteUrl: string,
   portfolioUrl: string,
-  showAlert: boolean,
-  alertText: string,
 };
 
 type ExtraStuff = {
   previousVolunteer: boolean,
   shirtSize: ShirtSize,
   dietaryRestrictions: DietaryRestriction[],
-  showAlert: boolean,
-  alertText: string,
 }
 
 type AgreementForm = {
   termsAndConditions: boolean,
   photoRelease: boolean,
   codeOfConduct: boolean,
-  showAlert: boolean,
-  alertText: string,
 };
 
 type AgreementUpdate = {
@@ -61,24 +54,18 @@ const Roles = () => {
   const [basicInfoForm, setBasicInfoForm] = useState<BasicInfoForm>({
     name: '',
     phone: '',
-    showAlert: false,
-    alertText: '',
   });
 
   const [contactInfoForm, setContactInfoForm] = useState<ContactInfoForm>({
     linkedInUrl: '',
     websiteUrl: '',
     portfolioUrl: '',
-    showAlert: false,
-    alertText: '',
   });
 
   const [extraStuff, setExtraStuff] = useState<ExtraStuff>({
     previousVolunteer: false,
     shirtSize: '',
     dietaryRestrictions: [],
-    showAlert: false,
-    alertText: '',
   });
 
   const [accessibilityRequirements, setAccessibilityRequirements] = useState('');
@@ -87,9 +74,11 @@ const Roles = () => {
     termsAndConditions: false,
     photoRelease: false,
     codeOfConduct: false,
-    showAlert: false,
-    alertText: '',
   });
+
+  const [submitDisabled, setSubmitDisabled] = useState(true);
+
+  const [processing, setProcessing] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -128,6 +117,53 @@ const Roles = () => {
       }));
     }
   }, []);
+
+  // Test for form validity
+  useEffect(() => {
+    const testBasicInfoForm = () => {
+      const nameTrimmed = basicInfoForm.name.trim();
+      const phoneTrimmed = parsePhone(basicInfoForm.phone).number;
+
+      if (nameTrimmed.length < 3 || !testPhone(phoneTrimmed)) {
+        return false;
+      }
+
+      return true;
+    };
+
+    const testContactInfo = () => {
+      const linkedInUrlTrimmed = contactInfoForm.linkedInUrl.trim();
+      
+      if (!linkedInUrlTrimmed) {
+        return false;
+      }
+
+      return true;
+    };
+
+    const testExtraStuff = () => {
+      if (!extraStuff.shirtSize) {
+        return false;
+      }
+
+      return true;
+    };
+
+    const testAgreements = () => {
+      const { termsAndConditions, photoRelease, codeOfConduct } = agreements;
+      if (!termsAndConditions || !photoRelease || !codeOfConduct) {
+        return false;
+      }
+
+      return true;
+    };
+
+    if (testBasicInfoForm() && testContactInfo() && testExtraStuff() && testAgreements()) {
+      setSubmitDisabled(false);
+    } else {
+      setSubmitDisabled(true);
+    }
+  }, [basicInfoForm, contactInfoForm, extraStuff, agreements]);
 
   // Handlers
   const handleName = (event: ChangeEvent<HTMLInputElement>) => {
@@ -240,6 +276,9 @@ const Roles = () => {
     }));
   };
 
+  // Data checkers
+
+
   const handleNext = () => {
     // TODO: Collect data and update user profile
     // TODO: Update user data with new roles
@@ -309,7 +348,6 @@ const Roles = () => {
                   size="medium"
                   id="name"
                   name="name"
-                  color="primary"
                   type="text"
                   label={<TextFieldLabel label="First and Last Name" required />}
                   value={basicInfoForm.name}
@@ -317,9 +355,7 @@ const Roles = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <IconButton>
-                          <BadgeOutlined />
-                        </IconButton>
+                        <BadgeOutlined />
                       </InputAdornment>
                     )
                   }}
@@ -336,7 +372,6 @@ const Roles = () => {
                   size="medium"
                   id="phone"
                   name="phone"
-                  color="primary"
                   type="phone"
                   label={<TextFieldLabel label="Phone Number" required />}
                   value={basicInfoForm.phone}
@@ -344,9 +379,7 @@ const Roles = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <IconButton>
-                          <LocalPhoneOutlined />
-                        </IconButton>
+                        <LocalPhoneOutlined />
                       </InputAdornment>
                     )
                   }}
@@ -367,7 +400,6 @@ const Roles = () => {
                   size="medium"
                   id="linkedInUrl"
                   name="linkedInUrl"
-                  color="primary"
                   type="text"
                   label={<TextFieldLabel label="LinkedIn" required />}
                   value={contactInfoForm.linkedInUrl}
@@ -375,9 +407,7 @@ const Roles = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <IconButton>
-                          <LinkedIn />
-                        </IconButton>
+                        <LinkedIn />
                       </InputAdornment>
                     )
                   }}
@@ -391,7 +421,6 @@ const Roles = () => {
                   size="medium"
                   id="websiteUrl"
                   name="websiteUrl"
-                  color="primary"
                   type="text"
                   label={<TextFieldLabel label="Website Link" />}
                   value={contactInfoForm.websiteUrl}
@@ -399,9 +428,7 @@ const Roles = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <IconButton>
-                          <Link />
-                        </IconButton>
+                        <Link />
                       </InputAdornment>
                     )
                   }}
@@ -418,7 +445,6 @@ const Roles = () => {
                   size="medium"
                   id="portfolioUrl"
                   name="portfolioUrl"
-                  color="primary"
                   type="text"
                   label={<TextFieldLabel label="Portfolio Link" />}
                   value={contactInfoForm.portfolioUrl}
@@ -426,9 +452,7 @@ const Roles = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <IconButton>
-                          <Link />
-                        </IconButton>
+                        <Link />
                       </InputAdornment>
                     )
                   }}
@@ -571,6 +595,7 @@ const Roles = () => {
             <StandardButton
               label="Next"
               handler={handleNext}
+              disabled={submitDisabled || processing}
             />
           </div>
         </div>
