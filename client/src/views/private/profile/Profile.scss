@@ -4,8 +4,8 @@
     max-width: calc(220px + 600px + ($gutterMedium * 3)); /* Don't ask. */
     display: flex;
     justify-content: space-between;
-    padding-left: $gutterMedium;
-    padding-right: $gutterMedium;
+    padding: $gutterMedium;
+    padding-top: 0;
   }
 }
 
@@ -355,4 +355,47 @@
   }
 }
 
+.agreementFormItem {
+  margin-bottom: 23px;
 
+  @media screen and (min-width: 768px) {
+    margin-bottom: 26px;
+  }
+
+  p, ul {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    letter-spacing: 0.25px;
+    margin-bottom: 21px;
+
+    @media screen and (min-width: 768px) {
+      line-height: 1.5rem;
+      letter-spacing: 0.1px;
+    }
+  }
+
+  li {
+    list-style: disc inside;
+  }
+
+  .checkboxContainer {
+    .checkboxLabel {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+
+      .text {
+        @include AvenirHeavy;
+        font-size: 0.875rem;
+        line-height: normal;
+        letter-spacing: 1.25px;
+        color: $primaryDark;
+        text-transform: uppercase;
+      }
+    }
+  }
+}
+
+.agreementFormItem.noMargin {
+  margin-bottom: 0;
+}

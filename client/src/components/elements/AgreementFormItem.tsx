@@ -5,15 +5,17 @@ import { Agreement } from '../../types/profile';
 import { Checkbox, FormControlLabel, IconButton } from '@mui/material';
 import { LaunchOutlined } from '@mui/icons-material';
 
-type AgreementFormProps = {
+type AgreementFormItemProps = {
   theme?: Agreement,
+  spacing?: 'normal' | 'tight',
   required?: boolean,
   selected?: boolean,
   handler?: (agreement?: Agreement) => void,
 };
 
-const AgreementForm = (props: AgreementFormProps) => {
-  const { theme, required, selected, handler } = props;
+const AgreementFormItem = (props: AgreementFormItemProps) => {
+  const { theme, spacing, required, selected, handler } = props;
+  const noMargin = (spacing === 'tight');
   const checked = !!selected;
   const handleCheckbox = handler ? handler : () => console.log('Checkbox selected.');
 
@@ -86,8 +88,10 @@ const AgreementForm = (props: AgreementFormProps) => {
 
   const labelId = theme ? `${theme}Label` : 'label';
 
+  const itemStyle = noMargin ? 'agreementFormItem noMargin' : 'agreementFormItem';
+
   return (
-    <form className="agreementForm" onClick={() => handleCheckbox(theme)}>
+    <div className={itemStyle}>
       <h3>
         {title}
       </h3>
@@ -99,11 +103,11 @@ const AgreementForm = (props: AgreementFormProps) => {
               <span className="text" id={labelId}>
                 {label}
                 {required && (
-                  <span className="red">*</span>
+                  <span>*</span>
                 )}
               </span>
               <IconButton>
-                <LaunchOutlined />
+                <LaunchOutlined color="primary" />
               </IconButton>
             </span>
           )}
@@ -119,8 +123,8 @@ const AgreementForm = (props: AgreementFormProps) => {
           onChange={() => handleCheckbox(theme)}
         />
       </div>
-    </form>
+    </div>
   );
 };
 
-export default AgreementForm;
+export default AgreementFormItem;

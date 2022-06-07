@@ -12,12 +12,13 @@ import { BadgeOutlined, LocalPhoneOutlined, LinkedIn, Link } from '@mui/icons-ma
 
 import StandardButton from '../../../../components/buttons/StandardButton';
 import TextFieldLabel from '../../../../components/elements/TextFieldLabel';
+import ShirtSizeCard from '../../../../components/elements/ShirtSizeCard';
+import DietaryRestrictionCard from '../../../../components/elements/DietaryRestrictionCard';
+import AgreementFormItem from '../../../../components/elements/AgreementFormItem';
+
 import { dietaryRestrictions, shirtSizes } from '../../../../helpers/constants';
 import { getGettingStartedProfileData } from '../../../../services/profile';
 import { parsePhone } from '../../../../helpers/functions';
-import ShirtSizeCard from '../../../../components/elements/ShirtSizeCard';
-import DietaryRestrictionCard from '../../../../components/elements/DietaryRestrictionCard';
-import AgreementForm from '../../../../components/elements/AgreementForm';
 
 type BasicInfoForm = {
   name: string,
@@ -42,7 +43,7 @@ type ExtraStuff = {
   alertText: string,
 }
 
-type AgreementForms = {
+type AgreementForm = {
   termsAndConditions: boolean,
   photoRelease: boolean,
   codeOfConduct: boolean,
@@ -82,7 +83,7 @@ const Roles = () => {
 
   const [accessibilityRequirements, setAccessibilityRequirements] = useState('');
 
-  const [agreements, setAgreements] = useState<AgreementForms>({
+  const [agreements, setAgreements] = useState<AgreementForm>({
     termsAndConditions: false,
     photoRelease: false,
     codeOfConduct: false,
@@ -540,24 +541,27 @@ const Roles = () => {
             </span>
           </div>
           <div className="divider" />
-          <AgreementForm
-            theme="termsAndConditions"
-            required={true}
-            selected={agreements.termsAndConditions}
-            handler={handleAgreement}
-          />
-          <AgreementForm
-            theme="photoRelease"
-            required={true}
-            selected={agreements.photoRelease}
-            handler={handleAgreement}
-          />
-          <AgreementForm
-            theme="codeOfConduct"
-            required={true}
-            selected={agreements.codeOfConduct}
-            handler={handleAgreement}
-          />
+          <form className="profileForm">
+            <AgreementFormItem
+              theme="termsAndConditions"
+              required={true}
+              selected={agreements.termsAndConditions}
+              handler={handleAgreement}
+            />
+            <AgreementFormItem
+              theme="photoRelease"
+              required={true}
+              selected={agreements.photoRelease}
+              handler={handleAgreement}
+            />
+            <AgreementFormItem
+              theme="codeOfConduct"
+              spacing="tight"
+              required={true}
+              selected={agreements.codeOfConduct}
+              handler={handleAgreement}
+            />
+          </form>
         </div>
 
         {/* Button Controls */}
