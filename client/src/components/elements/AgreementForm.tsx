@@ -2,20 +2,20 @@ import React from 'react';
 
 import { Agreement } from '../../types/profile';
 
-import { Checkbox, IconButton } from '@mui/material';
+import { Checkbox, FormControlLabel, IconButton } from '@mui/material';
 import { LaunchOutlined } from '@mui/icons-material';
 
 type AgreementFormProps = {
   theme?: Agreement,
   required?: boolean,
   selected?: boolean,
-  handler?: (dietaryRestriction?: Agreement) => void,
+  handler?: (agreement?: Agreement) => void,
 };
 
 const AgreementForm = (props: AgreementFormProps) => {
   const { theme, required, selected, handler } = props;
   const checked = !!selected;
-  const handleCheckbox = handler ? handler : () => console.log('Checkbox toggled.');
+  const handleCheckbox = handler ? handler : () => console.log('Checkbox selected.');
 
   // Build UI
   let title: string;
@@ -84,6 +84,8 @@ const AgreementForm = (props: AgreementFormProps) => {
     label = '';
   }
 
+  const labelId = theme ? `${theme}Label` : 'label';
+
   return (
     <form className="agreementForm" onClick={() => handleCheckbox(theme)}>
       <h3>
@@ -91,18 +93,31 @@ const AgreementForm = (props: AgreementFormProps) => {
       </h3>
       {content}
       <div className="checkboxContainer">
-        <Checkbox checked={checked} />
-        <span className="checkboxLabel">
-          <span className="text">
-            {label}
-            {required && (
-              <span className="red">*</span>
-            )}
-          </span>
-          <IconButton>
-            <LaunchOutlined />
-          </IconButton>
-        </span>
+        <FormControlLabel
+          label={(
+            <span className="checkboxLabel">
+              <span className="text" id={labelId}>
+                {label}
+                {required && (
+                  <span className="red">*</span>
+                )}
+              </span>
+              <IconButton>
+                <LaunchOutlined />
+              </IconButton>
+            </span>
+          )}
+          control={(
+            <Checkbox 
+              checked={checked}
+              id={theme}
+              inputProps={{
+                'aria-labelledby': labelId,
+              }}
+            />
+          )}
+          onChange={() => handleCheckbox(theme)}
+        />
       </div>
     </form>
   );

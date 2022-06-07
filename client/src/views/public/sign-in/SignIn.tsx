@@ -171,12 +171,14 @@ const SignIn = () => {
       checked={newUser}
       color="primary"
       id="newUser"
-      onChange={handleNewUser}
+      inputProps={{
+        'aria-labelledby': 'newUserLabel',
+      }}
     />
   );
 
   const newUserCheckboxLabel = (
-    <span className="checkboxLabel">
+    <span className="checkboxLabel" id="newUserLabel">
       I am a new user
     </span>
   );
@@ -236,6 +238,7 @@ const SignIn = () => {
                 <FormControlLabel
                   control={newUserCheckbox}
                   label={newUserCheckboxLabel}
+                  onChange={handleNewUser}
                 />
               </FormControl>
               <FormControl

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../../../store/hooks';
 import { updateProfile } from '../../../../store/profileSlice';
 
-import { DietaryRestriction, ShirtSize } from '../../../../types/profile';
+import { Agreement, DietaryRestriction, ShirtSize } from '../../../../types/profile';
 
 import ProfileLayout from '../../../../layouts/ProfileLayout';
 import { FormControl, FormControlLabel, IconButton, InputAdornment, Radio, RadioGroup, TextField } from '@mui/material';
@@ -17,6 +17,7 @@ import { getGettingStartedProfileData } from '../../../../services/profile';
 import { parsePhone } from '../../../../helpers/functions';
 import ShirtSizeCard from '../../../../components/elements/ShirtSizeCard';
 import DietaryRestrictionCard from '../../../../components/elements/DietaryRestrictionCard';
+import AgreementForm from '../../../../components/elements/AgreementForm';
 
 type BasicInfoForm = {
   name: string,
@@ -41,12 +42,18 @@ type ExtraStuff = {
   alertText: string,
 }
 
-type TermsAndConditions = {
+type AgreementForms = {
   termsAndConditions: boolean,
   photoRelease: boolean,
   codeOfConduct: boolean,
   showAlert: boolean,
   alertText: string,
+};
+
+type AgreementUpdate = {
+  termsAndConditions?: boolean,
+  photoRelease?: boolean,
+  codeOfConduct?: boolean,
 };
 
 const Roles = () => {
@@ -75,7 +82,7 @@ const Roles = () => {
 
   const [accessibilityRequirements, setAccessibilityRequirements] = useState('');
 
-  const [agreements, setAgreements] = useState<TermsAndConditions>({
+  const [agreements, setAgreements] = useState<AgreementForms>({
     termsAndConditions: false,
     photoRelease: false,
     codeOfConduct: false,
@@ -120,7 +127,6 @@ const Roles = () => {
       }));
     }
   }, []);
-
 
   // Handlers
   const handleName = (event: ChangeEvent<HTMLInputElement>) => {
@@ -218,6 +224,19 @@ const Roles = () => {
   const handleAccessibilityRequirements = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setAccessibilityRequirements(value);
+  };
+
+  const handleAgreement = (agreement?: Agreement) => {
+    if (!agreement) {
+      return;
+    }
+
+    const agreementsUpdate: AgreementUpdate = {};
+    agreementsUpdate[agreement] = !agreements[agreement];
+    setAgreements((prevState) => ({
+      ...prevState,
+      ...agreementsUpdate,
+    }));
   };
 
   const handleNext = () => {
@@ -521,14 +540,24 @@ const Roles = () => {
             </span>
           </div>
           <div className="divider" />
-          <section>
-            <h3>
-              In-Person Event Covid-19 Terms &amp; Conditions
-            </h3>
-            <p>
-              Code for Good (CFG) is committed to the safety, good health,
-            </p>
-          </section>
+          <AgreementForm
+            theme="termsAndConditions"
+            required={true}
+            selected={agreements.termsAndConditions}
+            handler={handleAgreement}
+          />
+          <AgreementForm
+            theme="photoRelease"
+            required={true}
+            selected={agreements.photoRelease}
+            handler={handleAgreement}
+          />
+          <AgreementForm
+            theme="codeOfConduct"
+            required={true}
+            selected={agreements.codeOfConduct}
+            handler={handleAgreement}
+          />
         </div>
 
         {/* Button Controls */}
