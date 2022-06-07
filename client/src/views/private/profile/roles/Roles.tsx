@@ -49,6 +49,8 @@ const Roles = () => {
   const handleNext = () => {
     // TODO: Replace with actual user update functionality
     if (userData) {
+      setProcessing(true);
+
       const profileUpdate: Profile = {
         ...userData.profile,
         roles: selectedRoles,
@@ -63,6 +65,8 @@ const Roles = () => {
           user: userUpdate,
         })
       );
+
+      setProcessing(false);
     }
 
     navigate('/profile/getting-started');

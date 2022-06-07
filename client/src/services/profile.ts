@@ -1,5 +1,7 @@
 import { store } from '../store/store';
 
+import { parsePhone } from '../helpers/functions';
+
 /**
  * Pull the user's saved profile and return an object with
  * data organized for the 'getting started' view
@@ -30,7 +32,7 @@ export const getGettingStartedProfileData = () => {
     {
       basicInfo: {
         name,
-        phone,
+        phone: parsePhone(phone).formatted,
       },
       contactInfo: {
         linkedInUrl,

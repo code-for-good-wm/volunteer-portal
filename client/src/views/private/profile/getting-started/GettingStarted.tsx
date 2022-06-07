@@ -1,10 +1,12 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppDispatch } from '../../../../store/hooks';
+import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
+import { updateAuth, user } from '../../../../store/authSlice';
 import { updateProfile } from '../../../../store/profileSlice';
 
-import { Agreement, DietaryRestriction, ShirtSize } from '../../../../types/profile';
+import { User } from '../../../../types/user';
+import { Agreement, Agreements, DietaryRestriction, Profile, ShirtSize } from '../../../../types/profile';
 
 import ProfileLayout from '../../../../layouts/ProfileLayout';
 import { FormControl, FormControlLabel, InputAdornment, Radio, RadioGroup, TextField } from '@mui/material';
@@ -50,7 +52,7 @@ type AgreementUpdate = {
   codeOfConduct?: boolean,
 };
 
-const Roles = () => {
+const GettingStarted = () => {
   const [basicInfoForm, setBasicInfoForm] = useState<BasicInfoForm>({
     name: '',
     phone: '',
@@ -79,6 +81,8 @@ const Roles = () => {
   const [submitDisabled, setSubmitDisabled] = useState(true);
 
   const [processing, setProcessing] = useState(false);
+
+  const userData = useAppSelector(user);
 
   const dispatch = useAppDispatch();
 
@@ -280,9 +284,68 @@ const Roles = () => {
 
 
   const handleNext = () => {
-    // TODO: Collect data and update user profile
-    // TODO: Update user data with new roles
-    // TODO: Determine next section based on user roles
+    // TODO: Replace with actual user update functionality
+    if (userData) {
+      setProcessing(true);
+
+      const name = basicInfoForm.name.trim();
+      const phone = parsePhone(basicInfoForm.phone).number;
+      const linkedInUrl = contactInfoForm.linkedInUrl.trim();
+      const websiteUrl = contactInfoForm.websiteUrl.trim();
+      const portfolioUrl = contactInfoForm.websiteUrl.trim();
+      const { previousVolunteer, shirtSize, dietaryRestrictions } = extraStuff;
+      const { termsAndConditions, photoRelease, codeOfConduct } = agreements;
+
+      const timestamp = new Date().toISOString();
+
+      let agreementsUpdate: Agreements = {};
+
+      if (userData.profile.agreements) {
+        agreementsUpdate = {
+          ...userData.profile.agreements
+        };
+      }
+
+      if (termsAndConditions) {
+        agreementsUpdate.termsAndConditions = timestamp;
+      }
+
+      if (photoRelease) {
+        agreementsUpdate.photoRelease = timestamp;
+      }
+
+      if (codeOfConduct) {
+        agreementsUpdate.codeOfConduct = timestamp;
+      }
+
+      const profileUpdate: Profile = {
+        ...userData.profile,
+        linkedInUrl,
+        websiteUrl,
+        portfolioUrl,
+        previousVolunteer,
+        shirtSize,
+        dietaryRestrictions,
+        accessibilityRequirements: accessibilityRequirements.trim(),
+        agreements: agreementsUpdate,
+      };
+
+      const userUpdate: User = {
+        ...userData,
+        name,
+        phone,
+        profile: profileUpdate,
+      };
+
+      dispatch(
+        updateAuth({
+          user: userUpdate,
+        })
+      );
+
+      setProcessing(false);
+    }
+
     navigate('/profile/technical-skills');
   };
 
@@ -604,4 +667,4 @@ const Roles = () => {
   );
 };
 
-export default Roles;
+export default GettingStarted;
