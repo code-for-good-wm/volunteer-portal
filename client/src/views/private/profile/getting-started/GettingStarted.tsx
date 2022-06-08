@@ -20,7 +20,7 @@ import AgreementFormItem from '../../../../components/elements/AgreementFormItem
 
 import { dietaryRestrictions, shirtSizes } from '../../../../helpers/constants';
 import { getGettingStartedProfileData } from '../../../../services/profile';
-import { parsePhone } from '../../../../helpers/functions';
+import { getNextProfileSection, parsePhone } from '../../../../helpers/functions';
 import { testPhone } from '../../../../helpers/validation';
 
 type BasicInfoForm = {
@@ -280,9 +280,6 @@ const GettingStarted = () => {
     }));
   };
 
-  // Data checkers
-
-
   const handleNext = () => {
     // TODO: Replace with actual user update functionality
     if (userData) {
@@ -346,7 +343,17 @@ const GettingStarted = () => {
       setProcessing(false);
     }
 
-    navigate('/profile/technical-skills');
+    // Determine next view to display
+    const nextSection = getNextProfileSection() ?? '';
+    if (!nextSection) {
+      // TODO: If something bad happens here, what do we do?
+      return;
+    }
+    if (nextSection === true) {
+      navigate('/profile/complete');
+    } else {
+      navigate(`/profile/${nextSection}`);
+    }
   };
 
   // Build shirt sizes

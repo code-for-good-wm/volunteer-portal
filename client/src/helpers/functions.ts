@@ -1,3 +1,4 @@
+import { store } from '../store/store';
 import { PrimaryProfileSectionId, Role } from '../types/profile';
 
 /**
@@ -54,4 +55,45 @@ export const parsePhone = (phone: string) => {
     number,
     formatted,
   };
+};
+
+/**
+ * Determine the next profile view to display based on the current view
+ * Returns the ID of the next section to display (e.g. 'technical-skills'),
+ * or a boolean value: false if we can't perform the operation, true if the
+ * current section is the final section to complete
+ * @returns {PrimaryProfileSectionId | boolean}
+ */
+export const getNextProfileSection = () => {
+  const appState = store.getState();
+
+  // Get current section
+  const currentSection = appState.profile.currentSection;
+  if (!currentSection) {
+    return false;
+  }
+
+  // Get user roles
+  const userData = appState.auth.user;
+  const userRoles = userData?.profile?.roles ?? [];
+
+  // Get expected profile sections to display
+  const displayedSections = getDisplayedProfileSections(userRoles);
+
+  // Get index of current section
+  const currentSectionIndex = displayedSections.findIndex((section) => {
+    return (section === currentSection);
+  });
+
+  if (currentSectionIndex < 0) {
+    return false;
+  }
+
+  const nextSection = displayedSections[currentSectionIndex + 1];
+
+  if (!nextSection) {
+    return true;
+  }
+
+  return nextSection;
 };
