@@ -3,11 +3,13 @@ import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import PageLayout from '../../../layouts/PageLayout';
 import StandardButton from '../../../components/buttons/StandardButton';
 import TextButton from '../../../components/buttons/TextButton';
+import TextFieldLabel from '../../../components/elements/TextFieldLabel';
 
-import { Alert, Checkbox, FormControl, FormControlLabel, TextField } from '@mui/material';
+import { Checkbox, FormControl, FormControlLabel, TextField } from '@mui/material';
 
 import { signInUser, createNewUser, recoverPassword } from '../../../services/auth';
 import { testEmail, testPassword } from '../../../helpers/validation';
+import FormAlert from '../../../components/elements/FormAlert';
 
 type SignInForm = {
   email: string,
@@ -33,8 +35,8 @@ const SignIn = () => {
   });
   const [processing, setProcessing] = useState(false);
 
+  // Test for form validity
   useEffect(() => {
-    // Test for form validity
     const emailTrimmed = form.email.trim();
     const passwordTrimmed = form.password.trim();
     if (testEmail(emailTrimmed) && passwordTrimmed) {
@@ -170,36 +172,19 @@ const SignIn = () => {
       checked={newUser}
       color="primary"
       id="newUser"
-      onChange={handleNewUser}
+      inputProps={{
+        'aria-labelledby': 'newUserLabel',
+      }}
     />
   );
 
-  const buildInputLabel = (label: string) => {
-    return (
-      <span className="inputLabel">
-        {label}
-      </span>
-    );
-  };
-
   const newUserCheckboxLabel = (
-    <span className="checkboxLabel">
+    <span className="checkboxLabel" id="newUserLabel">
       I am a new user
     </span>
   );
 
   const buttonLabel = newUser ? 'Create Account' : 'Sign In';
-
-  const formAlert = (
-    <FormControl
-      fullWidth
-      margin="dense"
-    >
-      <Alert severity={alert.severity}>
-        {alert.text}
-      </Alert>
-    </FormControl>
-  );
 
   return (
     <PageLayout>
@@ -217,9 +202,8 @@ const SignIn = () => {
                 size="medium"
                 id="email"
                 name="email"
-                color="primary"
                 type="email"
-                label={buildInputLabel('Email')}
+                label={<TextFieldLabel label="Email" />}
                 value={form.email}
                 onChange={handleEmail}
               />
@@ -230,9 +214,8 @@ const SignIn = () => {
                 size="medium"
                 id="password"
                 name="password"
-                color="primary"
                 type="password"
-                label={buildInputLabel('Password')}
+                label={<TextFieldLabel label="Password" />}
                 value={form.password}
                 onChange={handlePassword}
               />
@@ -243,6 +226,7 @@ const SignIn = () => {
                 <FormControlLabel
                   control={newUserCheckbox}
                   label={newUserCheckboxLabel}
+                  onChange={handleNewUser}
                 />
               </FormControl>
               <FormControl
@@ -251,7 +235,6 @@ const SignIn = () => {
               >
                 <StandardButton
                   type="submit"
-                  theme="primary"
                   label={buttonLabel}
                   disabled={submitDisabled || processing}
                 />
@@ -267,7 +250,13 @@ const SignIn = () => {
                   disabled={processing}
                 />
               </FormControl>
-              { alert.show && formAlert}
+              { alert.show && (
+                <FormAlert
+                  theme={alert.severity}
+                  spacing="tight"
+                  content={alert.text}
+                />
+              )}
             </form>
           </div>
         </div>

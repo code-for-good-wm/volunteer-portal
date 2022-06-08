@@ -1,4 +1,4 @@
-import { PrimaryProfileSection, RoleData } from '../types/profile';
+import { DietaryRestrictionData, PrimaryProfileSection, RoleData, ShirtSizeData } from '../types/profile';
 import { User } from '../types/user';
 
 export const testUserData: User = {
@@ -17,7 +17,6 @@ export const testUserData: User = {
     shirtSize: '',
     dietaryRestrictions: [],
     accessibilityRequirements: '',
-    agreements: [],
     skills: [],
     additionalSkills: '',
   }
@@ -42,13 +41,65 @@ export const roles: RoleData[] = [
   },
 ];
 
+export const shirtSizes: ShirtSizeData[] = [
+  {
+    id: 'small',
+    description: 'Small',
+  },
+  {
+    id: 'medium',
+    description: 'Medium',
+  },
+  {
+    id: 'large',
+    description: 'Large',
+  },
+  {
+    id: 'xl',
+    description: 'X-Large',
+  },
+  {
+    id: 'xxl',
+    description: 'XX-Large',
+  },
+];
+
+export const dietaryRestrictions: DietaryRestrictionData[] = [
+  {
+    id: 'vegan',
+    description: 'Vegan',
+  },
+  {
+    id: 'vegetarian',
+    description: 'Vegetarian',
+  },
+  {
+    id: 'dairy',
+    description: 'No Lactose / Dairy Free',
+  },
+  {
+    id: 'gluten',
+    description: 'No Gluten',
+  },
+  {
+    id: 'kosher',
+    description: 'Kosher',
+  },
+  {
+    id: 'nuts',
+    description: 'Nut Allergy',
+  },
+  {
+    id: 'fish',
+    description: 'Fish & Shellfish Allergy',
+  },
+  {
+    id: 'eggs',
+    description: 'Egg Allergy',
+  },
+];
+
 export const profileStructure: PrimaryProfileSection[] = [
-  // {
-  //   id: 'roles',
-  //   type: 'primary',
-  //   description: 'Roles',
-  //   sections: []
-  // },
   {
     id: 'getting-started',
     type: 'primary',

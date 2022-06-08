@@ -15,19 +15,25 @@ h1 {
   }
 }
 
-h1.profile {
-  @media screen and (min-width: 768px) {
-    font-size: 2.125rem;
-    line-height: 2.25rem;
-  }
-}
-
 h2 {
   font-size: 1.25rem;
   line-height: 1.5rem;
   letter-spacing: 0.15px;
   margin-bottom: 16px;
   font-weight: 400;
+}
+
+h3 {
+  @include AvenirHeavy;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  margin-bottom: 16px;
+
+  @media screen and (min-width: 768px) {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    margin-bottom: 24px;
+  }
 }
 
 .highlight {
@@ -37,6 +43,15 @@ h2 {
 
 .center {
   text-align: center;
+}
+
+.red {
+  color: $red;
+}
+
+div.divider {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  margin-bottom: $gutterSmall;
 }
 
 /* Structural Styles */
@@ -95,6 +110,18 @@ body {
 
   @media screen and (min-width: 768px) {
     padding: $gutterMedium;
+  }
+}
+
+.cardHeadingWithNote {
+  display: flex;
+  align-items: baseline;
+
+  .note {
+    font-size: .75rem;
+    line-height: 1rem;
+    letter-spacing: 0.4px;
+    margin-left: $gutterSmall;
   }
 }
 

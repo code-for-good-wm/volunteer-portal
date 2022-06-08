@@ -1,9 +1,11 @@
 .profileLayout {
   @media screen and (min-width: 768px) {
+    margin: 0 auto;
+    max-width: calc(220px + 600px + ($gutterMedium * 3)); /* Don't ask. */
     display: flex;
     justify-content: space-between;
-    padding-left: $gutterMedium;
-    padding-right: $gutterMedium;
+    padding: $gutterMedium;
+    padding-top: 0;
   }
 }
 
@@ -71,6 +73,28 @@
 .profileContentContainer {
   padding: $gutterSmall;
 
+  h1 {
+    margin-bottom: 24px;
+
+    @media screen and (min-width: 768px) {
+      font-size: 2.125rem;
+      line-height: 2rem;
+      margin-bottom: 34px;
+    }
+  }
+
+  section.bottomPadding {
+    padding-bottom: 33px;
+  }
+
+  .profileQuestionWrapper {
+    padding-bottom: 8px;
+
+    @media screen and (min-width: 768px) {
+      padding-bottom: $gutterMedium;
+    }
+  }
+
   .controls {
     display: flex;
     flex-direction: column;
@@ -81,7 +105,7 @@
   }
 
   @media screen and (min-width: 768px) {
-    padding: 0;
+    padding: 0; // Padding handled by profileLayout
 
     .controls {
       flex-direction: row-reverse;
@@ -92,4 +116,286 @@
       }
     }
   }
+}
+
+.basicInformationProfileCard {
+  /* Compensate for dietary restriction card margins */
+  padding-bottom: calc($gutterSmall - 9px);
+
+  @media screen and (min-width: 768px) {
+    padding-bottom: calc($gutterMedium - 8px);
+  }
+}
+
+.profileQuestion {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+
+  .question {
+    @include AvenirMedium;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    letter-spacing: 0.25px;
+    margin-right: .5rem;
+
+    @media screen and (min-width: 768px) {
+      font-size: 1rem;
+      line-height: 1.5rem;
+      letter-spacing: 0.15px;
+      margin-right: 1rem;
+    }
+  }
+
+  .note {
+    @include AvenirBookOblique;
+    font-size: .75rem;
+    line-height: 1rem;
+    letter-spacing: 0.4px;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+.shirtSizeSelections {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-top: 9px;
+
+  .shirtSizeCard {
+    width: 48.5%;
+    height: 70px;
+    border-radius: 4px;
+    margin-bottom: 9px;
+    padding-top: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative; /* For absolutely positioned children */
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14);
+    border: solid 1.3px transparent;
+    cursor: pointer;
+
+    .radioContainer {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    .radioContainer > span {
+      padding: 3px; /* Material override */
+    }
+
+    .imageContainer {
+      height: 29px;
+      margin-bottom: 4px;
+
+      img {
+        height: 100%;
+      }
+    }
+
+    .label {
+      font-size: 0.875rem;
+      line-height: 1.5rem;
+      letter-spacing: 0.1px;
+      text-align: center;
+    }
+  }
+
+  .selected {
+    border: solid 1.3px $primaryDark;
+  }
+
+  @media screen and (min-width: 440px) {
+    justify-content: flex-start;
+    padding-top: $gutterSmall;
+
+    .shirtSizeCard {
+      width: 100px;
+      margin-right: 9px;
+      padding-top: 0;
+
+      .label {
+        font-size: 0.75rem;
+        line-height: 1rem;
+        letter-spacing: 0.4px;
+      }
+    }
+  }
+}
+
+.dietaryRestrictionSelections {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding-top: 19px;
+
+  .dietaryRestrictionCard {
+    height: 38px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative; /* For absolutely positioned children */
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14);
+    border: solid 1.3px transparent;
+    cursor: pointer;
+
+    .checkboxContainer {
+      margin-right: 8px;
+    }
+
+    .imageContainer {
+      margin-right: 8px;
+      display: flex;
+      align-items: center;
+
+      .vegan {
+        width: 20px;
+        height: 18px;
+      }
+
+      .vegetarian, .fish {
+        width: 20px;
+        height: 19px;
+      }
+
+      .dairy {
+        width: 20px;
+        height: 21px;
+      }
+
+      .gluten {
+        width: 20px;
+        height: 22px;
+      }
+
+      .kosher, .nuts, .eggs {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .label {
+      font-size: 0.875rem;
+      line-height: 1.25;
+      letter-spacing: .25px;
+      text-align: left;
+    }
+  }
+
+  .selected {
+    border: solid 1.3px $primaryDark;
+  }
+
+  @media screen and (min-width: 440px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding-top: $gutterSmall;
+
+    .dietaryRestrictionCard {
+      width: 100px;
+      height: 70px;
+      flex-direction: column;
+      justify-content: center;
+      margin-bottom: 9px;
+      margin-right: 9px;
+
+      .checkboxContainer {
+        display: none;
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+      }
+
+      .checked {
+        display: block;
+      }
+
+      .checkboxContainer > span {
+        padding: 3px; /* Material override */
+      }
+
+      .imageContainer {
+        margin: 0;
+
+        .vegan {
+          margin-bottom: 7px;
+        }
+
+        .vegetarian, .fish {
+          margin-bottom: 6px;
+        }
+
+        .dairy {
+          margin-bottom: 4px;
+        }
+
+        .gluten {
+          margin-bottom: 3px;
+        }
+
+        .kosher, .nuts, .eggs {
+          margin-bottom: 5px;
+        }
+      }
+
+      .label {
+        font-size: 0.75rem;
+        line-height: 1rem;
+        letter-spacing: 0.4px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.agreementFormItem {
+  margin-bottom: 23px;
+
+  @media screen and (min-width: 768px) {
+    margin-bottom: 26px;
+  }
+
+  p, ul {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    letter-spacing: 0.25px;
+    margin-bottom: 21px;
+
+    @media screen and (min-width: 768px) {
+      line-height: 1.5rem;
+      letter-spacing: 0.1px;
+    }
+  }
+
+  li {
+    list-style: disc inside;
+  }
+
+  .checkboxContainer {
+    .checkboxLabel {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+
+      .text {
+        @include AvenirHeavy;
+        font-size: 0.875rem;
+        line-height: normal;
+        letter-spacing: 1.25px;
+        color: $primaryDark;
+        text-transform: uppercase;
+      }
+    }
+  }
+}
+
+.agreementFormItem.noMargin {
+  margin-bottom: 0;
 }

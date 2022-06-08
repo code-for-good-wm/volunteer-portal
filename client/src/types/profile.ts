@@ -8,6 +8,8 @@ export type ShirtSize = 'small' | 'medium' | 'large' | 'xl' | 'xxl' | '';
 
 export type DietaryRestriction = 'vegan' | 'vegetarian' | 'dairy' | 'gluten' | 'kosher' | 'nuts' | 'fish' | 'eggs'; // Soy? Corn?
 
+export type Agreement = 'termsAndConditions' | 'photoRelease' | 'codeOfConduct';
+
 export type SkillCode = 'frontEndDev' | 'backEndDev' | 'databases' | 'mobileDev' | 'devOps' | 'wordPress' | 'squarespace' | 'wix' | 'weebly' | 'htmlCss' | 'javaScript' | 'react' | 'vue' | 'angular' | 'nodeExpress' | 'phpLaravel' | 'projMgmt' | 'brand' | 'copy' | 'crm' | 'marketing' | 'seo' | 'social' | 'technicalWriting' | 'testing' | 'photography' | 'videography' | 'print' | 'ux' | 'ui' | 'designThinking' | 'illustration' | 'motionGraphics' | 'adobeSuite' | 'sketch' | 'figma' | 'zeplin' | 'invision' | 'marvel' | 'adobeXd' | 'deployment';
 
 export interface PrimaryProfileSection {
@@ -27,9 +29,9 @@ export interface SecondaryProfileSection {
  * Agreements are ISO date strings, e.g. '2022-05-19T20:47:46.021Z'
  */
 export interface Agreements {
-  termsAndConditions: string;
-  photoRelease: string;
-  codeOfConduct: string;
+  termsAndConditions?: string;
+  photoRelease?: string;
+  codeOfConduct?: string;
 }
 
 export interface Skill {
@@ -54,12 +56,22 @@ export interface Profile {
   shirtSize: ShirtSize;
   dietaryRestrictions: DietaryRestriction[];
   accessibilityRequirements: string;
-  agreements: Agreements[];
+  agreements?: Agreements;
   skills: UserSkill[];
   additionalSkills: string;
 }
 
 export interface RoleData {
   id: Role;
+  description: string;
+}
+
+export interface ShirtSizeData {
+  id: ShirtSize;
+  description: string;
+}
+
+export interface DietaryRestrictionData {
+  id: DietaryRestriction;
   description: string;
 }
