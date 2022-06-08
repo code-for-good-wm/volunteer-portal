@@ -5,7 +5,7 @@ import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
 import { user } from '../../../../store/authSlice';
 import { updateProfile } from '../../../../store/profileSlice';
 
-import { ProfileSkill, SkillCode, SkillLevel } from '../../../../types/profile';
+import { ProfileSkill, SkillCode, SkillLevel, UserSkillData } from '../../../../types/profile';
 
 import ProfileLayout from '../../../../layouts/ProfileLayout';
 
@@ -43,7 +43,6 @@ const TechnicalSkills = () => {
     const userSkills = getUserSkills() ?? [];
 
     // Build object out of user skill data
-    type UserSkillData = Partial<Record<SkillCode, SkillLevel>>
     const userSkillData: UserSkillData = {};
     userSkills.forEach((skill) => {
       userSkillData[skill.code] = skill.level;
