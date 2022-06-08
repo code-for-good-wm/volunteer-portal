@@ -10,8 +10,9 @@ export type DietaryRestriction = 'vegan' | 'vegetarian' | 'dairy' | 'gluten' | '
 
 export type Agreement = 'termsAndConditions' | 'photoRelease' | 'codeOfConduct';
 
-export type SkillCode = 'frontEndDev' | 'backEndDev' | 'databases' | 'mobileDev' | 'devOps' | 'wordPress' | 'squarespace' | 'wix' | 'weebly' | 'htmlCss' | 'javaScript' | 'react' | 'vue' | 'angular' | 'nodeExpress' | 'phpLaravel' | 'projMgmt' | 'brand' | 'copy' | 'crm' | 'marketing' | 'seo' | 'social' | 'technicalWriting' | 'testing' | 'photography' | 'videography' | 'print' | 'ux' | 'ui' | 'designThinking' | 'illustration' | 'motionGraphics' | 'adobeSuite' | 'sketch' | 'figma' | 'zeplin' | 'invision' | 'marvel' | 'adobeXd' | 'deployment';
+export type SkillCode = 'frontEndDev' | 'backEndDev' | 'databases' | 'mobileDev' | 'devOps' | 'wordPress' | 'squarespace' | 'wix' | 'weebly' | 'htmlCss' | 'javaScript' | 'react' | 'vue' | 'angular' | 'nodeExpress' | 'phpLaravel' | 'projMgmt' | 'brand' | 'copy' | 'crm' | 'marketing' | 'seo' | 'social' | 'technicalWriting' | 'testing' | 'photography' | 'videography' | 'print' | 'ux' | 'ui' | 'designThinking' | 'illustration' | 'motionGraphics' | 'adobeSuite' | 'sketch' | 'figma' | 'zeplin' | 'inVision' | 'marvel' | 'adobeXd' | 'deployment';
 
+export type SkillLevel = 0 | 1 | 2 | 3 | 4;
 export interface PrimaryProfileSection {
   id: PrimaryProfileSectionId;
   type: 'primary';
@@ -41,7 +42,13 @@ export interface Skill {
 
 export interface UserSkill {
   code: SkillCode;
-  level: 0 | 1 | 2 | 3 | 4;
+  level: SkillLevel;
+}
+
+export interface ProfileSkill {
+  code: SkillCode;
+  description: string;
+  level: SkillLevel;
 }
 
 export interface Profile {
@@ -74,4 +81,20 @@ export interface ShirtSizeData {
 export interface DietaryRestrictionData {
   id: DietaryRestriction;
   description: string;
+}
+
+export interface TechnicalSkillsData {
+  experienceLevel: Skill[];
+  toolsAndLanguages: Skill[];
+}
+
+export interface DesignSkillsData {
+  experienceLevel: Skill[];
+  tools: Skill[];
+  development: Skill[];
+}
+
+export interface AdditionalSkillsData {
+  otherExperience: Skill[];
+  otherSkills: Skill[];
 }

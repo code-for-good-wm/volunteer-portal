@@ -5,13 +5,20 @@ import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
 import { user } from '../../../../store/authSlice';
 import { updateProfile } from '../../../../store/profileSlice';
 
+import { ProfileSkill, SkillCode, SkillLevel } from '../../../../types/profile';
+
 import ProfileLayout from '../../../../layouts/ProfileLayout';
 
 import StandardButton from '../../../../components/buttons/StandardButton';
 
 import { getNextProfileSection } from '../../../../helpers/functions';
+import { getUserSkills } from '../../../../services/profile';
+import { technicalSkills } from '../../../../helpers/constants';
 
 const TechnicalSkills = () => {
+  const [experienceLevels, setExperienceLevels] = useState<ProfileSkill[]>([]);
+  const [toolsAndLanguages, setToolsAndLanguages] = useState<ProfileSkill[]>([]);
+
   const [submitDisabled, setSubmitDisabled] = useState(true);
 
   const [processing, setProcessing] = useState(false);
@@ -33,7 +40,37 @@ const TechnicalSkills = () => {
 
   // On mount, pull any current profile data and populate the forms
   useEffect(() => {
-    // TODO: Complete getTechnicalSkillsProfileData()
+    const userSkills = getUserSkills() ?? [];
+
+    // Build object out of user skill data
+    type UserSkillData = Partial<Record<SkillCode, SkillLevel>>
+    const userSkillData: UserSkillData = {};
+    userSkills.forEach((skill) => {
+      userSkillData[skill.code] = skill.level;
+    });
+
+    const populatedExperienceLevels = technicalSkills.experienceLevel.map((skill) => {
+      const { code, description } = skill;
+      const merge: ProfileSkill = {
+        code,
+        description,
+        level: userSkillData[code] ?? 0,
+      };
+      return merge;
+    });
+
+    const populatedToolsAndLanguages = technicalSkills.toolsAndLanguages.map((skill) => {
+      const { code, description } = skill;
+      const merge: ProfileSkill = {
+        code,
+        description,
+        level: userSkillData[code] ?? 0,
+      };
+      return merge;
+    });
+
+    setExperienceLevels(populatedExperienceLevels);
+    setToolsAndLanguages(populatedToolsAndLanguages);
   }, []);
 
   const handleNext = () => {

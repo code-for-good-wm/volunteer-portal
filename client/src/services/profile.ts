@@ -53,3 +53,21 @@ export const getGettingStartedProfileData = () => {
     }
   );
 };
+
+/**
+ * Pull the user's saved profile and return the user's skills array
+ */
+export const getUserSkills = () => {
+  const appState = store.getState();
+  const { user } = appState.auth;
+
+  // If no user data, return undefined
+  if (!user) {
+    return;
+  }
+
+  // Pull profile and return data
+  const { profile } = user;
+
+  return profile.skills;
+};
