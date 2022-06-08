@@ -1,14 +1,17 @@
 import { Schema, model } from "mongoose";
 
-const schema = new Schema({
-  name: { type: String, required: true },
+export interface SkillOption {
+  code: string;
+  description: string;
+  category: string;
+}
+
+export const SkillOptionModel = model<SkillOption>('SkillOption', new Schema({
+  code: { type: String, required: true },
+  description: { type: String, required: true },
   category: { type: String, required: true }
 }, {
   timestamps: {
     createdAt: "createdDate"
   }
-});
-
-const SkillOptionModel = model("SkillOption", schema, "SkillOption");
-
-export default SkillOptionModel;
+}));

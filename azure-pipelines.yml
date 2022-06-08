@@ -5,6 +5,8 @@
 
 trigger:
 - dev
+- main
+- feature/functions-and-db
 
 pool:
   vmImage: ubuntu-latest
@@ -27,6 +29,7 @@ steps:
 
 - task: AzureStaticWebApp@0
   inputs:
+    production_branch: 'main' # defines which branch is the main site, other branches get previews
     app_location: 'client' # App built files cwd
     api_location: 'server' # Api source code path relative to cwd
     skip_api_build: false # Build the app backend to Functions 

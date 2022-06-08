@@ -7,14 +7,16 @@
       "name": "req",
       "methods": [
         "get",
-        "post"
-      ]
+        "post",
+        "put",
+        "delete"
+      ],
+      "route": "/user/{userId?}"
     },
     {
       "type": "http",
       "direction": "out",
       "name": "res"
     }
-  ],
-  "scriptFile": "../dist/HelloWorld/index.js"
+  ]
 }
