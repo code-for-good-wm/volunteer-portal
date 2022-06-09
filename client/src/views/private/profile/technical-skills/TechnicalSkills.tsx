@@ -72,6 +72,10 @@ const TechnicalSkills = () => {
     setToolsAndLanguages(populatedToolsAndLanguages);
   }, []);
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   const handleNext = () => {
     // TODO: Replace with actual user update functionality
     if (userData) {
@@ -101,6 +105,47 @@ const TechnicalSkills = () => {
         <h1>
           Tell us about your <span className="highlight">technical</span> skills.
         </h1>
+        <div className="contentCard profileCard basicInformationProfileCard">
+
+          {/* Basic Information */}
+
+          <div className="cardHeadingWithNote">
+            <h2>
+              Technical Skills
+            </h2>
+            <span className="note">
+              <span className="sup red">
+                *
+              </span>
+              Required
+            </span>
+          </div>
+          <div className="divider" />
+          <section>
+            <div className="profileQuestionWrapper">
+              <p className="profileQuestion" id="previousVolunteer">
+                <span className="question">
+                  What&apos;s your experience level?<span className="red">*</span>
+                </span>
+              </p>
+              <form className="profileForm">
+
+              </form>
+            </div>
+          </section>
+          <section>
+            <div className="profileQuestionWrapper">
+              <p className="profileQuestion" id="previousVolunteer">
+                <span className="question">
+                  What development experience do you have?<span className="red">*</span>
+                </span>
+              </p>
+              <form className="profileForm">
+                
+              </form>
+            </div>
+          </section>
+        </div>
 
         {/* Button Controls */}
 
@@ -110,6 +155,14 @@ const TechnicalSkills = () => {
               label="Next"
               handler={handleNext}
               disabled={submitDisabled || processing}
+            />
+          </div>
+          <div className="buttonContainer spacing">
+            <StandardButton
+              theme="secondary"
+              label="Back"
+              handler={handleBack}
+              disabled={processing}
             />
           </div>
         </div>

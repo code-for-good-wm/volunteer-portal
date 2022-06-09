@@ -280,6 +280,10 @@ const GettingStarted = () => {
     }));
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   const handleNext = () => {
     // TODO: Replace with actual user update functionality
     if (userData) {
@@ -392,10 +396,10 @@ const GettingStarted = () => {
         <h1>
           Tell us a little about <span className="highlight">yourself</span>.
         </h1>
-
-        {/* Basic Information */}
-
         <div className="contentCard profileCard basicInformationProfileCard">
+
+          {/* Basic Information */}
+
           <div className="cardHeadingWithNote">
             <h2>
               Basic Information
@@ -666,6 +670,14 @@ const GettingStarted = () => {
               label="Next"
               handler={handleNext}
               disabled={submitDisabled || processing}
+            />
+          </div>
+          <div className="buttonContainer spacing">
+            <StandardButton
+              theme="secondary"
+              label="Back"
+              handler={handleBack}
+              disabled={processing}
             />
           </div>
         </div>
