@@ -1,5 +1,5 @@
 import { store } from '../store/store';
-import { PrimaryProfileSectionId, Role } from '../types/profile';
+import { PrimaryProfileSectionId, Role, SkillCode, UserSkill, UserSkillData } from '../types/profile';
 
 /**
  * Capitalize first letter of a string
@@ -96,4 +96,40 @@ export const getNextProfileSection = () => {
   }
 
   return nextSection;
+};
+
+/**
+ * Convert an array of user skill data to an object
+ * @param {UserSkill[]} skillData
+ * @returns {UserSkillData}
+ */
+export const convertSkillDataToObject = (skillData: UserSkill[]) => {
+  const initialData: UserSkillData = {};
+
+  const obj = skillData.reduce((prev, current) => {
+    const { code, level } = current;
+    const update = { ...prev };
+    update[code] = level;
+    return update;
+  }, initialData);
+
+  return obj;
+};
+
+/**
+ * Convert an object of user skill data to an array
+ * @param {UserSkillData} skillData
+ * @returns {UserSkill[]}
+ */
+export const convertSkillDataToArray = (skillData: UserSkillData) => {
+  const entries = Object.entries(skillData); // example: [ 'nameOfCode', '0' ]
+
+  const arr: UserSkill[] = entries.map((entry) => {
+    const code = entry[0] as SkillCode;
+    const level = entry[1];
+
+    return { code, level };
+  });
+
+  return arr;
 };

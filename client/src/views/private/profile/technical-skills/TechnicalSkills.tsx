@@ -5,14 +5,14 @@ import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
 import { user } from '../../../../store/authSlice';
 import { updateProfile } from '../../../../store/profileSlice';
 
-import { ProfileSkill, SkillCode, SkillLevel, UserSkill, UserSkillData } from '../../../../types/profile';
+import { ProfileSkill, UserSkill, UserSkillData } from '../../../../types/profile';
 
 import ProfileLayout from '../../../../layouts/ProfileLayout';
 
 import StandardButton from '../../../../components/buttons/StandardButton';
 
-import { getNextProfileSection } from '../../../../helpers/functions';
-import { getUserSkills } from '../../../../services/profile';
+import { convertSkillDataToObject, getNextProfileSection } from '../../../../helpers/functions';
+import { getUserSkills, updateUserSkills } from '../../../../services/profile';
 import { skillLevels, technicalSkills } from '../../../../helpers/constants';
 import SkillCard from '../../../../components/elements/SkillCard';
 
@@ -43,10 +43,7 @@ const TechnicalSkills = () => {
     const userSkills = getUserSkills() ?? [];
 
     // Build object out of user skill data
-    const userSkillData: UserSkillData = {};
-    userSkills.forEach((skill) => {
-      userSkillData[skill.code] = skill.level;
-    });
+    const userSkillData = convertSkillDataToObject(userSkills);
 
     const populatedExperienceLevels = technicalSkills.experienceLevel.map((skill) => {
       const { code, description } = skill;
@@ -115,7 +112,29 @@ const TechnicalSkills = () => {
     if (userData) {
       setProcessing(true);
 
-      // TODO: Update user profile data
+      const skillUpdate: UserSkill[] = [];
+
+      experienceLevels.forEach((setting) => {
+        const { code, level } = setting;
+        skillUpdate.push({
+          code,
+          level
+        });
+      });
+
+      toolsAndLanguages.forEach((setting) => {
+        const { code, level } = setting;
+        skillUpdate.push({
+          code,
+          level
+        });
+      });
+
+      const updateResult = updateUserSkills(skillUpdate);
+
+      if (!updateResult) {
+        // TODO: Handle errors
+      }
 
       setProcessing(false);
     }
@@ -133,7 +152,7 @@ const TechnicalSkills = () => {
     }
   };
 
-  // Build skills
+  // Build UI
   const experienceLevelCards = experienceLevels.map((skill) => {
     return (
       <SkillCard

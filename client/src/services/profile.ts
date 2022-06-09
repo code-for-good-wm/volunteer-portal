@@ -1,6 +1,9 @@
 import { store } from '../store/store';
 
-import { parsePhone } from '../helpers/functions';
+import { convertSkillDataToArray, convertSkillDataToObject, parsePhone } from '../helpers/functions';
+import { Profile, UserSkill, UserSkillData } from '../types/profile';
+import { User } from '../types/user';
+import { updateAuth } from '../store/authSlice';
 
 /**
  * Pull the user's saved profile and return an object with
@@ -70,4 +73,54 @@ export const getUserSkills = () => {
   const { profile } = user;
 
   return profile.skills;
+};
+
+/**
+ * Update the users' skills settings based on an array of skill data
+ * @param {UserSkill[]} [update]
+ */
+export const updateUserSkills = (update?: UserSkill[]) => {
+  if (!update) {
+    return;
+  }
+
+  const appState = store.getState();
+  const { user } = appState.auth;
+
+  // If no user data, return undefined
+  if (!user) {
+    return;
+  }
+
+  // Pull current skill data
+  const { profile } = user;
+  const currentSkills = profile.skills;
+
+  // Convert to objects for merge
+  const currentSkillsObj = convertSkillDataToObject(currentSkills);
+  const updateObj = convertSkillDataToObject(update);
+
+  const updatedSkillsObj: UserSkillData = {
+    ...currentSkillsObj,
+    ...updateObj,
+  };
+
+  // Convert back to array and update user data
+  const updatedSkills = convertSkillDataToArray(updatedSkillsObj);
+
+  const profileUpdate: Profile = {
+    ...profile,
+    skills: updatedSkills
+  };
+
+  const userUpdate: User = {
+    ...user,
+    profile: profileUpdate
+  };
+
+  store.dispatch(updateAuth({
+    user: userUpdate
+  }));
+
+  return true;
 };
