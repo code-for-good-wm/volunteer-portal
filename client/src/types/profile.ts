@@ -86,6 +86,11 @@ export interface DietaryRestrictionData {
   description: string;
 }
 
+export interface SkillLevelData {
+  level: SkillLevel;
+  description: string;
+}
+
 export interface TechnicalSkillsData {
   experienceLevel: Skill[];
   toolsAndLanguages: Skill[];

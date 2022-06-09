@@ -5,7 +5,7 @@ import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
 import { user } from '../../../../store/authSlice';
 import { updateProfile } from '../../../../store/profileSlice';
 
-import { ProfileSkill, SkillCode, SkillLevel, UserSkillData } from '../../../../types/profile';
+import { ProfileSkill, SkillCode, SkillLevel, UserSkill, UserSkillData } from '../../../../types/profile';
 
 import ProfileLayout from '../../../../layouts/ProfileLayout';
 
@@ -14,9 +14,11 @@ import StandardButton from '../../../../components/buttons/StandardButton';
 import { getNextProfileSection } from '../../../../helpers/functions';
 import { getUserSkills } from '../../../../services/profile';
 import { technicalSkills } from '../../../../helpers/constants';
+import SkillCard from '../../../../components/elements/SkillCard';
 
 const TechnicalSkills = () => {
   const [experienceLevels, setExperienceLevels] = useState<ProfileSkill[]>([]);
+  
   const [toolsAndLanguages, setToolsAndLanguages] = useState<ProfileSkill[]>([]);
 
   const [submitDisabled, setSubmitDisabled] = useState(true);
@@ -72,6 +74,40 @@ const TechnicalSkills = () => {
     setToolsAndLanguages(populatedToolsAndLanguages);
   }, []);
 
+  const handleExperienceLevelUpdate = (skillData: UserSkill) => {
+    const { code, level } = skillData;
+
+    const update = experienceLevels.map((setting) => {
+      if (setting.code === code) {
+        const newSetting = {
+          ...setting,
+          level,
+        };
+        return newSetting;
+      }
+      return setting;
+    });
+
+    setExperienceLevels(update);
+  };
+
+  const handleToolsAndLanguagesUpdate = (skillData: UserSkill) => {
+    const { code, level } = skillData;
+
+    const update = toolsAndLanguages.map((setting) => {
+      if (setting.code === code) {
+        const newSetting = {
+          ...setting,
+          level,
+        };
+        return newSetting;
+      }
+      return setting;
+    });
+
+    setToolsAndLanguages(update);
+  };
+
   const handleBack = () => {
     navigate(-1);
   };
@@ -99,6 +135,27 @@ const TechnicalSkills = () => {
     }
   };
 
+  // Build skills
+  const experienceLevelCards = experienceLevels.map((skill) => {
+    return (
+      <SkillCard
+        key={skill.code}
+        skill={skill}
+        handler={handleExperienceLevelUpdate}
+      />
+    );
+  });
+
+  const toolsAndLanguageCards = toolsAndLanguages.map((skill) => {
+    return (
+      <SkillCard
+        key={skill.code}
+        skill={skill}
+        handler={handleToolsAndLanguagesUpdate}
+      />
+    );
+  });
+
   return (
     <ProfileLayout>
       <div className="profileContentContainer">
@@ -106,9 +163,6 @@ const TechnicalSkills = () => {
           Tell us about your <span className="highlight">technical</span> skills.
         </h1>
         <div className="contentCard profileCard basicInformationProfileCard">
-
-          {/* Basic Information */}
-
           <div className="cardHeadingWithNote">
             <h2>
               Technical Skills
@@ -121,6 +175,9 @@ const TechnicalSkills = () => {
             </span>
           </div>
           <div className="divider" />
+
+          {/* Experience Level */}
+
           <section>
             <div className="profileQuestionWrapper">
               <p className="profileQuestion" id="previousVolunteer">
@@ -129,10 +186,15 @@ const TechnicalSkills = () => {
                 </span>
               </p>
               <form className="profileForm">
-
+                <div className="skillCards">
+                  {experienceLevelCards}
+                </div>
               </form>
             </div>
           </section>
+
+          {/* Tools and Languages */}
+
           <section>
             <div className="profileQuestionWrapper">
               <p className="profileQuestion" id="previousVolunteer">
@@ -141,7 +203,9 @@ const TechnicalSkills = () => {
                 </span>
               </p>
               <form className="profileForm">
-                
+                <div className="skillCards">
+                  {toolsAndLanguageCards}
+                </div>
               </form>
             </div>
           </section>
