@@ -5,7 +5,7 @@ import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
 import { user } from '../../../../store/authSlice';
 import { updateProfile } from '../../../../store/profileSlice';
 
-import { ProfileSkill, UserSkill, UserSkillData } from '../../../../types/profile';
+import { ProfileSkill, UserSkill } from '../../../../types/profile';
 
 import ProfileLayout from '../../../../layouts/ProfileLayout';
 
