@@ -1,4 +1,4 @@
-import { DesignSkillsData, DietaryRestrictionData, PrimaryProfileSection, RoleData, ShirtSizeData, TechnicalSkillsData } from '../types/profile';
+import { DesignSkillsData, DietaryRestrictionData, PrimaryProfileSection, RoleData, ShirtSizeData, SkillLevelData, TechnicalSkillsData } from '../types/profile';
 import { User } from '../types/user';
 
 export const testUserData: User = {
@@ -96,6 +96,29 @@ export const dietaryRestrictions: DietaryRestrictionData[] = [
   {
     id: 'eggs',
     description: 'Egg Allergy',
+  },
+];
+
+export const skillLevels: SkillLevelData[] = [
+  {
+    level: 0,
+    description: 'None'
+  },
+  {
+    level: 1,
+    description: 'Newbie'
+  },
+  {
+    level: 2,
+    description: 'Familiar'
+  },
+  {
+    level: 3,
+    description: 'Very Familiar'
+  },
+  {
+    level: 4,
+    description: 'Daily Use'
   },
 ];
 
@@ -222,7 +245,7 @@ export const technicalSkills: TechnicalSkillsData = {
     },
     {
       code: 'htmlCss',
-      description: 'HTML/CSS'
+      description: 'HTML / CSS'
     },
     {
       code: 'javaScript',
@@ -242,11 +265,11 @@ export const technicalSkills: TechnicalSkillsData = {
     },
     {
       code: 'nodeExpress',
-      description: 'Node/Express'
+      description: 'Node / Express'
     },
     {
       code: 'phpLaravel',
-      description: 'PHP/Laravel'
+      description: 'PHP / Laravel'
     },
   ]
 };
@@ -331,7 +354,7 @@ export const designSkills: DesignSkillsData = {
     },
     {
       code: 'deployment',
-      description: 'Ops/Deployment'
+      description: 'Ops / Deployment'
     },
   ],
 };

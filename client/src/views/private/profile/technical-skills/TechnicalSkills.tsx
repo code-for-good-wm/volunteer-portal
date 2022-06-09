@@ -13,15 +13,13 @@ import StandardButton from '../../../../components/buttons/StandardButton';
 
 import { getNextProfileSection } from '../../../../helpers/functions';
 import { getUserSkills } from '../../../../services/profile';
-import { technicalSkills } from '../../../../helpers/constants';
+import { skillLevels, technicalSkills } from '../../../../helpers/constants';
 import SkillCard from '../../../../components/elements/SkillCard';
 
 const TechnicalSkills = () => {
   const [experienceLevels, setExperienceLevels] = useState<ProfileSkill[]>([]);
   
   const [toolsAndLanguages, setToolsAndLanguages] = useState<ProfileSkill[]>([]);
-
-  const [submitDisabled, setSubmitDisabled] = useState(true);
 
   const [processing, setProcessing] = useState(false);
 
@@ -156,6 +154,14 @@ const TechnicalSkills = () => {
     );
   });
 
+  const skillLevelLabels = skillLevels.map((level) => {
+    return (
+      <span className="label" key={level.level}>
+        {level.description}
+      </span>
+    );
+  });
+
   return (
     <ProfileLayout>
       <div className="profileContentContainer">
@@ -178,7 +184,7 @@ const TechnicalSkills = () => {
 
           {/* Experience Level */}
 
-          <section>
+          <section className="skillsSectionSpacing">
             <div className="profileQuestionWrapper">
               <p className="profileQuestion" id="previousVolunteer">
                 <span className="question">
@@ -186,6 +192,12 @@ const TechnicalSkills = () => {
                 </span>
               </p>
               <form className="profileForm">
+                <div className="skillLevelLabels">
+                  <div className="spacer" />
+                  <div className="labels">
+                    {skillLevelLabels}
+                  </div>
+                </div>
                 <div className="skillCards">
                   {experienceLevelCards}
                 </div>
@@ -203,6 +215,12 @@ const TechnicalSkills = () => {
                 </span>
               </p>
               <form className="profileForm">
+                <div className="skillLevelLabels">
+                  <div className="spacer" />
+                  <div className="labels">
+                    {skillLevelLabels}
+                  </div>
+                </div>
                 <div className="skillCards">
                   {toolsAndLanguageCards}
                 </div>
@@ -218,7 +236,7 @@ const TechnicalSkills = () => {
             <StandardButton
               label="Next"
               handler={handleNext}
-              disabled={submitDisabled || processing}
+              disabled={processing}
             />
           </div>
           <div className="buttonContainer spacing">
