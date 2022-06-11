@@ -1,14 +1,14 @@
 {
   "bindings": [
     {
-      "authLevel": "Anonymous",
+      "authLevel": "anonymous",
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
       "methods": [
         "get"
       ],
-      "route": "/skills/options"
+      "route": "skills/options"
     },
     {
       "type": "http",

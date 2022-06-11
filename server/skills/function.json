@@ -1,7 +1,7 @@
 {
   "bindings": [
     {
-      "authLevel": "Anonymous",
+      "authLevel": "anonymous",
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
@@ -11,7 +11,7 @@
         "put",
         "delete"
       ],
-      "route": "/user/{userId}/skills/{skillCode?}"
+      "route": "user/{userId}/skills/{skillCode?}"
     },
     {
       "type": "http",
