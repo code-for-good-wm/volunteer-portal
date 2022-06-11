@@ -21,19 +21,21 @@ steps:
     versionSpec: '16.x'
   displayName: 'Install Node.js'
 
+# npm audit is broken: https://github.com/facebook/create-react-app/issues/11174
 - script: |
     cd client
-    npm install
+    npm install --no-audit
+    npm audit --omit=dev
     npm run build
   displayName: 'npm install and build'
 
 - task: AzureStaticWebApp@0
   inputs:
     production_branch: 'main' # defines which branch is the main site, other branches get previews
-    app_location: 'client' # App built files cwd
+    app_location: 'client/build' # App built files cwd
     api_location: 'server' # Api source code path relative to cwd
     skip_api_build: false # Build the app backend to Functions 
     skip_app_build: true # handled by react in script step
-    output_location: 'client/build' # empty because we're skipping the app build
+    output_location: '' # empty because we're skipping the app build
     cwd: '$(System.DefaultWorkingDirectory)' # Working directory - optional
     azure_static_web_apps_api_token: $(swa_deploy_token)
