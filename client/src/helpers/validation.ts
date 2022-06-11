@@ -4,8 +4,7 @@
  * @returns {boolean}
  */
 export const testEmail = (email: string) => {
-  // eslint-disable-next-line
-  const emailRegEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const emailRegEx = /^[^@]+@[^@.]+\..{2,}$/;
   return emailRegEx.test(email);
 };
 
