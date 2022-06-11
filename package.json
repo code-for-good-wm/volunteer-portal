@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dev": "swa start http://localhost:3000 --api-location ./server'",
-    "dev:install": "npm install && cd api && npm install && func init --language javascript --worker-runtime node"
+    "dev:install": "npm install && cd server && npm install && func init --language javascript --worker-runtime node"
   },
   "devDependencies": {
     "@azure/static-web-apps-cli": "^1.0.1"

@@ -34,6 +34,6 @@ steps:
     api_location: 'server' # Api source code path relative to cwd
     skip_api_build: false # Build the app backend to Functions 
     skip_app_build: true # handled by react in script step
-    output_location: 'build' # empty because we're skipping the app build
+    output_location: 'client/build' # empty because we're skipping the app build
     cwd: '$(System.DefaultWorkingDirectory)' # Working directory - optional
     azure_static_web_apps_api_token: $(swa_deploy_token)
