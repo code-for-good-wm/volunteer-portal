@@ -22,12 +22,14 @@ steps:
   displayName: 'Install Node.js'
 
 # npm audit is broken: https://github.com/facebook/create-react-app/issues/11174
+# specifying a custom build path, and moving the config file and env file there
 - script: |
     cd client
     npm install --no-audit
     npm audit --omit=dev
     BUILD_PATH='../app_dist' npm run build
     cp ../staticwebapp.config.json ../app_dist/staticwebapp.config.json
+    cp ./.env.example ../app_dist/.env
   displayName: 'npm install and build'
 
 - task: AzureStaticWebApp@0
