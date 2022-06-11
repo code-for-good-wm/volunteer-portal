@@ -26,13 +26,14 @@ steps:
     cd client
     npm install --no-audit
     npm audit --omit=dev
-    npm run build
+    BUILD_PATH='../app_dist' npm run build
+    cp ../staticwebapp.config.json ../app_dist/staticwebapp.config.json
   displayName: 'npm install and build'
 
 - task: AzureStaticWebApp@0
   inputs:
     production_branch: 'main' # defines which branch is the main site, other branches get previews
-    app_location: 'client/build' # App built files cwd
+    app_location: 'app_dist' # App built files cwd
     api_location: 'server' # Api source code path relative to cwd
     skip_api_build: false # Build the app backend to Functions 
     skip_app_build: true # handled by react in script step

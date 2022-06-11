@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "scripts": {
     "dev": "swa start http://localhost:3000 --api-location ./server'",
     "dev:install": "npm install && cd server && npm install && func init --language javascript --worker-runtime node"
