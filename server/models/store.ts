@@ -25,7 +25,7 @@ const configureMongoose = async function (log: Logger): Promise<void> {
     db.on("error", (err) => log("Mongoose database error:", err));
 
     // Load configuration information
-    const config = await getConfig(log);
+    const config = await getConfig();
 
     if (!config.database.connectionString) {
       throw 'No connection string provided!';

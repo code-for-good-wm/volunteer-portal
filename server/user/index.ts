@@ -20,7 +20,13 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     return;
   }
 
-  await connect(context.log);
+  try {
+    await connect(context.log);
+  } catch (err) {
+    context.res.status = 500;
+    context.res.body = err;
+    return;
+  }
 
   let result: Result | null = null;
 
