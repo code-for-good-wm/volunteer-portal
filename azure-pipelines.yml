@@ -23,7 +23,7 @@ steps:
 
 # npm audit is broken: https://github.com/facebook/create-react-app/issues/11174
 # specifying a custom build path, and moving the config file and env file there
-- task: Bash @3
+- task: Bash@3
   displayName: 'npm install and build'
   script: |
     cd client
