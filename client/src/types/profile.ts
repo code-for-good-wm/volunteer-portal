@@ -10,7 +10,7 @@ export type DietaryRestriction = 'vegan' | 'vegetarian' | 'dairy' | 'gluten' | '
 
 export type Agreement = 'termsAndConditions' | 'photoRelease' | 'codeOfConduct';
 
-export type SkillCode = 'frontEndDev' | 'backEndDev' | 'databases' | 'mobileDev' | 'devOps' | 'wordPress' | 'squarespace' | 'wix' | 'weebly' | 'htmlCss' | 'javaScript' | 'react' | 'vue' | 'angular' | 'nodeExpress' | 'phpLaravel' | 'projMgmt' | 'brand' | 'copy' | 'crm' | 'marketing' | 'seo' | 'social' | 'technicalWriting' | 'testing' | 'photography' | 'videography' | 'print' | 'ux' | 'ui' | 'designThinking' | 'illustration' | 'motionGraphics' | 'adobeSuite' | 'sketch' | 'figma' | 'zeplin' | 'inVision' | 'marvel' | 'adobeXd' | 'deployment';
+export type SkillCode = 'frontEndDev' | 'backEndDev' | 'databases' | 'mobileDev' | 'devOps' | 'wordPress' | 'squarespace' | 'wix' | 'weebly' | 'htmlCss' | 'javaScript' | 'react' | 'vue' | 'angular' | 'nodeExpress' | 'phpLaravel' | 'projMgmt' | 'brand' | 'copy' | 'crm' | 'marketing' | 'seo' | 'social' | 'technicalWriting' | 'testing' | 'photography' | 'videography' | 'print' | 'ux' | 'ui' | 'designThinking' | 'illustration' | 'motionGraphics' | 'adobeSuite' | 'sketch' | 'figma' | 'zeplin' | 'inVision' | 'marvel' | 'adobeXd';
 
 export type SkillLevel = 0 | 1 | 2 | 3 | 4;
 

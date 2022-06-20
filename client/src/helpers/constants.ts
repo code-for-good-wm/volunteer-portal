@@ -353,8 +353,8 @@ export const designSkills: DesignSkillsData = {
       description: 'Mobile Dev'
     },
     {
-      code: 'deployment',
-      description: 'Ops / Deployment'
+      code: 'devOps',
+      description: 'DevOps'
     },
   ],
 };
