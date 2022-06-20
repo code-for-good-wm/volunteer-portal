@@ -22,15 +22,14 @@ steps:
   displayName: 'Install Node.js'
 
 # npm audit is broken: https://github.com/facebook/create-react-app/issues/11174
-# specifying a custom build path, and moving the config file and env file there
-- task: Bash@3
-  displayName: 'npm install and build'
-  script: |
+# specifying a custom build path, and moving the config file there
+- script: |
     cd client
     npm install --no-audit
     npm audit --omit=dev
     BUILD_PATH='../app_dist' npm run build
     cp ../staticwebapp.config.json ../app_dist/staticwebapp.config.json
+  displayName: 'npm install and build'
   env: # set environment variables that are used during build time here
     REACT_APP_MSAL_CLIENT_ID: b4e280de-2c62-4226-a09b-616acbe03b31
     REACT_APP_MSAL_AUTHORITY: https://login.microsoftonline.com/common
