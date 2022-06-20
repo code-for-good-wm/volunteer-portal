@@ -16,10 +16,10 @@ import { TextField } from '@mui/material';
 
 import { convertSkillDataToObject } from '../../../../helpers/functions';
 import { getAdditionalSkills, getUserSkills, updateAdditionalSkills } from '../../../../services/profile';
-import { skillLevels, additionalSkills } from '../../../../helpers/constants';
+import { skillLevels, otherExperience } from '../../../../helpers/constants';
 
 const AdditionalSkills = () => {
-  const [otherExperience, setOtherExperience] = useState<ProfileSkill[]>([]);
+  const [otherExperienceLevels, setOtherExperienceLevels] = useState<ProfileSkill[]>([]);
   
   const [otherSkills, setOtherSkills] = useState('');
 
@@ -47,7 +47,7 @@ const AdditionalSkills = () => {
     // Build object out of user skill data
     const userSkillData = convertSkillDataToObject(userSkills);
 
-    const populatedOtherExperience = additionalSkills.otherExperience.map((skill) => {
+    const populatedOtherExperienceLevels = otherExperience.map((skill) => {
       const { code, description } = skill;
       const merge: ProfileSkill = {
         code,
@@ -59,14 +59,14 @@ const AdditionalSkills = () => {
 
     const otherSkillsContent = getAdditionalSkills() ?? '';
 
-    setOtherExperience(populatedOtherExperience);
+    setOtherExperienceLevels(populatedOtherExperienceLevels);
     setOtherSkills(otherSkillsContent);
   }, []);
 
-  const handleOtherExperienceUpdate = (skillData: UserSkill) => {
+  const handleOtherExperienceLevelUpdate = (skillData: UserSkill) => {
     const { code, level } = skillData;
 
-    const update = otherExperience.map((setting) => {
+    const update = otherExperienceLevels.map((setting) => {
       if (setting.code === code) {
         const newSetting = {
           ...setting,
@@ -77,7 +77,7 @@ const AdditionalSkills = () => {
       return setting;
     });
 
-    setOtherExperience(update);
+    setOtherExperienceLevels(update);
   };
 
   const handleOtherSkills = (event: ChangeEvent<HTMLInputElement>) => {
@@ -96,7 +96,7 @@ const AdditionalSkills = () => {
 
       const skillUpdate: UserSkill[] = [];
 
-      otherExperience.forEach((setting) => {
+      otherExperienceLevels.forEach((setting) => {
         const { code, level } = setting;
         skillUpdate.push({
           code,
@@ -118,12 +118,12 @@ const AdditionalSkills = () => {
   };
 
   // Build UI
-  const otherExperienceCards = otherExperience.map((skill) => {
+  const otherExperienceCards = otherExperienceLevels.map((skill) => {
     return (
       <SkillCard
         key={skill.code}
         skill={skill}
-        handler={handleOtherExperienceUpdate}
+        handler={handleOtherExperienceLevelUpdate}
       />
     );
   });

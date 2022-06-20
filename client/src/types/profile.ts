@@ -101,7 +101,3 @@ export interface DesignSkillsData {
   tools: Skill[];
   development: Skill[];
 }
-
-export interface AdditionalSkillsData {
-  otherExperience: Skill[];
-}
