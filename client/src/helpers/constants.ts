@@ -24,12 +24,12 @@ export const testUserData: User = {
 
 export const roles: RoleData[] = [
   {
-    id: 'designer',
-    description: 'Designer',
-  },
-  {
     id: 'developer',
     description: 'Developer',
+  },
+  {
+    id: 'designer',
+    description: 'Designer',
   },
   {
     id: 'support',
