@@ -1,14 +1,14 @@
 {
   "bindings": [
     {
-      "authLevel": "Anonymous",
+      "authLevel": "anonymous",
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
       "methods": [
-        "get",
-        "post"
-      ]
+        "get"
+      ],
+      "route": "skills/options"
     },
     {
       "type": "http",
@@ -16,5 +16,5 @@
       "name": "res"
     }
   ],
-  "scriptFile": "../dist/HelloWorld/index.js"
+  "scriptFile": "../dist/options/index.js"
 }

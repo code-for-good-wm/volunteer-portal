@@ -1,0 +1,12 @@
+{
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "scripts": {
+    "dev": "swa start ./client/build --api-location ./server",
+    "dev:install": "cd client && npm install --no-audit && npm run build && cp ../staticwebapp.config.json ./build/ && cd ../server && npm install && func init --language typescript --worker-runtime node"
+  },
+  "devDependencies": {
+    "@azure/static-web-apps-cli": "^1.0.1"
+  }
+}

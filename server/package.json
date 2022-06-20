@@ -1,6 +1,9 @@
 {
   "name": "server",
   "version": "0.1.0",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
@@ -8,9 +11,13 @@
     "start": "func start",
     "test": "echo \"No tests yet...\""
   },
-  "dependencies": {},
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "mongoose": "^5.10.11"
+  },
   "devDependencies": {
     "@azure/functions": "^3.0.0",
+    "@types/node": "^16.5.1",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^5.25.0",
     "eslint": "^8.15.0",
