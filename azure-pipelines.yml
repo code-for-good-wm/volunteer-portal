@@ -4,7 +4,9 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
+- dev
 - main
+- feature/functions-and-db
 
 pool:
   vmImage: ubuntu-latest
@@ -19,18 +21,24 @@ steps:
     versionSpec: '16.x'
   displayName: 'Install Node.js'
 
+# npm audit is broken: https://github.com/facebook/create-react-app/issues/11174
+# specifying a custom build path, and moving the config file and env file there
 - script: |
     cd client
-    npm install
-    npm run build
+    npm install --no-audit
+    npm audit --omit=dev
+    BUILD_PATH='../app_dist' npm run build
+    cp ../staticwebapp.config.json ../app_dist/staticwebapp.config.json
+    cp ./.env.example ../app_dist/.env
   displayName: 'npm install and build'
 
 - task: AzureStaticWebApp@0
   inputs:
-    app_location: 'build' # App built files cwd
-    api_location: 'api' # Api source code path relative to cwd
-    skip_api_build: true # Don't build the API - there isn't one yet
+    production_branch: 'main' # defines which branch is the main site, other branches get previews
+    app_location: 'app_dist' # App built files cwd
+    api_location: 'server' # Api source code path relative to cwd
+    skip_api_build: false # Build the app backend to Functions 
     skip_app_build: true # handled by react in script step
     output_location: '' # empty because we're skipping the app build
-    cwd: '$(System.DefaultWorkingDirectory)/client' # Working directory - optional
+    cwd: '$(System.DefaultWorkingDirectory)' # Working directory - optional
     azure_static_web_apps_api_token: $(swa_deploy_token)
