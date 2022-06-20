@@ -176,7 +176,18 @@ body {
   line-height: 1rem;
   letter-spacing: 1.25px;
   text-transform: uppercase;
+}
+
+.standardButtonText.primary {
   color: $white;
+}
+
+.standardButtonText.secondary {
+  color: $primaryDark;
+}
+
+.standardButtonText.disabled {
+  color: $grayLight;
 }
 
 .textButton {

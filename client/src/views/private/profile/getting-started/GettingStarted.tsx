@@ -20,7 +20,7 @@ import AgreementFormItem from '../../../../components/elements/AgreementFormItem
 
 import { dietaryRestrictions, shirtSizes } from '../../../../helpers/constants';
 import { getGettingStartedProfileData } from '../../../../services/profile';
-import { parsePhone } from '../../../../helpers/functions';
+import { getNextProfileSection, parsePhone } from '../../../../helpers/functions';
 import { testPhone } from '../../../../helpers/validation';
 
 type BasicInfoForm = {
@@ -135,16 +135,6 @@ const GettingStarted = () => {
       return true;
     };
 
-    const testContactInfo = () => {
-      const linkedInUrlTrimmed = contactInfoForm.linkedInUrl.trim();
-      
-      if (!linkedInUrlTrimmed) {
-        return false;
-      }
-
-      return true;
-    };
-
     const testExtraStuff = () => {
       if (!extraStuff.shirtSize) {
         return false;
@@ -162,7 +152,7 @@ const GettingStarted = () => {
       return true;
     };
 
-    if (testBasicInfoForm() && testContactInfo() && testExtraStuff() && testAgreements()) {
+    if (testBasicInfoForm() && testExtraStuff() && testAgreements()) {
       setSubmitDisabled(false);
     } else {
       setSubmitDisabled(true);
@@ -280,8 +270,9 @@ const GettingStarted = () => {
     }));
   };
 
-  // Data checkers
-
+  const handleBack = () => {
+    navigate(-1);
+  };
 
   const handleNext = () => {
     // TODO: Replace with actual user update functionality
@@ -346,7 +337,17 @@ const GettingStarted = () => {
       setProcessing(false);
     }
 
-    navigate('/profile/technical-skills');
+    // Determine next view to display
+    const nextSection = getNextProfileSection() ?? '';
+    if (!nextSection) {
+      // TODO: If something bad happens here, what do we do?
+      return;
+    }
+    if (nextSection === true) {
+      navigate('/profile/complete');
+    } else {
+      navigate(`/profile/${nextSection}`);
+    }
   };
 
   // Build shirt sizes
@@ -385,10 +386,10 @@ const GettingStarted = () => {
         <h1>
           Tell us a little about <span className="highlight">yourself</span>.
         </h1>
-
-        {/* Basic Information */}
-
         <div className="contentCard profileCard basicInformationProfileCard">
+
+          {/* Basic Information */}
+
           <div className="cardHeadingWithNote">
             <h2>
               Basic Information
@@ -464,7 +465,7 @@ const GettingStarted = () => {
                   id="linkedInUrl"
                   name="linkedInUrl"
                   type="text"
-                  label={<TextFieldLabel label="LinkedIn" required />}
+                  label={<TextFieldLabel label="LinkedIn" />}
                   value={contactInfoForm.linkedInUrl}
                   onChange={handleLinkedInUrl}
                   InputProps={{
@@ -659,6 +660,14 @@ const GettingStarted = () => {
               label="Next"
               handler={handleNext}
               disabled={submitDisabled || processing}
+            />
+          </div>
+          <div className="buttonContainer spacing">
+            <StandardButton
+              theme="secondary"
+              label="Back"
+              handler={handleBack}
+              disabled={processing}
             />
           </div>
         </div>

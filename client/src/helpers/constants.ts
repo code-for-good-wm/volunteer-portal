@@ -1,4 +1,4 @@
-import { DietaryRestrictionData, PrimaryProfileSection, RoleData, ShirtSizeData } from '../types/profile';
+import { DesignSkillsData, DietaryRestrictionData, PrimaryProfileSection, RoleData, ShirtSizeData, SkillLevelData, TechnicalSkillsData } from '../types/profile';
 import { User } from '../types/user';
 
 export const testUserData: User = {
@@ -99,6 +99,29 @@ export const dietaryRestrictions: DietaryRestrictionData[] = [
   },
 ];
 
+export const skillLevels: SkillLevelData[] = [
+  {
+    level: 0,
+    description: 'None'
+  },
+  {
+    level: 1,
+    description: 'Newbie'
+  },
+  {
+    level: 2,
+    description: 'Familiar'
+  },
+  {
+    level: 3,
+    description: 'Very Familiar'
+  },
+  {
+    level: 4,
+    description: 'Daily Use'
+  },
+];
+
 export const profileStructure: PrimaryProfileSection[] = [
   {
     id: 'getting-started',
@@ -179,3 +202,159 @@ export const profileStructure: PrimaryProfileSection[] = [
     ]
   },
 ];
+
+export const technicalSkills: TechnicalSkillsData = {
+  experienceLevel: [
+    {
+      code: 'frontEndDev',
+      description: 'Front End Dev'
+    },
+    {
+      code: 'backEndDev',
+      description: 'Back End Dev'
+    },
+    {
+      code: 'databases',
+      description: 'Databases'
+    },
+    {
+      code: 'mobileDev',
+      description: 'Mobile Dev'
+    },
+    {
+      code: 'devOps',
+      description: 'DevOps'
+    },
+  ],
+  toolsAndLanguages: [
+    {
+      code: 'wordPress',
+      description: 'WordPress'
+    },
+    {
+      code: 'squarespace',
+      description: 'Squarespace'
+    },
+    {
+      code: 'wix',
+      description: 'Wix'
+    },
+    {
+      code: 'weebly',
+      description: 'Weebly'
+    },
+    {
+      code: 'htmlCss',
+      description: 'HTML / CSS'
+    },
+    {
+      code: 'javaScript',
+      description: 'JavaScript'
+    },
+    {
+      code: 'react',
+      description: 'React'
+    },
+    {
+      code: 'vue',
+      description: 'Vue'
+    },
+    {
+      code: 'angular',
+      description: 'Angular'
+    },
+    {
+      code: 'nodeExpress',
+      description: 'Node / Express'
+    },
+    {
+      code: 'phpLaravel',
+      description: 'PHP / Laravel'
+    },
+  ]
+};
+
+export const designSkills: DesignSkillsData = {
+  experienceLevel: [
+    {
+      code: 'print',
+      description: 'Print Design'
+    },
+    {
+      code: 'ux',
+      description: 'User Experience (UX)'
+    },
+    {
+      code: 'ui',
+      description: 'User Interface (UI)'
+    },
+    {
+      code: 'designThinking',
+      description: 'Design Thinking'
+    },
+    {
+      code: 'illustration',
+      description: 'Illustration'
+    },
+    {
+      code: 'brand',
+      description: 'Branding'
+    },
+    {
+      code: 'motionGraphics',
+      description: 'Motion Graphics'
+    },
+  ],
+  tools: [
+    {
+      code: 'adobeSuite',
+      description: 'Adobe Creative Suite'
+    },
+    {
+      code: 'sketch',
+      description: 'Sketch'
+    },
+    {
+      code: 'figma',
+      description: 'Figma'
+    },
+    {
+      code: 'zeplin',
+      description: 'Zeplin'
+    },
+    {
+      code: 'inVision',
+      description: 'InVision'
+    },
+    {
+      code: 'marvel',
+      description: 'Marvel'
+    },
+    {
+      code: 'adobeXd',
+      description: 'Adobe XD'
+    },
+  ],
+  development: [
+    {
+      code: 'frontEndDev',
+      description: 'Front End Dev'
+    },
+    {
+      code: 'backEndDev',
+      description: 'Back End Dev'
+    },
+    {
+      code: 'databases',
+      description: 'Databases'
+    },
+    {
+      code: 'mobileDev',
+      description: 'Mobile Dev'
+    },
+    {
+      code: 'deployment',
+      description: 'Ops / Deployment'
+    },
+  ],
+};

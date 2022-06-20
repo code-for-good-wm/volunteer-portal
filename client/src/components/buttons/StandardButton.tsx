@@ -4,7 +4,7 @@ import { Button } from '@mui/material';
 
 type StandardButtonProps = {
   type?: 'submit' | 'button',
-  theme?: 'primary'
+  theme?: 'primary' | 'secondary'
   disabled?: boolean,
   label?: string,
   handler?: () => void,
@@ -17,18 +17,21 @@ const StandardButton = (props: StandardButtonProps) => {
   const buttonTheme = theme || 'primary';
   const handleButton = handler ? handler : () => console.log('Button clicked!');
   const buttonLabel = label || 'Button';
+  const variantType = theme === 'secondary' ? 'outlined' : 'contained';
+
+  const buttonTextStyle = `standardButtonText ${disabled && theme === 'secondary' ? 'disabled' : buttonTheme}`;
 
   return (
     <Button
       type={buttonType}
-      color={buttonTheme}
+      color="primary"
       disableElevation
       fullWidth
-      variant="contained"
+      variant={variantType}
       disabled={disabled}
       onClick={buttonType === 'submit' ? undefined : handleButton}
     >
-      <span className="standardButtonText">
+      <span className={buttonTextStyle}>
         {buttonLabel}
       </span>
     </Button>
