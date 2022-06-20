@@ -135,16 +135,6 @@ const GettingStarted = () => {
       return true;
     };
 
-    const testContactInfo = () => {
-      const linkedInUrlTrimmed = contactInfoForm.linkedInUrl.trim();
-      
-      if (!linkedInUrlTrimmed) {
-        return false;
-      }
-
-      return true;
-    };
-
     const testExtraStuff = () => {
       if (!extraStuff.shirtSize) {
         return false;
@@ -162,7 +152,7 @@ const GettingStarted = () => {
       return true;
     };
 
-    if (testBasicInfoForm() && testContactInfo() && testExtraStuff() && testAgreements()) {
+    if (testBasicInfoForm() && testExtraStuff() && testAgreements()) {
       setSubmitDisabled(false);
     } else {
       setSubmitDisabled(true);
@@ -475,7 +465,7 @@ const GettingStarted = () => {
                   id="linkedInUrl"
                   name="linkedInUrl"
                   type="text"
-                  label={<TextFieldLabel label="LinkedIn" required />}
+                  label={<TextFieldLabel label="LinkedIn" />}
                   value={contactInfoForm.linkedInUrl}
                   onChange={handleLinkedInUrl}
                   InputProps={{
