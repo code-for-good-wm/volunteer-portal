@@ -104,5 +104,4 @@ export interface DesignSkillsData {
 
 export interface AdditionalSkillsData {
   otherExperience: Skill[];
-  otherSkills: Skill[];
 }

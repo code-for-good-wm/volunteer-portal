@@ -1,4 +1,4 @@
-import { DesignSkillsData, DietaryRestrictionData, PrimaryProfileSection, RoleData, ShirtSizeData, SkillLevelData, TechnicalSkillsData } from '../types/profile';
+import { AdditionalSkillsData, DesignSkillsData, DietaryRestrictionData, PrimaryProfileSection, RoleData, ShirtSizeData, SkillLevelData, TechnicalSkillsData } from '../types/profile';
 import { User } from '../types/user';
 
 export const testUserData: User = {
@@ -355,6 +355,55 @@ export const designSkills: DesignSkillsData = {
     {
       code: 'deployment',
       description: 'Ops / Deployment'
+    },
+  ],
+};
+
+export const additionalSkills: AdditionalSkillsData = {
+  otherExperience: [
+    {
+      code: 'projMgmt',
+      description: 'Project Management'
+    },
+    {
+      code: 'brand',
+      description: 'Brand Strategy'
+    },
+    {
+      code: 'copy',
+      description: 'Copywriting'
+    },
+    {
+      code: 'crm',
+      description: 'CRM Tools (e.g. Salesforce)'
+    },
+    {
+      code: 'marketing',
+      description: 'Marketing'
+    },
+    {
+      code: 'seo',
+      description: 'SEO'
+    },
+    {
+      code: 'social',
+      description: 'Social Media'
+    },
+    {
+      code: 'technicalWriting',
+      description: 'Technical Writing'
+    },
+    {
+      code: 'testing',
+      description: 'User Testing / Compliance Testing'
+    },
+    {
+      code: 'photography',
+      description: 'Photography'
+    },
+    {
+      code: 'videography',
+      description: 'Videography'
     },
   ],
 };
