@@ -6,7 +6,7 @@
 trigger:
 - dev
 - main
-- feature/functions-and-db
+- feature/*
 
 pool:
   vmImage: ubuntu-latest
