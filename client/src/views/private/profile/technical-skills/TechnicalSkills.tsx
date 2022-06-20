@@ -10,11 +10,11 @@ import { ProfileSkill, UserSkill } from '../../../../types/profile';
 import ProfileLayout from '../../../../layouts/ProfileLayout';
 
 import StandardButton from '../../../../components/buttons/StandardButton';
+import SkillCard from '../../../../components/elements/SkillCard';
 
 import { convertSkillDataToObject, getNextProfileSection } from '../../../../helpers/functions';
 import { getUserSkills, updateUserSkills } from '../../../../services/profile';
 import { skillLevels, technicalSkills } from '../../../../helpers/constants';
-import SkillCard from '../../../../components/elements/SkillCard';
 
 const TechnicalSkills = () => {
   const [experienceLevels, setExperienceLevels] = useState<ProfileSkill[]>([]);
