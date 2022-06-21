@@ -76,7 +76,8 @@ export const getUserSkills = () => {
 };
 
 /**
- * Update the users' skills settings based on an array of skill data
+ * Update the users' profile based on an array of
+ * other experience skill data and additional skill content
  * @param {UserSkill[]} [update]
  */
 export const updateUserSkills = (update?: UserSkill[]) => {
@@ -111,6 +112,72 @@ export const updateUserSkills = (update?: UserSkill[]) => {
   const profileUpdate: Profile = {
     ...profile,
     skills: updatedSkills
+  };
+
+  const userUpdate: User = {
+    ...user,
+    profile: profileUpdate
+  };
+
+  store.dispatch(updateAuth({
+    user: userUpdate
+  }));
+
+  return true;
+};
+
+/**
+ * Pull the user's saved profile and return the profile's
+ * additionalSkills (a string)
+ */
+export const getAdditionalSkills = () => {
+  const appState = store.getState();
+  const { user } = appState.auth;
+
+  // If no user data, return undefined
+  if (!user) {
+    return;
+  }
+
+  // Pull profile and return data
+  const { profile } = user;
+  return profile.additionalSkills;
+};
+
+/**
+ * Update the users' skills settings based on an array of skill data
+ * @param {UserSkill[]} otherExperience
+ * @param {string} additionalSkills
+ */
+export const updateAdditionalSkills = (otherExperience: UserSkill[], additionalSkills: string) => {
+  const appState = store.getState();
+  const { user } = appState.auth;
+
+  // If no user data, return undefined
+  if (!user) {
+    return;
+  }
+
+  // Pull current skill data
+  const { profile } = user;
+  const currentSkills = profile.skills;
+
+  // Convert to objects for merge
+  const currentSkillsObj = convertSkillDataToObject(currentSkills);
+  const updateObj = convertSkillDataToObject(otherExperience);
+
+  const updatedSkillsObj: UserSkillData = {
+    ...currentSkillsObj,
+    ...updateObj,
+  };
+
+  // Convert back to array and update user data
+  const updatedSkills = convertSkillDataToArray(updatedSkillsObj);
+
+  const profileUpdate: Profile = {
+    ...profile,
+    skills: updatedSkills,
+    additionalSkills
   };
 
   const userUpdate: User = {

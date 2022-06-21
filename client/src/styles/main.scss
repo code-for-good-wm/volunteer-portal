@@ -25,6 +25,10 @@
   font-family: 'Avenir-Heavy', Arial, Helvetica, sans-serif;
 }
 
+@mixin AvenirHeavyOblique {
+  font-family: 'Avenir-HeavyOblique', Arial, Helvetica, sans-serif;
+}
+
 /* Import global stylesheets */
 @import './resets.scss';
 @import './colors.scss';

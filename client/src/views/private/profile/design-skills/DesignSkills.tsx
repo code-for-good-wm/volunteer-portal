@@ -12,7 +12,7 @@ import ProfileLayout from '../../../../layouts/ProfileLayout';
 import StandardButton from '../../../../components/buttons/StandardButton';
 import SkillCard from '../../../../components/elements/SkillCard';
 
-import { convertSkillDataToObject, getNextProfileSection } from '../../../../helpers/functions';
+import { convertSkillDataToObject, getNextProfileSectionId } from '../../../../helpers/functions';
 import { getUserSkills, updateUserSkills } from '../../../../services/profile';
 import { skillLevels, designSkills } from '../../../../helpers/constants';
 
@@ -178,7 +178,7 @@ const DesignSkills = () => {
     }
 
     // Determine next view to display
-    const nextSection = getNextProfileSection() ?? '';
+    const nextSection = getNextProfileSectionId() ?? '';
     if (!nextSection) {
       // TODO: If something bad happens here, what do we do?
       return;
@@ -253,7 +253,7 @@ const DesignSkills = () => {
 
           <section className="skillsSectionSpacing">
             <div className="profileQuestionWrapper">
-              <p className="profileQuestion" id="previousVolunteer">
+              <p className="profileQuestion">
                 <span className="question">
                   What&apos;s your experience level?<span className="red">*</span>
                 </span>
@@ -276,7 +276,7 @@ const DesignSkills = () => {
 
           <section className="skillsSectionSpacing">
             <div className="profileQuestionWrapper">
-              <p className="profileQuestion" id="previousVolunteer">
+              <p className="profileQuestion">
                 <span className="question">
                   What experience do you have with these design tools?<span className="red">*</span>
                 </span>
@@ -299,7 +299,7 @@ const DesignSkills = () => {
 
           <section>
             <div className="profileQuestionWrapper">
-              <p className="profileQuestion" id="previousVolunteer">
+              <p className="profileQuestion">
                 <span className="question">
                   What development experience do you have?<span className="red">*</span>
                 </span>

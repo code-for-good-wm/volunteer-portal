@@ -20,7 +20,7 @@ import AgreementFormItem from '../../../../components/elements/AgreementFormItem
 
 import { dietaryRestrictions, shirtSizes } from '../../../../helpers/constants';
 import { getGettingStartedProfileData } from '../../../../services/profile';
-import { getNextProfileSection, parsePhone } from '../../../../helpers/functions';
+import { getNextProfileSectionId, parsePhone } from '../../../../helpers/functions';
 import { testPhone } from '../../../../helpers/validation';
 
 type BasicInfoForm = {
@@ -338,7 +338,7 @@ const GettingStarted = () => {
     }
 
     // Determine next view to display
-    const nextSection = getNextProfileSection() ?? '';
+    const nextSection = getNextProfileSectionId() ?? '';
     if (!nextSection) {
       // TODO: If something bad happens here, what do we do?
       return;

@@ -12,7 +12,7 @@ import ProfileLayout from '../../../../layouts/ProfileLayout';
 import StandardButton from '../../../../components/buttons/StandardButton';
 import SkillCard from '../../../../components/elements/SkillCard';
 
-import { convertSkillDataToObject, getNextProfileSection } from '../../../../helpers/functions';
+import { convertSkillDataToObject, getNextProfileSectionId } from '../../../../helpers/functions';
 import { getUserSkills, updateUserSkills } from '../../../../services/profile';
 import { skillLevels, technicalSkills } from '../../../../helpers/constants';
 
@@ -140,7 +140,7 @@ const TechnicalSkills = () => {
     }
 
     // Determine next view to display
-    const nextSection = getNextProfileSection() ?? '';
+    const nextSection = getNextProfileSectionId() ?? '';
     if (!nextSection) {
       // TODO: If something bad happens here, what do we do?
       return;
@@ -205,7 +205,7 @@ const TechnicalSkills = () => {
 
           <section className="skillsSectionSpacing">
             <div className="profileQuestionWrapper">
-              <p className="profileQuestion" id="previousVolunteer">
+              <p className="profileQuestion">
                 <span className="question">
                   What&apos;s your experience level?<span className="red">*</span>
                 </span>
@@ -228,7 +228,7 @@ const TechnicalSkills = () => {
 
           <section>
             <div className="profileQuestionWrapper">
-              <p className="profileQuestion" id="previousVolunteer">
+              <p className="profileQuestion">
                 <span className="question">
                   What development experience do you have?<span className="red">*</span>
                 </span>

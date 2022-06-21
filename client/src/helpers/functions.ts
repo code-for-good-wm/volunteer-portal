@@ -1,5 +1,6 @@
 import { store } from '../store/store';
 import { PrimaryProfileSectionId, Role, SkillCode, UserSkill, UserSkillData } from '../types/profile';
+import { profileStructure } from './constants';
 
 /**
  * Capitalize first letter of a string
@@ -64,7 +65,7 @@ export const parsePhone = (phone: string) => {
  * current section is the final section to complete
  * @returns {PrimaryProfileSectionId | boolean}
  */
-export const getNextProfileSection = () => {
+export const getNextProfileSectionId = () => {
   const appState = store.getState();
 
   // Get current section
@@ -89,13 +90,57 @@ export const getNextProfileSection = () => {
     return false;
   }
 
-  const nextSection = displayedSections[currentSectionIndex + 1];
+  const nextSectionId = displayedSections[currentSectionIndex + 1];
 
-  if (!nextSection) {
+  if (!nextSectionId) {
     return true;
   }
 
-  return nextSection;
+  return nextSectionId;
+};
+
+/**
+ * Determine the ID of the previous profile view based on the current view
+ * Returns the ID of the next section to display (e.g. 'design-skills'),
+ * or undefined if a previous section cannot be determined
+ * @returns {PrimaryProfileSection | undefined}
+ */
+export const getPreviousProfileSection = () => {
+  const appState = store.getState();
+
+  // Get current section
+  const currentSection = appState.profile.currentSection;
+  if (!currentSection) {
+    return;
+  }
+
+  // Get user roles
+  const userData = appState.auth.user;
+  const userRoles = userData?.profile?.roles ?? [];
+
+  // Get expected profile sections to display
+  const displayedSections = getDisplayedProfileSections(userRoles);
+
+  // Get index of current section
+  const currentSectionIndex = displayedSections.findIndex((section) => {
+    return (section === currentSection);
+  });
+
+  if (currentSectionIndex < 0) {
+    return;
+  }
+
+  const prevSectionId = displayedSections[currentSectionIndex - 1];
+
+  if (!prevSectionId) {
+    return;
+  }
+
+  const sectionData = profileStructure.find((section) => {
+    return (section.id === prevSectionId);
+  });
+
+  return sectionData;
 };
 
 /**

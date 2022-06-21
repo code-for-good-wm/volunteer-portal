@@ -7,6 +7,7 @@ import { useAppSelector } from '../store/hooks';
 import { signedIn } from '../store/authSlice';
 import { handleAuthStateChange } from '../services/auth';
 
+import ScrollToTop from './ScrollToTop';
 import Private from './Private';
 import Public from './Public';
 
@@ -23,6 +24,7 @@ const NavSwitch = () => {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       {navStack}
     </BrowserRouter>
   );
