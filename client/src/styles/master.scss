@@ -107,6 +107,7 @@ body {
   border-radius: 5px;
   box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 3px -2px rgba(0, 0, 0, 0.12), 0 3px 4px 0 rgba(0, 0, 0, 0.14);
   margin-bottom: $gutterMedium;
+  background-color: $white;
 
   @media screen and (min-width: 768px) {
     padding: $gutterMedium;
@@ -130,6 +131,9 @@ body {
 .headerBar {
   height: 59px;
   position: sticky;
+  top: 0;
+  z-index: 99;
+  background-color: $white;
   display: flex;
   align-items: center;
   justify-content: space-between;
