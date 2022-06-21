@@ -1,17 +1,10 @@
-import { Button } from '@mui/material';
 import React from 'react';
 
 import DiscoBall from '../../../../assets/images/disco-ball.png';
 
-import StandardButton from '../../../../components/buttons/StandardButton';
+import { Button } from '@mui/material';
 
 const ProfileComplete = () => {
-  const handleButton = () => {
-    // TODO: Would we want this button to go back to the landing page?
-    window.location.href = 'https://codeforgoodwm.org/';
-  };
-
-  // Build UI
   const contentCard = (
     <div className="contentCard profileCompletionCard">
       <p className="completionThanks">
@@ -41,12 +34,9 @@ const ProfileComplete = () => {
             fullWidth
             variant="contained"
             href="https://codeforgoodwm.org/"
-            sx={{
-              height: 56
-            }}
           >
             <span className="standardButtonText primary center">
-              Continue to Code for Good&apos;s Home Page
+              Code for Good Home Page
             </span>
           </Button>
         </div>

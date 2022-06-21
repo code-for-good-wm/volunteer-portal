@@ -522,6 +522,8 @@
 }
 
 .profileCompletionCard {
+  max-width: 675px;
+
   .completionThanks {
     @include AvenirHeavy;
     font-size: 0.875rem;
@@ -543,8 +545,32 @@
   }
 
   .completionDivider {
-    width: 191px;
+    width: 210px;
     margin: 0 auto $gutterMedium;
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  @media screen and (min-width: 768px) {
+    .completionThanks {
+      padding-top: 8px;
+      margin-bottom: 8px;
+    }
+
+    .completionHeading {
+      font-size: 2.125rem;
+    }
+
+    .completionDivider {
+      width: 470px;
+    }
+  }
+}
+
+.profileCompletionButtonContainer {
+  max-width: 430px;
+  margin: 0 auto;
+
+  @media screen and (min-width: 768px) {
+    padding-top: 8px;
   }
 }
