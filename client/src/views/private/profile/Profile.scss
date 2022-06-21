@@ -510,3 +510,41 @@
     margin: 0;
   }
 }
+
+.completionImageContainer {
+  text-align: center;
+  margin-bottom: 28px;
+
+  img {
+    width: 119px;
+    height: 119px;
+  }
+}
+
+.profileCompletionCard {
+  .completionThanks {
+    @include AvenirHeavy;
+    font-size: 0.875rem;
+    line-height: 1rem;
+    letter-spacing: 1.25px;
+    color: rgba(0, 0, 0, 0.6);
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: $gutterSmall;
+  }
+
+  .completionHeading {
+    @include AvenirHeavy;
+    color: $primaryMain;
+    font-size: 1.5rem;
+    line-height: normal;
+    letter-spacing: 0;
+    text-align: center;
+  }
+
+  .completionDivider {
+    width: 191px;
+    margin: 0 auto $gutterMedium;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+}
