@@ -6,6 +6,8 @@ import { updateAuth } from '../store/authSlice';
 import { testUserData } from '../helpers/constants';
 
 export const handleAuthStateChange = (fbUser: User | null) => {
+  console.log('Auth Update: ', fbUser);
+
   const appState = store.getState();
   const { signedIn, updating, user } = appState.auth;
 
