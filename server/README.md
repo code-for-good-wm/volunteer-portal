@@ -7,6 +7,10 @@ We're using Node 16 for this project.  [Learn how to use a Node Version Manager.
 
 We're using ESLint.  If you're using Visual Studio Code, be sure to install and enable the [ESLint extension for VS Code](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint).
 
+We're using [MongoDB](https://www.mongodb.com/).  In order to run functions locally for testing, you'll need MondoDB running on your local machine.  [This article](https://zellwk.com/blog/local-mongodb/) can help you install and start MongoDB.
+
+The cloud function code also takes advantage of environment variables.  In order to test the functions locally, you'll want to create a `.env` file in the root project directory and copy the contents of the `env.local` into that file.
+
 If you're using the command line, [this documentation](https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-node?tabs=azure-cli%2Cbrowser) will be helpful as you create new [HTTP Trigger functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger?tabs=in-process%2Cfunctionsv2&pivots=programming-language-javascript) and run them locally for testing.  However, because we're using TypeScript, there are some gotchas.
 
 - If you've just cloned the repo, be sure to run `npm install` in the root project directory to install dependencies (ie TypeScript, ESLint, et cetera).
