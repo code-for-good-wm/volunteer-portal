@@ -25,6 +25,9 @@ local.settings.json
 node_modules
 dist
 
+# Firebase credentials
+fb-credentials*.json
+
 # Local python packages
 .python_packages/
 
