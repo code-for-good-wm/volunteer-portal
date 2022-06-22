@@ -13,7 +13,7 @@ export interface User {
 export const UserModel = model<User>('User', new Schema({
   ident: { type: String, required: true },
   authProvider: { type: String, required: true },
-  name: { type: String, required: true },
+  name: String,
   email: { type: String, required: true },
   emailValidated: Boolean
 }, MongooseOpts));

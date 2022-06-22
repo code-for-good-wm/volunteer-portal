@@ -1,48 +1,83 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { Result, tryGetUserIdent } from '../core';
+import { Result } from '../core';
+import { checkRequestAuth } from '../helpers';
 import { connect, userStore } from '../models/store'
 import { User } from '../models/user';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+  const logger = context.log;
 
-  // set return value to JSON
+  // Set return value to JSON
   context.res = {
     header: {
-        "Content-Type": "application/json"
+      'Content-Type': 'application/json'
     }
-  }
+  };
 
-  // TODO uncomment to support user id checks
-  let { userIdent, status } = { userIdent: 'example', status: 200 }
-  // const { userIdent, status } = tryGetUserIdent(req, context);
-  context.res.status = status;
-  if (context.res.status !== 200) {
+  let email = '';
+  let uid = '';
+
+  try {
+    // Check access token from header
+    const authorization = req.headers.authorization;
+    const decodedToken = await checkRequestAuth(authorization, logger);
+
+    if (!decodedToken) {
+      context.res.status = 401;
+      context.res.body = {
+        'error' : {
+          'code' : 401,
+          'message' : 'Unauthorized'
+        }
+      };
+      return;
+    }
+
+    // Acquire user email and Firebase ID from decoded token
+    email = decodedToken.email ?? '';
+    uid = decodedToken.uid;
+  } catch (error) {
+    logger('Authentication error: ', error);
+    context.res.status = 500;
+    context.res.body = {
+      'error' : {
+        'code' : 500,
+        'message' : 'Internal error'
+      }
+    };
     return;
   }
 
   try {
-    await connect(context.log);
-  } catch (err) {
+    // Connect to database
+    await connect(logger);
+  } catch (error) {
+    logger('Database error: ', error);
     context.res.status = 500;
-    context.res.body = err;
+    context.res.body = {
+      'error' : {
+        'code' : 500,
+        'message' : 'Internal error'
+      }
+    };
     return;
   }
 
   let result: Result | null = null;
 
   switch (req.method) {
-    case 'GET':
-      result = await getUser(userIdent);
-      break;
-    case 'POST':
-      result = await createUser(context, userIdent);
-      break;
-    case 'PUT':
-      result = await updateUser(context, userIdent);
-      break;
-    case 'DELETE':
-      result = await deleteUser(context, userIdent);
-      break;
+  case 'GET':
+    result = await getUser(uid);
+    break;
+  case 'POST':
+    result = await createUser(email, uid);
+    break;
+  case 'PUT':
+    result = await updateUser(context, uid);
+    break;
+  case 'DELETE':
+    result = await deleteUser(context, uid);
+    break;
   }
 
   if (result) {
@@ -56,11 +91,16 @@ async function getUser(userIdent: string): Promise<Result> {
   return { body: user, status: user ? 200 : 404 };
 }
 
-async function createUser(context: Context, userIdent: string): Promise<Result> {
-  let user = context.req?.body;
-  user.ident = userIdent;
-  user = await userStore.create(user);
-  return { body: user, status: 201 };
+async function createUser(email: string, userIdent: string): Promise<Result> {
+  // Build new user
+  const newUser: User = {
+    ident: userIdent,
+    authProvider: 'firebase',
+    name: '',
+    email,
+  };
+  const userData = await userStore.create(newUser);
+  return { body: userData, status: 201 };
 }
 
 async function updateUser(context: Context, userIdent: string): Promise<Result> {

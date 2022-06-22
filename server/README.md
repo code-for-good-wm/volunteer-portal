@@ -17,6 +17,8 @@ We're bootstrapping user authorization via [Firebase](https://firebase.google.co
 - If you do not have access to the Firebase projects, ask a team admin to generate them for you.
 - In your `.env` file, add the name of the JSON file (likely `fb-credentials.dev.json`) to the `GOOGLE_APPLICATION_CREDENTIALS` variable.  During initialization, the Admin SDK should automatically use the settings within that file.
 
+If testing functions locally using a version of the portal spun up on `localhost`, you'll need to add a `local.settings.json` file to the root project directory.  Copy the contents of the `local.settings.example.json` file into `local.settings.json` and adjust where necessary.  (`local.settings.json` is used only on one's local machine and is ignored by git.)
+
 If you're using the command line, [this documentation](https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-node?tabs=azure-cli%2Cbrowser) will be helpful as you create new [HTTP Trigger functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger?tabs=in-process%2Cfunctionsv2&pivots=programming-language-javascript) and run them locally for testing.  However, because we're using TypeScript, the functions must first be transpiled prior to testing in a software such as [Postman](https://www.postman.com/).
 
 - If you've just cloned the repo, be sure to run `npm install` in the root project directory to install dependencies (ie TypeScript, ESLint, et cetera).
