@@ -11,7 +11,6 @@ export interface User {
 }
 
 export const UserModel = model<User>('User', new Schema({
-  _id: Types.ObjectId,
   ident: { type: String, required: true },
   authProvider: { type: String, required: true },
   name: { type: String, required: true },

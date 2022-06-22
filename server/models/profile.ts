@@ -29,7 +29,6 @@ export interface Profile {
 }
 
 const profileSchema = new Schema<Profile>({
-  _id: Types.ObjectId,
   user: { type: Types.ObjectId, required: true, ref: 'User' },
   code: { type: String, required: true },
   level: { type: Number, required: true },
