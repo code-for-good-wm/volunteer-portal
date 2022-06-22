@@ -15,6 +15,8 @@ const configureMongoose = async function (log: Logger): Promise<void> {
     virtuals: true,
     versionKey: false
   });
+  mongoose.set('useNewUrlParser', true);
+  mongoose.set('useCreateIndex', true);
 
   try {
     const db = mongoose.connection;

@@ -6,7 +6,7 @@
 trigger:
 - dev
 - main
-- feature/functions-and-db
+- feature/*
 
 pool:
   vmImage: ubuntu-latest
@@ -22,15 +22,25 @@ steps:
   displayName: 'Install Node.js'
 
 # npm audit is broken: https://github.com/facebook/create-react-app/issues/11174
-# specifying a custom build path, and moving the config file and env file there
+# specifying a custom build path, and moving the config file there
 - script: |
     cd client
     npm install --no-audit
     npm audit --omit=dev
     BUILD_PATH='../app_dist' npm run build
     cp ../staticwebapp.config.json ../app_dist/staticwebapp.config.json
-    cp ./.env.example ../app_dist/.env
   displayName: 'npm install and build'
+  env: # set environment variables that are used during build time here
+    REACT_APP_MSAL_CLIENT_ID: b4e280de-2c62-4226-a09b-616acbe03b31
+    REACT_APP_MSAL_AUTHORITY: https://login.microsoftonline.com/common
+    REACT_APP_SIGN_IN_REDIRECT: https://icy-desert-098cf4a0f-dev.eastus2.1.azurestaticapps.net/
+    REACT_APP_SIGN_OUT_REDIRECT: https://icy-desert-098cf4a0f-dev.eastus2.1.azurestaticapps.net/
+    REACT_APP_FB_API_KEY: AIzaSyCdAB0DHnQo0gEgeWlRE-hS5HR0SSpvZnM
+    REACT_APP_FB_AUTH_DOMAIN: cfg-volunteer-portal-dev.firebaseapp.com
+    REACT_APP_FB_PROJECT_ID: cfg-volunteer-portal-dev
+    REACT_APP_FB_STORAGE_BUCKET: cfg-volunteer-portal-dev.appspot.com
+    REACT_APP_FB_MESSAGING_SENDER_ID: '999099573017'
+    REACT_APP_FB_APP_ID: 1:999099573017:web:8900acb08d870522d8db88
 
 - task: AzureStaticWebApp@0
   inputs:

@@ -1,21 +1,20 @@
-import * as dotenv from 'dotenv';
-
 const getConfig = async () => {
-    // Load any ENV vars from local .env file
-    if (process.env.NODE_ENV !== "production") {
-        dotenv.config();
+  // load database configuration
+  let databaseConn = process.env.DATABASE_URI;
+  const databaseName = process.env.DATABASE_NAME || 'cfg-volunteers';
+  
+  // encode a passowrd if it's provided separately
+  const databasePassword = process.env.DATABASE_PASS;
+  if (databasePassword && databaseConn) {
+    databaseConn = databaseConn.replace("__DB_PASS__", encodeURIComponent(databasePassword));
+  }
+
+  return {
+    database: {
+      connectionString: databaseConn,
+      databaseName
     }
-
-    // load database configuration
-    const databaseConn = process.env.DATABASE_URI;
-    const databaseName  = process.env.DATABASE_NAME || 'cfg-volunteers';
-
-    return {
-        database: {
-            connectionString: databaseConn,
-            databaseName
-        }
-    };
+  };
 };
 
 export default getConfig;
