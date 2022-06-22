@@ -2,38 +2,17 @@ import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 
 import '../firebase/init'; // Initialize the Firebase Admin SDK
 
-import { decodeFirebaseToken } from '../helpers';
+import { checkRequestAuth } from '../helpers';
 
 const AuthTest: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   const contentType = 'application/json'; // JSON responses
   const logger = context.log;
 
   try {
-    // Acquire access token from header
+    // Check access token from header
     const authorization = req.headers.authorization;
-    let token = '';
+    const decodedToken = await checkRequestAuth(authorization, logger);
 
-    if (authorization) {
-      const parts = authorization.split('Bearer ');
-      token = parts[1];
-    }
-
-    if (!token) {
-      context.res = {
-        status: 401,
-        contentType,
-        body: {
-          'error' : {
-            'code' : 401,
-            'message' : 'Unauthorized'
-          }
-        },
-      };
-      return;
-    }
-
-    // Verify JWT access token w/Firebase Admin SDK
-    const decodedToken = await decodeFirebaseToken(token, logger);
     if (!decodedToken) {
       context.res = {
         status: 401,
@@ -48,9 +27,7 @@ const AuthTest: AzureFunction = async function (context: Context, req: HttpReque
       return;
     }
 
-    const { uid } = decodedToken;
-
-    logger('Here is the ID of the Firebase user: ', uid);
+    logger('Here is the full decoded token: ', decodedToken);
 
     context.res = {
       // Defaults to 200 status response
