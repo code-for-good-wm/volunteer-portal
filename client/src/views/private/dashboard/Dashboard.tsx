@@ -10,6 +10,9 @@ import StandardButton from '../../../components/buttons/StandardButton';
 
 const Dashboard = () => {
   const userData = useAppSelector(user);
+
+  console.log('Here is the user data stored in state: ', userData);
+
   const profile = userData?.profile;
 
   const navigate = useNavigate();

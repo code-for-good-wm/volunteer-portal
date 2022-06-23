@@ -1,43 +1,84 @@
+import * as mongoose from 'mongoose';
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { Result, tryGetUserIdent } from '../core';
-import { connect, profileStore, skillStore } from '../models/store'
+import { connect, profileStore, skillStore, userStore } from '../models/store'
 import { Profile, ProfileModel } from '../models/profile';
 import { User } from '../models/user';
+import { checkRequestAuth } from '../helpers';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+  const logger = context.log;
 
-  // set return value to JSON
+  // Set return value to JSON
   context.res = {
     header: {
-        "Content-Type": "application/json"
+      'Content-Type': 'application/json'
     }
-  }
+  };
 
-  // TODO uncomment to support user id checks
-  let { userIdent, status } = { userIdent: 'example', status: 200 }
-  // const { userIdent, status } = tryGetUserIdent(req, context);
-  context.res.status = status;
-  if (context.res.status !== 200) {
+  // Attempt to capture caller information from token
+  let uid = '';
+
+  try {
+    // Check access token from header
+    const authorization = req.headers.authorization;
+    const decodedToken = await checkRequestAuth(authorization, logger);
+
+    if (!decodedToken?.uid) {
+      context.res.status = 401;
+      context.res.body = {
+        'error' : {
+          'code' : 401,
+          'message' : 'Unauthorized'
+        }
+      };
+      return;
+    }
+
+    // Acquire caller Firebase ID from decoded token
+    uid = decodedToken.uid;
+  } catch (error) {
+    logger('Authentication error: ', error);
+    context.res.status = 500;
+    context.res.body = {
+      'error' : {
+        'code' : 500,
+        'message' : 'Internal error'
+      }
+    };
     return;
   }
 
-  await connect(context.log);
+  try {
+    // Connect to database
+    await connect(logger);
+  } catch (error) {
+    logger('Database error: ', error);
+    context.res.status = 500;
+    context.res.body = {
+      'error' : {
+        'code' : 500,
+        'message' : 'Internal error'
+      }
+    };
+    return;
+  }
 
   let result: Result | null = null;
 
   switch (req.method) {
-    case 'GET':
-      result = await getProfile(context, userIdent);
-      break;
-    case 'POST':
-      result = await createProfile(context, userIdent);
-      break;
-    case 'PUT':
-      result = await updateProfile(context, userIdent);
-      break;
-    case 'DELETE':
-      result = await deleteProfile(context, userIdent);
-      break;
+  case 'GET':
+    result = await getProfile(context, uid);
+    break;
+  case 'POST':
+    result = await createProfile(context, uid);
+    break;
+  case 'PUT':
+    result = await updateProfile(context, uid);
+    break;
+  case 'DELETE':
+    result = await deleteProfile(context, uid);
+    break;
   }
 
   if (result) {
@@ -47,56 +88,273 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 };
 
 async function getProfile(context: Context, userIdent: string): Promise<Result> {
+  // Check to see if this user exists
+  const user = await userStore.list(userIdent);
+  if (!user) {
+    return {
+      body: {
+        'error' : {
+          'code' : 404,
+          'message' : 'User not found'
+        }
+      },
+      status: 404,
+    };
+  }
+
+  // Acquire user ID from binding data
   const userId = context.bindingData.userId;
-  // TODO: confirm userId == userIdent provided
+  if (!userId) {
+    return {
+      body: {
+        'error': {
+          'code' : 400,
+          'message' : 'Missing required parameter',
+        }
+      },
+      status: 400,
+    };
+  }
 
+  // For MVP we're allowing users to access only their own data
+  if (userId !== user._id) {
+    return {
+      body: {
+        'error': {
+          'code' : 403,
+          'message' : 'Forbidden',
+        }
+      },
+      status: 403,
+    };
+  }
+
+  // Pull this user's corresponding profile data
   const profile = await profileStore.list(userId);
-
   if (profile) {
     profile.skills = await skillStore.list(userId);
   }
 
-  return { body: profile, status: profile ? 200 : 404 };
+  const body = profile ?? {
+    'code' : 404,
+    'message' : 'Profile data not found'
+  };
+
+  return { body, status: profile ? 200 : 404 };
 }
 
 async function createProfile(context: Context, userIdent: string): Promise<Result> {
-  let profile = context.req?.body;
+  // Check to see if this user exists
+  const user = await userStore.list(userIdent);
+  if (!user) {
+    return {
+      body: {
+        'error' : {
+          'code' : 404,
+          'message' : 'User not found'
+        }
+      },
+      status: 404,
+    };
+  }
 
+  // Acquire user ID from binding data
   const userId = context.bindingData.userId;
-  // TODO: confirm userId == userIdent provided
+  if (!userId) {
+    return {
+      body: {
+        'error': {
+          'code' : 400,
+          'message' : 'Missing required parameter',
+        }
+      },
+      status: 400,
+    };
+  }
 
-  profile.user = userId;
-  
-  // TODO: handle skills here or ask the UI to do it?
-  delete profile.skills;
+  // For MVP we're allowing users to access only their own data
+  if (userId !== user._id) {
+    return {
+      body: {
+        'error': {
+          'code' : 403,
+          'message' : 'Forbidden',
+        }
+      },
+      status: 403,
+    };
+  }
 
-  return { body: await profileStore.create(profile), status: 201 };
+  // Build an initial profile
+  const newProfile: Profile = {
+    user: userId,
+    roles: [],
+    dietaryRestrictions: [],
+    skills: [], // We're not adding any skills at this time
+  };
+
+  const profileData = await profileStore.create(newProfile);
+
+  return { body: profileData, status: 201 };
 }
 
 async function updateProfile(context: Context, userIdent: string): Promise<Result> {
-  let profile = context.req?.body;
-
-  const { _id } = context.req?.body;
-  const userId = context.bindingData.userId;
-  // TODO: confirm userId == userIdent provided
-
-  profile.user = userId;
-  // TODO: handle skills here or ask the UI to do it?
-  delete profile.skills;
-
-  const result = await profileStore.update(_id, userId, profile);
-
-  if (result.nModified === 1) {
-    return { body: profile, status: 200 };
-  } else {
-    return { body: null, status: 404 };
+  // Check to see if this user exists
+  const user = await userStore.list(userIdent);
+  if (!user) {
+    return {
+      body: {
+        'error' : {
+          'code' : 404,
+          'message' : 'User not found'
+        }
+      },
+      status: 404,
+    };
   }
+
+  // Acquire user ID from binding data
+  const userId = context.bindingData.userId;
+  if (!userId) {
+    return {
+      body: {
+        'error': {
+          'code' : 400,
+          'message' : 'Missing required parameter',
+        }
+      },
+      status: 400,
+    };
+  }
+
+  // For MVP we're allowing users to access only their own data
+  if (userId !== user._id) {
+    return {
+      body: {
+        'error': {
+          'code' : 403,
+          'message' : 'Forbidden',
+        }
+      },
+      status: 403,
+    };
+  }
+
+  // Pull this user's corresponding profile data
+  const profile = await profileStore.list(userId);
+  if (!profile) {
+    return {
+      body: {
+        'error' : {
+          'code' : 404,
+          'message' : 'Profile data not found'
+        }
+      },
+      status: 404,
+    };
+  }
+
+  const profileId = profile._id;
+  const profileUpdate = context.req?.body;
+  const skillsUpdate = profileUpdate?.skills;
+  delete profileUpdate?.skills;
+
+  // Attempt profile update
+  const profileUpdateResult = await profileStore.update(profileId, userId, profileUpdate);
+
+  if (profileUpdateResult.nModified !== 1) {
+    // Profile not found, status 404
+    return {
+      body: {
+        'error' : {
+          'code' : 404,
+          'message' : 'Profile data not found'
+        }
+      },
+      status: 404,
+    };
+  }
+
+  // Attempt skills update
+  // TODO: Build a gentler method of doing this
+  if (skillsUpdate) {
+    // Wipe out current skills
+    await skillStore.deleteAllForUser(userId);
+    // Update with new data
+    await skillStore.createMany(userId, skillsUpdate);
+  }
+
+  // Acquire updated data
+  const updatedProfile = await profileStore.list(userId);
+  if (updatedProfile) {
+    updatedProfile.skills = await skillStore.list(userId);
+  }
+
+  return {
+    body: updatedProfile,
+    status: 200,
+  };
 }
 
 async function deleteProfile(context: Context, userIdent: string): Promise<Result> {
+  // Check to see if this user exists
+  const user = await userStore.list(userIdent);
+  if (!user) {
+    return {
+      body: {
+        'error' : {
+          'code' : 404,
+          'message' : 'User not found'
+        }
+      },
+      status: 404,
+    };
+  }
+
+  // Acquire user ID from binding data
   const userId = context.bindingData.userId;
-  const { _id } = context.req?.body;
-  await profileStore.delete(_id, userId);
+  if (!userId) {
+    return {
+      body: {
+        'error': {
+          'code' : 400,
+          'message' : 'Missing required parameter',
+        }
+      },
+      status: 400,
+    };
+  }
+
+  // For MVP we're allowing users to delete only their own data
+  if (userId !== user._id) {
+    return {
+      body: {
+        'error': {
+          'code' : 403,
+          'message' : 'Forbidden',
+        }
+      },
+      status: 403,
+    };
+  }
+
+  // Pull this user's corresponding profile data
+  const profile = await profileStore.list(userId);
+  if (!profile) {
+    return {
+      body: {
+        'error' : {
+          'code' : 404,
+          'message' : 'Profile data not found'
+        }
+      },
+      status: 404,
+    };
+  }
+
+  const profileId = profile._id;
+  await profileStore.delete(profileId, userId);
+  await skillStore.deleteAllForUser(userId);
   return { body: null, status: 202 };
 }
 

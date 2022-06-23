@@ -1,9 +1,9 @@
 import { Profile } from './profile';
 
 export interface User {
-  id: string; // Pulled from Firebase Auth
+  _id: string; // ID of user document in database
   name: string;
   email: string;
   phone: string; // Ten numerical digits
-  profile: Profile;
+  profile: Profile
 }

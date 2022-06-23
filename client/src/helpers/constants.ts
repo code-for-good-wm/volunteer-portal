@@ -2,7 +2,7 @@ import { DesignSkillsData, DietaryRestrictionData, PrimaryProfileSection, RoleDa
 import { User } from '../types/user';
 
 export const testUserData: User = {
-  id: '76iatw8omMRPY5VmwIf9HqrlSTe2',
+  _id: '76iatw8omMRPY5VmwIf9HqrlSTe2',
   name: '',
   email: 'test1@slothwerks.com',
   phone: '',

@@ -88,13 +88,34 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 };
 
 async function getUser(userIdent: string): Promise<Result> {
+  // Attempt to acquire user data
   const user = await userStore.list(userIdent);
-  const body = user ?? {
-    'code' : 404,
-    'message' : 'User not found'
-  };
+  if (!user) {
+    return {
+      body: {
+        'error' : {
+          'code' : 404,
+          'message' : 'User not found',
+        }
+      },
+      status: 404,
+    };
+  }
 
-  return { body, status: user ? 200 : 404 };
+  // For MVP we're allowing users to only access their own data
+  if (userIdent !== user.ident) {
+    return {
+      body: {
+        'error': {
+          'code' : 403,
+          'message' : 'Forbidden',
+        }
+      },
+      status: 403,
+    };
+  }
+
+  return { body: user, status: 200 };
 }
 
 async function createUser(context: Context, userIdent: string): Promise<Result> {
@@ -151,7 +172,7 @@ async function createUser(context: Context, userIdent: string): Promise<Result> 
 }
 
 async function updateUser(context: Context, userIdent: string): Promise<Result> {
-  // Verify we're updating this user's information
+  // Attempt to acquire user data
   const user = await userStore.list(userIdent);
   if (!user) {
     return {
@@ -165,30 +186,41 @@ async function updateUser(context: Context, userIdent: string): Promise<Result> 
     };
   }
 
-  if (user.ident !== userIdent) {
+  // Acquire user ID from binding data
+  const userId = context.bindingData.userId;
+  if (!userId) {
     return {
       body: {
-        'error' : {
-          'code' : 401,
-          'message' : 'Unauthorized'
+        'error': {
+          'code' : 400,
+          'message' : 'Missing required parameter',
         }
       },
-      status: 401,
+      status: 400,
+    };
+  }
+
+  // For MVP we're allowing users to access only their own data
+  if (userId !== user._id) {
+    return {
+      body: {
+        'error': {
+          'code' : 403,
+          'message' : 'Forbidden',
+        }
+      },
+      status: 403,
     };
   }
 
   // Move forward with update
   const update = context.req?.body;
-  const userId = context.bindingData.userId;
   const result = await userStore.update(userId, userIdent, update);
 
   if (result.nModified === 1) {
     // User was updated
     return { 
-      body: { 
-        ...user, 
-        ...update 
-      }, 
+      body: await userStore.list(userIdent),
       status: 200,
     };
   } else {
@@ -206,7 +238,7 @@ async function updateUser(context: Context, userIdent: string): Promise<Result> 
 }
 
 async function deleteUser(context: Context, userIdent: string): Promise<Result> {
-  // Verify we're deleting the current user's data
+  // Attempt to acquire user data
   const user = await userStore.list(userIdent);
   if (!user) {
     return {
@@ -220,19 +252,33 @@ async function deleteUser(context: Context, userIdent: string): Promise<Result> 
     };
   }
 
-  if (user.ident !== userIdent) {
+  // Acquire user ID from binding data
+  const userId = context.bindingData.userId;
+  if (!userId) {
     return {
       body: {
-        'error' : {
-          'code' : 401,
-          'message' : 'Unauthorized'
+        'error': {
+          'code' : 400,
+          'message' : 'Missing required parameter',
         }
       },
-      status: 401,
+      status: 400,
     };
   }
 
-  const userId = context.bindingData.userId;
+  // For MVP we're allowing users to delete only their own data
+  if (userId !== user._id) {
+    return {
+      body: {
+        'error': {
+          'code' : 403,
+          'message' : 'Forbidden',
+        }
+      },
+      status: 403,
+    };
+  }
+
   await userStore.delete(userId, userIdent);
   return { body: null, status: 202 };
 }

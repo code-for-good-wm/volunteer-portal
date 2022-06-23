@@ -23,11 +23,11 @@ type FormAlert = {
 }
 
 const SignIn = () => {
-  const [newUser, setNewUser] = useState(true);
+  const [newUser, setNewUser] = useState(false);
   const [submitDisabled, setSubmitDisabled] = useState(true);
   const [form, setForm] = useState<SignInForm>({
-    email: 'test2@slothwerks.com',
-    password: '73577357',
+    email: '',
+    password: '',
   });
   const [alert, setAlert] = useState<FormAlert>({
     show: false,
