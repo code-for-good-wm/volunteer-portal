@@ -86,8 +86,7 @@ export const profileStore = {
     // TODO: include skills with populate
     return await ProfileModel.findOne({user: userId});
   },
-  create: async(userId: mongoose.Types.ObjectId, profile: Profile) => {
-    profile.user = userId;
+  create: async(profile: Profile) => {
     return await ProfileModel.create(profile);
   },
   update: async(_id: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId, profile: Profile) => {

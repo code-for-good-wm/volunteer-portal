@@ -38,16 +38,16 @@ export const getGettingStartedProfileData = () => {
         phone: parsePhone(phone).formatted,
       },
       contactInfo: {
-        linkedInUrl,
-        websiteUrl,
-        portfolioUrl,
+        linkedInUrl: linkedInUrl ?? '',
+        websiteUrl: websiteUrl ?? '',
+        portfolioUrl: portfolioUrl ?? '',
       },
       extraStuff: {
         previousVolunteer: !!previousVolunteer, // Could be undefined
-        shirtSize,
+        shirtSize: shirtSize ?? '',
         dietaryRestrictions,
       },
-      accessibilityRequirements,
+      accessibilityRequirements: accessibilityRequirements ?? '',
       agreements: {
         termsAndConditions: !!agreements?.termsAndConditions, // Convert to boolean
         photoRelease: !!agreements?.photoRelease, // Convert to boolean

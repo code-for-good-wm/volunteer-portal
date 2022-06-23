@@ -23,11 +23,11 @@ type FormAlert = {
 }
 
 const SignIn = () => {
-  const [newUser, setNewUser] = useState(false);
+  const [newUser, setNewUser] = useState(true);
   const [submitDisabled, setSubmitDisabled] = useState(true);
   const [form, setForm] = useState<SignInForm>({
-    email: '',
-    password: '',
+    email: 'test2@slothwerks.com',
+    password: '73577357',
   });
   const [alert, setAlert] = useState<FormAlert>({
     show: false,
@@ -78,6 +78,9 @@ const SignIn = () => {
 
   const handleNewUser = () => {
     setNewUser(prevState => !prevState);
+    if (alert.show) {
+      resetAlert();
+    }
   };
 
   const handleSubmit = (event: FormEvent) => {

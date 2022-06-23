@@ -1,8 +1,10 @@
+import * as mongoose from 'mongoose';
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { Result } from '../core';
 import { checkRequestAuth } from '../helpers';
-import { connect, userStore } from '../models/store';
+import { connect, profileStore, userStore } from '../models/store';
 import { User } from '../models/user';
+import { Profile } from '../models/profile';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   const logger = context.log;
@@ -133,6 +135,18 @@ async function createUser(context: Context, userIdent: string): Promise<Result> 
   };
 
   const userData = await userStore.create(newUser);
+  const userId = userData._id as mongoose.Types.ObjectId;
+
+  // Build an initial profile
+  const newProfile: Profile = {
+    user: userId,
+    roles: [],
+    dietaryRestrictions: [],
+    skills: [],
+  };
+
+  await profileStore.create(newProfile);
+
   return { body: userData, status: 201 };
 }
 

@@ -93,18 +93,62 @@ export const createNewUser = async (params: SignInParams) => {
   const auth = getAuth();
   
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    // TODO: We will also need to create a user document
-    // with the user's email and default settings
-    // Once complete, fire success
+    // Set updating to true to avoid automatic authentication
+    store.dispatch(
+      updateAuth({
+        updating: true,
+      })
+    );
+    
+    // Create the new Firebase user
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-    // We'll use an auth listener to handle changes
+    // Acquire bearer token
+    const { user } = userCredential;
+    const token = await user.getIdToken();
+
+    // Prep fetch call
+    const url = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/`;
+    const body = JSON.stringify({
+      email,
+    });
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body
+    });
+
+    if (!response.ok) {
+      // TODO: Possible 400 and 401 responses here; should we create custom messaging?
+      throw new Error('Failed to create a new user document.');
+    }
+
+    const data = await response.json();
+
+    console.log('The response from the server: ', data);
+
+    // TODO: Update store with user data pulled from server
+    store.dispatch(
+      updateAuth({
+        updating: false,
+      })
+    );
+
     if (success) {
       success();
     }
   } catch (error) {
     const authError = error as FirebaseError;
     const { code } = authError;
+
+    // If signed in, sign out user
+    if (auth.currentUser) {
+      auth.signOut();
+    }
 
     // Build custom error messaging
     let message = 'Could not create account at this time.  Check your network connection and try again later.';

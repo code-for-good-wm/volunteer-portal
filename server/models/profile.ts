@@ -7,14 +7,16 @@ import { User } from "./user";
 import { UserSkill } from "./user-skill";
 
 export interface Agreements {
-  termsAndConditions?: boolean;
-  photoRelease?: boolean;
-  codeOfConduct?: boolean;
+  termsAndConditions?: string; // ISO date
+  photoRelease?: string; // ISO date
+  codeOfConduct?: string; // ISO date
 }
 
 export interface Profile {
   _id?: Types.ObjectId;
   user: Types.ObjectId | User;
+  lastUpdate?: string; // ISO date; timestamp of most recent profile completion
+  completionDate?: string; // ISO date; timestamp of initial profile completion
   roles: Role[];
   linkedInUrl?: string;
   websiteUrl?: string;
@@ -23,15 +25,15 @@ export interface Profile {
   shirtSize?: ShirtSize;
   dietaryRestrictions: DietaryRestriction[];
   accessibilityRequirements?: string;
-  agreements: Agreements;
+  agreements?: Agreements;
   skills: Types.ObjectId[] | UserSkill[];
   additionalSkills?: string;
 }
 
 const profileSchema = new Schema<Profile>({
   user: { type: Types.ObjectId, required: true, ref: 'User' },
-  code: { type: String, required: true },
-  level: { type: Number, required: true },
+  lastUpdate: String,
+  completionDate: String,
   roles: [{ type: String, enum: Role }], // array of Role
   linkedInUrl: String,
   websiteUrl: String,
@@ -41,9 +43,9 @@ const profileSchema = new Schema<Profile>({
   dietaryRestrictions: [{ type: String, enum: DietaryRestriction }], // array of DietaryRestriction
   accessibilityRequirements: String,
   agreements: new Schema<Agreements>({
-    termsAndConditions: Boolean,
-    photoRelease: Boolean,
-    codeOfConduct: Boolean,
+    termsAndConditions: String,
+    photoRelease: String,
+    codeOfConduct: String,
   }),
   skills: [{ type: Types.ObjectId, ref: 'UserSkill' }],
   additionalSkills: String

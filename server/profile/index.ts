@@ -70,7 +70,7 @@ async function createProfile(context: Context, userIdent: string): Promise<Resul
   // TODO: handle skills here or ask the UI to do it?
   delete profile.skills;
 
-  return { body: await profileStore.create(userId, profile), status: 201 };
+  return { body: await profileStore.create(profile), status: 201 };
 }
 
 async function updateProfile(context: Context, userIdent: string): Promise<Result> {
