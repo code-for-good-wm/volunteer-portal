@@ -1,7 +1,7 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { Result } from '../core';
 import { checkRequestAuth } from '../helpers';
-import { connect, userStore } from '../models/store'
+import { connect, userStore } from '../models/store';
 import { User } from '../models/user';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
@@ -14,7 +14,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     }
   };
 
-  let email = '';
+  // Attempt to capture caller information from token
   let uid = '';
 
   try {
@@ -22,7 +22,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const authorization = req.headers.authorization;
     const decodedToken = await checkRequestAuth(authorization, logger);
 
-    if (!decodedToken) {
+    if (!decodedToken?.uid) {
       context.res.status = 401;
       context.res.body = {
         'error' : {
@@ -33,8 +33,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
       return;
     }
 
-    // Acquire user email and Firebase ID from decoded token
-    email = decodedToken.email ?? '';
+    // Acquire caller Firebase ID from decoded token
     uid = decodedToken.uid;
   } catch (error) {
     logger('Authentication error: ', error);
@@ -70,7 +69,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     result = await getUser(uid);
     break;
   case 'POST':
-    result = await createUser(email, uid);
+    result = await createUser(context, uid);
     break;
   case 'PUT':
     result = await updateUser(context, uid);
@@ -88,36 +87,137 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
 async function getUser(userIdent: string): Promise<Result> {
   const user = await userStore.list(userIdent);
-  return { body: user, status: user ? 200 : 404 };
+  const body = user ?? {
+    'code' : 404,
+    'message' : 'User not found'
+  };
+
+  return { body, status: user ? 200 : 404 };
 }
 
-async function createUser(email: string, userIdent: string): Promise<Result> {
+async function createUser(context: Context, userIdent: string): Promise<Result> {
+  // Check to see if this user already exists; if so, return error
+  const user = await userStore.list(userIdent);
+  if (user) {
+    return {
+      body: {
+        'error' : {
+          'code' : 400,
+          'message' : 'User document already exists'
+        }
+      },
+      status: 400,
+    };
+  }
+
   // Build new user
+  const email = context.req?.body?.email ?? '';
+  if (!email) {
+    return {
+      body: {
+        'error' : {
+          'code' : 400,
+          'message' : 'Missing required parameters'
+        }
+      },
+      status: 400,
+    };
+  }
+
   const newUser: User = {
     ident: userIdent,
     authProvider: 'firebase',
     name: '',
+    phone: '',
     email,
   };
+
   const userData = await userStore.create(newUser);
   return { body: userData, status: 201 };
 }
 
 async function updateUser(context: Context, userIdent: string): Promise<Result> {
-  let user = context.req?.body;
+  // Verify we're updating this user's information
+  const user = await userStore.list(userIdent);
+  if (!user) {
+    return {
+      body: {
+        'error' : {
+          'code' : 404,
+          'message' : 'User not found'
+        }
+      },
+      status: 404,
+    };
+  }
+
+  if (user.ident !== userIdent) {
+    return {
+      body: {
+        'error' : {
+          'code' : 401,
+          'message' : 'Unauthorized'
+        }
+      },
+      status: 401,
+    };
+  }
+
+  // Move forward with update
+  const update = context.req?.body;
   const userId = context.bindingData.userId;
-  user.ident = userIdent;
-  const result = await userStore.update(userId, userIdent, user);
+  const result = await userStore.update(userId, userIdent, update);
+
   if (result.nModified === 1) {
     // User was updated
-    return { body: user, status: 200 };
+    return { 
+      body: { 
+        ...user, 
+        ...update 
+      }, 
+      status: 200,
+    };
   } else {
     // User not found, status 404
-    return { body: null, status: 404 };
+    return {
+      body: {
+        'error' : {
+          'code' : 404,
+          'message' : 'User not found'
+        }
+      },
+      status: 404,
+    };
   }
 }
 
 async function deleteUser(context: Context, userIdent: string): Promise<Result> {
+  // Verify we're deleting the current user's data
+  const user = await userStore.list(userIdent);
+  if (!user) {
+    return {
+      body: {
+        'error' : {
+          'code' : 404,
+          'message' : 'User not found'
+        }
+      },
+      status: 404,
+    };
+  }
+
+  if (user.ident !== userIdent) {
+    return {
+      body: {
+        'error' : {
+          'code' : 401,
+          'message' : 'Unauthorized'
+        }
+      },
+      status: 401,
+    };
+  }
+
   const userId = context.bindingData.userId;
   await userStore.delete(userId, userIdent);
   return { body: null, status: 202 };
