@@ -1,8 +1,8 @@
 import * as mongoose from 'mongoose';
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { Result } from '../core';
-import { checkRequestAuth } from '../helpers';
-import { connect, profileStore, userStore } from '../models/store';
+import { checkBindingDataUserId, checkRequestAuth } from '../helpers';
+import { connect, profileStore, skillStore, userStore } from '../models/store';
 import { User } from '../models/user';
 import { Profile } from '../models/profile';
 
@@ -172,46 +172,13 @@ async function createUser(context: Context, userIdent: string): Promise<Result> 
 }
 
 async function updateUser(context: Context, userIdent: string): Promise<Result> {
-  // Attempt to acquire user data
-  const user = await userStore.list(userIdent);
-  if (!user) {
-    return {
-      body: {
-        'error' : {
-          'code' : 404,
-          'message' : 'User not found'
-        }
-      },
-      status: 404,
-    };
-  }
-
-  // Acquire user ID from binding data
-  const userId = context.bindingData.userId;
-  if (!userId) {
-    return {
-      body: {
-        'error': {
-          'code' : 400,
-          'message' : 'Missing required parameter',
-        }
-      },
-      status: 400,
-    };
-  }
-
   // For MVP we're allowing users to access only their own data
-  if (userId !== user._id) {
-    return {
-      body: {
-        'error': {
-          'code' : 403,
-          'message' : 'Forbidden',
-        }
-      },
-      status: 403,
-    };
+  const checkResult = await checkBindingDataUserId(context, userIdent);
+  if (checkResult.body.error) {
+    return checkResult;
   }
+
+  const userId = checkResult.body._id;
 
   // Move forward with update
   const update = context.req?.body;
@@ -238,48 +205,24 @@ async function updateUser(context: Context, userIdent: string): Promise<Result> 
 }
 
 async function deleteUser(context: Context, userIdent: string): Promise<Result> {
-  // Attempt to acquire user data
-  const user = await userStore.list(userIdent);
-  if (!user) {
-    return {
-      body: {
-        'error' : {
-          'code' : 404,
-          'message' : 'User not found'
-        }
-      },
-      status: 404,
-    };
-  }
-
-  // Acquire user ID from binding data
-  const userId = context.bindingData.userId;
-  if (!userId) {
-    return {
-      body: {
-        'error': {
-          'code' : 400,
-          'message' : 'Missing required parameter',
-        }
-      },
-      status: 400,
-    };
-  }
-
   // For MVP we're allowing users to delete only their own data
-  if (userId !== user._id) {
-    return {
-      body: {
-        'error': {
-          'code' : 403,
-          'message' : 'Forbidden',
-        }
-      },
-      status: 403,
-    };
+  const checkResult = await checkBindingDataUserId(context, userIdent);
+  if (checkResult.body.error) {
+    return checkResult;
   }
+
+  const userId = checkResult.body._id;
 
   await userStore.delete(userId, userIdent);
+
+  // Delete this user's corresponding profile data
+  const profile = await profileStore.list(userId);
+  if (profile) {
+    const profileId = profile._id;
+    await profileStore.delete(profileId, userId);
+    await skillStore.deleteAllForUser(userId);
+  }
+
   return { body: null, status: 202 };
 }
 

@@ -1,10 +1,9 @@
-import * as mongoose from 'mongoose';
+
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { Result, tryGetUserIdent } from '../core';
-import { connect, profileStore, skillStore, userStore } from '../models/store'
-import { Profile, ProfileModel } from '../models/profile';
-import { User } from '../models/user';
-import { checkRequestAuth } from '../helpers';
+import { Result } from '../core';
+import { connect, profileStore, skillStore } from '../models/store';
+import { Profile } from '../models/profile';
+import { checkBindingDataUserId, checkRequestAuth } from '../helpers';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   const logger = context.log;
@@ -88,46 +87,13 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 };
 
 async function getProfile(context: Context, userIdent: string): Promise<Result> {
-  // Check to see if this user exists
-  const user = await userStore.list(userIdent);
-  if (!user) {
-    return {
-      body: {
-        'error' : {
-          'code' : 404,
-          'message' : 'User not found'
-        }
-      },
-      status: 404,
-    };
-  }
-
-  // Acquire user ID from binding data
-  const userId = context.bindingData.userId;
-  if (!userId) {
-    return {
-      body: {
-        'error': {
-          'code' : 400,
-          'message' : 'Missing required parameter',
-        }
-      },
-      status: 400,
-    };
-  }
-
   // For MVP we're allowing users to access only their own data
-  if (userId !== user._id) {
-    return {
-      body: {
-        'error': {
-          'code' : 403,
-          'message' : 'Forbidden',
-        }
-      },
-      status: 403,
-    };
+  const checkResult = await checkBindingDataUserId(context, userIdent);
+  if (checkResult.body.error) {
+    return checkResult;
   }
+
+  const userId = checkResult.body._id;
 
   // Pull this user's corresponding profile data
   const profile = await profileStore.list(userId);
@@ -136,54 +102,23 @@ async function getProfile(context: Context, userIdent: string): Promise<Result> 
   }
 
   const body = profile ?? {
-    'code' : 404,
-    'message' : 'Profile data not found'
+    'error' : {
+      'code' : 404,
+      'message' : 'Profile data not found'
+    }
   };
 
   return { body, status: profile ? 200 : 404 };
 }
 
 async function createProfile(context: Context, userIdent: string): Promise<Result> {
-  // Check to see if this user exists
-  const user = await userStore.list(userIdent);
-  if (!user) {
-    return {
-      body: {
-        'error' : {
-          'code' : 404,
-          'message' : 'User not found'
-        }
-      },
-      status: 404,
-    };
-  }
-
-  // Acquire user ID from binding data
-  const userId = context.bindingData.userId;
-  if (!userId) {
-    return {
-      body: {
-        'error': {
-          'code' : 400,
-          'message' : 'Missing required parameter',
-        }
-      },
-      status: 400,
-    };
-  }
-
   // For MVP we're allowing users to access only their own data
-  if (userId !== user._id) {
-    return {
-      body: {
-        'error': {
-          'code' : 403,
-          'message' : 'Forbidden',
-        }
-      },
-      status: 403,
-    };
+  const checkResult = await checkBindingDataUserId(context, userIdent);
+  if (checkResult.body.error) {
+    return checkResult;
   }
+
+  const userId = checkResult.body._id;
 
   // Build an initial profile
   const newProfile: Profile = {
@@ -199,46 +134,13 @@ async function createProfile(context: Context, userIdent: string): Promise<Resul
 }
 
 async function updateProfile(context: Context, userIdent: string): Promise<Result> {
-  // Check to see if this user exists
-  const user = await userStore.list(userIdent);
-  if (!user) {
-    return {
-      body: {
-        'error' : {
-          'code' : 404,
-          'message' : 'User not found'
-        }
-      },
-      status: 404,
-    };
-  }
-
-  // Acquire user ID from binding data
-  const userId = context.bindingData.userId;
-  if (!userId) {
-    return {
-      body: {
-        'error': {
-          'code' : 400,
-          'message' : 'Missing required parameter',
-        }
-      },
-      status: 400,
-    };
-  }
-
   // For MVP we're allowing users to access only their own data
-  if (userId !== user._id) {
-    return {
-      body: {
-        'error': {
-          'code' : 403,
-          'message' : 'Forbidden',
-        }
-      },
-      status: 403,
-    };
+  const checkResult = await checkBindingDataUserId(context, userIdent);
+  if (checkResult.body.error) {
+    return checkResult;
   }
+
+  const userId = checkResult.body._id;
 
   // Pull this user's corresponding profile data
   const profile = await profileStore.list(userId);
@@ -297,46 +199,13 @@ async function updateProfile(context: Context, userIdent: string): Promise<Resul
 }
 
 async function deleteProfile(context: Context, userIdent: string): Promise<Result> {
-  // Check to see if this user exists
-  const user = await userStore.list(userIdent);
-  if (!user) {
-    return {
-      body: {
-        'error' : {
-          'code' : 404,
-          'message' : 'User not found'
-        }
-      },
-      status: 404,
-    };
+  // For MVP we're allowing users to access only their own data
+  const checkResult = await checkBindingDataUserId(context, userIdent);
+  if (checkResult.body.error) {
+    return checkResult;
   }
 
-  // Acquire user ID from binding data
-  const userId = context.bindingData.userId;
-  if (!userId) {
-    return {
-      body: {
-        'error': {
-          'code' : 400,
-          'message' : 'Missing required parameter',
-        }
-      },
-      status: 400,
-    };
-  }
-
-  // For MVP we're allowing users to delete only their own data
-  if (userId !== user._id) {
-    return {
-      body: {
-        'error': {
-          'code' : 403,
-          'message' : 'Forbidden',
-        }
-      },
-      status: 403,
-    };
-  }
+  const userId = checkResult.body._id;
 
   // Pull this user's corresponding profile data
   const profile = await profileStore.list(userId);
