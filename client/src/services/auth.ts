@@ -49,8 +49,6 @@ export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
         const { _id } = userData;
         const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${_id}/profile`;
 
-        console.log('Fetching profile: ', profileUrl);
-
         const profileResponse = await fetch(profileUrl, {
           headers: {
             'Content-Type': 'application/json',
@@ -85,8 +83,6 @@ export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
         if (auth.currentUser) {
           auth.signOut();
         }
-
-        // TODO: Display error in UI?
       }
     } else {
       // Ignore other cases?
@@ -115,14 +111,84 @@ export const signInUser = async (params: SignInParams) => {
   const auth = getAuth();
   
   try {
+    // Set updating to true to avoid automatic data load
+    store.dispatch(
+      updateAuth({
+        updating: true,
+      })
+    );
+
     await signInWithEmailAndPassword(auth, email, password);
-    // We'll use an auth listener to handle changes
+  
+    // Acquire bearer token
+    const fbUser = auth.currentUser;
+    const token = await fbUser?.getIdToken();
+
+    // Acquire user document
+    const userUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user`;
+
+    const userResponse = await fetch(userUrl, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!userResponse.ok) {
+      throw new Error('Failed to acquire user data.');
+    }
+
+    const userData = await userResponse.json() as User;
+
+    // Acquire user profile
+    const { _id } = userData;
+    const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${_id}/profile`;
+
+    const profileResponse = await fetch(profileUrl, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!profileResponse.ok) {
+      throw new Error('Failed to acquire user profile.');
+    }
+
+    const profileData = await profileResponse.json() as Profile;
+
+    store.dispatch(
+      updateProfile({
+        data: profileData,
+      })
+    );
+
+    store.dispatch(
+      updateAuth({
+        signedIn: true,
+        user: userData,
+        updating: false,
+      })
+    );
+
     if (success) {
       success();
     }
   } catch (error) {
     const authError = error as FirebaseError;
     const { code } = authError;
+
+    // Set updating to false
+    store.dispatch(
+      updateAuth({
+        updating: false,
+      })
+    );
+
+    // If signed in, sign out user
+    if (auth.currentUser) {
+      auth.signOut();
+    }
 
     // Build custom error messaging
     let message = 'Could not sign in at this time.  Check your network connection and try again later.';
