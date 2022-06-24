@@ -3,12 +3,13 @@ import { createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, signIn
 
 import { Profile } from '../types/profile';
 import { User } from '../types/user';
-import { SignInParams, RecoverPasswordParams } from '../types/services';
+import { SignInParams, RecoverPasswordParams, ServiceParams } from '../types/services';
 
 import { store } from '../store/store';
 import { updateAuth } from '../store/authSlice';
 import { updateProfile } from '../store/profileSlice';
 import { resetAppState } from '../helpers/functions';
+import { updateAlert } from '../store/alertSlice';
 
 export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
   const appState = store.getState();
@@ -18,7 +19,7 @@ export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
 
   if (fbUser) {
     if (!updating && !user) {
-      // Set updating to true while pulling data; show loader in UI
+      // Set updating to true while pulling data
       store.dispatch(
         updateAuth({
           updating: true,
@@ -29,49 +30,13 @@ export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
         // Acquire bearer token
         const token = await fbUser.getIdToken();
 
-        // Acquire user document
-        const userUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user`;
+        // Pull user data and store in state
+        await getUserData(token);
 
-        const userResponse = await fetch(userUrl, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        if (!userResponse.ok) {
-          throw new Error('Failed to acquire user data.');
-        }
-
-        const userData = await userResponse.json() as User;
-
-        // Acquire user profile
-        const { _id } = userData;
-        const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${_id}/profile`;
-
-        const profileResponse = await fetch(profileUrl, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        if (!profileResponse.ok) {
-          throw new Error('Failed to acquire user profile.');
-        }
-
-        const profileData = await profileResponse.json() as Profile;
-
-        store.dispatch(
-          updateProfile({
-            data: profileData,
-          })
-        );
-
+        // Set updating to false and sign in user
         store.dispatch(
           updateAuth({
             signedIn: true,
-            user: userData,
             updating: false,
           })
         );
@@ -122,51 +87,15 @@ export const signInUser = async (params: SignInParams) => {
   
     // Acquire bearer token
     const fbUser = auth.currentUser;
-    const token = await fbUser?.getIdToken();
+    const token = await fbUser?.getIdToken() || '';
 
-    // Acquire user document
-    const userUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user`;
+    // Pull user data and store in state
+    await getUserData(token);
 
-    const userResponse = await fetch(userUrl, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-
-    if (!userResponse.ok) {
-      throw new Error('Failed to acquire user data.');
-    }
-
-    const userData = await userResponse.json() as User;
-
-    // Acquire user profile
-    const { _id } = userData;
-    const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${_id}/profile`;
-
-    const profileResponse = await fetch(profileUrl, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-
-    if (!profileResponse.ok) {
-      throw new Error('Failed to acquire user profile.');
-    }
-
-    const profileData = await profileResponse.json() as Profile;
-
-    store.dispatch(
-      updateProfile({
-        data: profileData,
-      })
-    );
-
+    // Set updating to false and sign in user
     store.dispatch(
       updateAuth({
         signedIn: true,
-        user: userData,
         updating: false,
       })
     );
@@ -178,12 +107,8 @@ export const signInUser = async (params: SignInParams) => {
     const authError = error as FirebaseError;
     const { code } = authError;
 
-    // Set updating to false
-    store.dispatch(
-      updateAuth({
-        updating: false,
-      })
-    );
+    // Reset app state
+    resetAppState();
 
     // If signed in, sign out user
     if (auth.currentUser) {
@@ -293,12 +218,8 @@ export const createNewUser = async (params: SignInParams) => {
     const authError = error as FirebaseError;
     const { code } = authError;
 
-    // Set updating to false
-    store.dispatch(
-      updateAuth({
-        updating: false,
-      })
-    );
+    // Reset app state
+    resetAppState();
 
     // If signed in, sign out user
     if (auth.currentUser) {
@@ -312,6 +233,56 @@ export const createNewUser = async (params: SignInParams) => {
     } else if (code === 'auth/invalid-email') {
       message = 'The email address is invalid and cannot be used to create an account.';
     }
+
+    if (failure) {
+      failure(message);
+    }
+  }
+};
+
+export const refreshCurrentUserData = async(params: ServiceParams) => {
+  const {
+    success,
+    failure,
+  } = params;
+
+  const auth = getAuth();
+  
+  try {
+    // Set updating to true to avoid automatic data load
+    store.dispatch(
+      updateAuth({
+        updating: true,
+      })
+    );
+  
+    // Acquire bearer token
+    const fbUser = auth.currentUser;
+    const token = await fbUser?.getIdToken() || '';
+
+    // Pull user data and store in state
+    await getUserData(token);
+
+    // Set updating to false and sign in user
+    store.dispatch(
+      updateAuth({
+        updating: false,
+      })
+    );
+
+    if (success) {
+      success();
+    }
+  } catch (error) {
+    const message = 'An error occurred while refreshing user data.';
+    // Show snack alert
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: message,
+      })
+    );
 
     if (failure) {
       failure(message);
@@ -350,4 +321,56 @@ export const recoverPassword = async (params: RecoverPasswordParams) => {
       failure(message);
     }
   }
+};
+
+/**
+ * Pull user data from server and store in state
+ */
+const getUserData = async (token: string) => {
+  // Acquire user document
+  const userUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user`;
+
+  const userResponse = await fetch(userUrl, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!userResponse.ok) {
+    throw new Error('Failed to acquire user data.');
+  }
+
+  const userData = await userResponse.json() as User;
+
+  // Acquire user profile
+  const { _id } = userData;
+  const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${_id}/profile`;
+
+  const profileResponse = await fetch(profileUrl, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!profileResponse.ok) {
+    throw new Error('Failed to acquire user profile.');
+  }
+
+  const profileData = await profileResponse.json() as Profile;
+
+  store.dispatch(
+    updateProfile({
+      data: profileData,
+    })
+  );
+
+  store.dispatch(
+    updateAuth({
+      user: userData,
+    })
+  );
+
+  return true;
 };
