@@ -76,7 +76,8 @@ export const checkBindingDataUserId: CheckBindingDataUserId = async (context: Co
   }
 
   // Compare; if requestor and userId are not the same, return error
-  if (userId !== user._id) {
+  // IMPORTANT: We're ignoring type here; the _id field is technically an object
+  if (userId != user._id) {
     return {
       body: {
         'error': {

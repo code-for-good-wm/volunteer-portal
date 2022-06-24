@@ -28,7 +28,7 @@ export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
         const token = await fbUser.getIdToken();
 
         // Acquire user document
-        const userUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/`;
+        const userUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user`;
 
         const userResponse = await fetch(userUrl, {
           headers: {
@@ -45,7 +45,9 @@ export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
 
         // Acquire user profile
         const { _id } = userData;
-        const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${_id}/profile/`;
+        const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${_id}/profile`;
+
+        console.log('Fetching profile: ', profileUrl);
 
         const profileResponse = await fetch(profileUrl, {
           headers: {
@@ -71,9 +73,10 @@ export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
           })
         );
       } catch (error) {
-        // Stop loader
         store.dispatch(
           updateAuth({
+            signedIn: false,
+            user: null,
             updating: false,
           })
         );
@@ -83,7 +86,7 @@ export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
           auth.signOut();
         }
 
-        // TODO: Show error?
+        // TODO: Display error in UI?
       }
     } else {
       // Ignore other cases?
@@ -165,7 +168,7 @@ export const createNewUser = async (params: SignInParams) => {
     const token = await user.getIdToken();
 
     // Prep fetch call
-    const userUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/`;
+    const userUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user`;
     const body = JSON.stringify({
       email,
     });
@@ -188,7 +191,7 @@ export const createNewUser = async (params: SignInParams) => {
 
     // Acquire user profile
     const { _id } = userData;
-    const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${_id}/profile/`;
+    const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${_id}/profile`;
 
     const profileResponse = await fetch(profileUrl, {
       headers: {
