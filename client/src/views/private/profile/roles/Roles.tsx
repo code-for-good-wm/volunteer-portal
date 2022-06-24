@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
-import { updateProfile, profile } from '../../../../store/profileSlice';
+import { profile } from '../../../../store/profileSlice';
 
-import { Profile, Role } from '../../../../types/profile';
+import { Role } from '../../../../types/profile';
 
 import RoleCard from '../../../../components/elements/RoleCard';
 import StandardButton from '../../../../components/buttons/StandardButton';
 
 import { roles } from '../../../../helpers/constants';
+import { updateUserRoles } from '../../../../services/profile';
 
 const Roles = () => {
   const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
@@ -45,25 +46,20 @@ const Roles = () => {
   };
 
   const handleNext = () => {
-    // TODO: Replace with actual user update functionality
-    if (profileData) {
-      setProcessing(true);
-
-      const profileUpdate: Profile = {
-        ...profileData,
-        roles: selectedRoles,
-      };
-
-      dispatch(
-        updateProfile({
-          data: profileUpdate,
-        })
-      );
-
+    const success = () => {
       setProcessing(false);
-    }
+      navigate('/profile/getting-started');
+    };
 
-    navigate('/profile/getting-started');
+    const failure = () => {
+      setProcessing(false);
+    };
+
+    updateUserRoles({
+      roles: selectedRoles,
+      success,
+      failure,
+    });
   };
 
   // Build cards

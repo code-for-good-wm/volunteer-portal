@@ -248,14 +248,7 @@ export const refreshCurrentUserData = async(params: ServiceParams) => {
 
   const auth = getAuth();
   
-  try {
-    // Set updating to true to avoid automatic data load
-    store.dispatch(
-      updateAuth({
-        updating: true,
-      })
-    );
-  
+  try {  
     // Acquire bearer token
     const fbUser = auth.currentUser;
     const token = await fbUser?.getIdToken() || '';
@@ -263,25 +256,13 @@ export const refreshCurrentUserData = async(params: ServiceParams) => {
     // Pull user data and store in state
     await getUserData(token);
 
-    // Set updating to false and sign in user
-    store.dispatch(
-      updateAuth({
-        updating: false,
-      })
-    );
-
     if (success) {
       success();
     }
   } catch (error) {
-    store.dispatch(
-      updateAuth({
-        updating: false,
-      })
-    );
-
-    // Show alert
     const message = 'An error occurred while refreshing user data.';
+ 
+    // Show alert
     store.dispatch(
       updateAlert({
         visible: true,

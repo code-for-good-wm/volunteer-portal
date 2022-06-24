@@ -1,3 +1,5 @@
+import { Role } from './profile';
+
 export interface ServiceParams {
   success?: () => void,
   failure?: (message: string) => void,
@@ -10,4 +12,8 @@ export interface SignInParams extends ServiceParams {
 
 export interface RecoverPasswordParams extends ServiceParams {
   email: string,
+}
+
+export interface UpdateUserRolesParams extends ServiceParams {
+  roles: Role[],
 }

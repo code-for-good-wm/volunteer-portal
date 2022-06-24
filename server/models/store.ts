@@ -83,7 +83,6 @@ export const userStore = {
 
 export const profileStore = {
   list: async(userId: mongoose.Types.ObjectId) => {
-    // TODO: include skills with populate
     return await ProfileModel.findOne({user: userId});
   },
   create: async(profile: Profile) => {
@@ -94,7 +93,6 @@ export const profileStore = {
     return await ProfileModel.updateOne({_id, user: userId}, profile);
   },
   delete: async(_id: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {
-    // TODO: clean up other items?
     return await ProfileModel.deleteOne({_id, user: userId});
   }
 };

@@ -1,8 +1,78 @@
 import { store } from '../store/store';
+import { getAuth } from 'firebase/auth';
+
+import { Profile, UserSkill, UserSkillData } from '../types/profile';
+import { UpdateUserRolesParams } from '../types/services';
+
+import { updateProfile } from '../store/profileSlice';
+import { updateAlert } from '../store/alertSlice';
 
 import { convertSkillDataToArray, convertSkillDataToObject, parsePhone } from '../helpers/functions';
-import { Profile, UserSkill, UserSkillData } from '../types/profile';
-import { updateProfile } from '../store/profileSlice';
+
+export const updateUserRoles = async (params: UpdateUserRolesParams) => {
+  const {
+    roles,
+    success,
+    failure
+  } = params;
+
+  const auth = getAuth();
+  const appState = store.getState();
+
+  try {
+    // Acquire bearer token
+    const fbUser = auth.currentUser;
+    const token = await fbUser?.getIdToken() || '';
+
+    const userId = appState.auth.user?._id;
+
+    // Prep fetch call
+    const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/profile`;
+    const body = JSON.stringify({
+      roles,
+    });
+
+    const profileResponse = await fetch(profileUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body,
+    });
+
+    if (!profileResponse.ok) {
+      throw new Error('Failed to update user profile.');
+    }
+
+    const profileUpdate = await profileResponse.json() as Profile;
+
+    store.dispatch(
+      updateProfile({
+        data: profileUpdate,
+      })
+    );
+
+    if (success) {
+      success();
+    }
+  } catch (error) {
+    const message = 'An error occurred while updating user data.';
+
+    // Show alert
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: message,
+      })
+    );
+
+    if (failure) {
+      failure(message);
+    }
+  }
+};
 
 /**
  * Pull the user's saved profile and return an object with

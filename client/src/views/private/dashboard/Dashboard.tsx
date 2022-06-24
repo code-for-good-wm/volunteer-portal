@@ -22,7 +22,11 @@ const Dashboard = () => {
       navigate('/profile');
     };
 
-    refreshCurrentUserData({ success });
+    const failure = () => {
+      setProcessing(false);
+    };
+
+    refreshCurrentUserData({ success, failure });
   };
 
   // Build UI
