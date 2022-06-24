@@ -47,17 +47,10 @@ export const alertSlice = createSlice({
         draftState.content = action.payload.content;
       }
     },
-    resetAlert: (draftState) => {
-      const { visible, theme, duration, content } = initialState;
-      draftState.visible = visible;
-      draftState.theme = theme;
-      draftState.duration = duration;
-      draftState.content = content;
-    }
   },
 });
 
-export const { updateAlert, resetAlert } = alertSlice.actions;
+export const { updateAlert } = alertSlice.actions;
 
 export const alert = (state: RootState) => state.alert;
 

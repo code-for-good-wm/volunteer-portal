@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import PageLayout from '../../../layouts/PageLayout';
@@ -7,15 +7,22 @@ import { useAppSelector } from '../../../store/hooks';
 import { profile } from '../../../store/profileSlice';
 
 import StandardButton from '../../../components/buttons/StandardButton';
-
+import { refreshCurrentUserData } from '../../../services/auth';
 
 const Dashboard = () => {
+  const [processing, setProcessing] = useState(false);
+
   const profileData = useAppSelector(profile);
 
   const navigate = useNavigate();
 
   const handleButton = () => {
-    navigate('/profile');
+    const success = () => {
+      setProcessing(false);
+      navigate('/profile');
+    };
+
+    refreshCurrentUserData({ success });
   };
 
   // Build UI
@@ -63,6 +70,7 @@ const Dashboard = () => {
             <StandardButton
               label={buttonLabel}
               handler={handleButton}
+              disabled={processing}
             />
           </div>
         </div>

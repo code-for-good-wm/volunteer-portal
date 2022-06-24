@@ -5,7 +5,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { signedIn, updating } from '../store/authSlice';
-import { alert, resetAlert } from '../store/alertSlice';
+import { alert, updateAlert } from '../store/alertSlice';
 import { handleAuthStateChange } from '../services/auth';
 
 import ScrollToTop from './ScrollToTop';
@@ -30,7 +30,9 @@ const NavSwitch = () => {
 
   const handleAlertClose = () => {
     dispatch(
-      resetAlert()
+      updateAlert({
+        visible: false,
+      })
     );
   };
 

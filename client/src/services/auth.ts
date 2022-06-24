@@ -274,8 +274,14 @@ export const refreshCurrentUserData = async(params: ServiceParams) => {
       success();
     }
   } catch (error) {
+    store.dispatch(
+      updateAuth({
+        updating: false,
+      })
+    );
+
+    // Show alert
     const message = 'An error occurred while refreshing user data.';
-    // Show snack alert
     store.dispatch(
       updateAlert({
         visible: true,
