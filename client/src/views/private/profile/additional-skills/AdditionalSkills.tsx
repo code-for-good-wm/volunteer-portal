@@ -1,8 +1,7 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
-import { user } from '../../../../store/authSlice';
+import { useAppDispatch } from '../../../../store/hooks';
 import { updateProfile } from '../../../../store/profileSlice';
 
 import { ProfileSkill, UserSkill } from '../../../../types/profile';
@@ -24,8 +23,6 @@ const AdditionalSkills = () => {
   const [otherSkills, setOtherSkills] = useState('');
 
   const [processing, setProcessing] = useState(false);
-
-  const userData = useAppSelector(user);
 
   const dispatch = useAppDispatch();
 
@@ -91,27 +88,25 @@ const AdditionalSkills = () => {
 
   const handleSubmit = () => {
     // TODO: Replace with actual user update functionality
-    if (userData) {
-      setProcessing(true);
+    setProcessing(true);
 
-      const skillUpdate: UserSkill[] = [];
+    const skillUpdate: UserSkill[] = [];
 
-      otherExperienceLevels.forEach((setting) => {
-        const { code, level } = setting;
-        skillUpdate.push({
-          code,
-          level
-        });
+    otherExperienceLevels.forEach((setting) => {
+      const { code, level } = setting;
+      skillUpdate.push({
+        code,
+        level
       });
+    });
 
-      const updateResult = updateAdditionalSkills(skillUpdate, otherSkills);
+    const updateResult = updateAdditionalSkills(skillUpdate, otherSkills);
 
-      if (!updateResult) {
-        // TODO: Handle errors
-      }
-
-      setProcessing(false);
+    if (!updateResult) {
+      // TODO: Handle errors
     }
+
+    setProcessing(false);
 
     // Continue to completion screen
     navigate('/profile/complete');

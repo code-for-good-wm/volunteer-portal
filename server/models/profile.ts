@@ -15,7 +15,6 @@ export interface Agreements {
 export interface Profile {
   _id?: Types.ObjectId;
   user: Types.ObjectId | User;
-  lastUpdate?: string; // ISO date; timestamp of most recent profile completion
   completionDate?: string; // ISO date; timestamp of initial profile completion
   roles: Role[];
   linkedInUrl?: string;
@@ -32,7 +31,6 @@ export interface Profile {
 
 const profileSchema = new Schema<Profile>({
   user: { type: Types.ObjectId, required: true, ref: 'User' },
-  lastUpdate: String,
   completionDate: String,
   roles: [{ type: String, enum: Role }], // array of Role
   linkedInUrl: String,

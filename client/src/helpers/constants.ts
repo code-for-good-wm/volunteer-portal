@@ -1,4 +1,4 @@
-import { DesignSkillsData, DietaryRestrictionData, PrimaryProfileSection, RoleData, ShirtSizeData, Skill, SkillLevelData, TechnicalSkillsData } from '../types/profile';
+import { DesignSkillsData, DietaryRestrictionData, PrimaryProfileSection, Profile, RoleData, ShirtSizeData, Skill, SkillLevelData, TechnicalSkillsData } from '../types/profile';
 import { User } from '../types/user';
 
 export const testUserData: User = {
@@ -6,20 +6,19 @@ export const testUserData: User = {
   name: '',
   email: 'test1@slothwerks.com',
   phone: '',
-  profile: {
-    currentSection: '',
-    lastUpdate: '',
-    completionDate: '',
-    roles: [],
-    linkedInUrl: '',
-    websiteUrl: '',
-    portfolioUrl: '',
-    shirtSize: '',
-    dietaryRestrictions: [],
-    accessibilityRequirements: '',
-    skills: [],
-    additionalSkills: '',
-  }
+};
+
+export const testProfileData: Profile = {
+  completionDate: '',
+  roles: [],
+  linkedInUrl: '',
+  websiteUrl: '',
+  portfolioUrl: '',
+  shirtSize: '',
+  dietaryRestrictions: [],
+  accessibilityRequirements: '',
+  skills: [],
+  additionalSkills: '',
 };
 
 export const roles: RoleData[] = [

@@ -1,5 +1,7 @@
+import { updateAuth } from '../store/authSlice';
+import { updateProfile } from '../store/profileSlice';
 import { store } from '../store/store';
-import { PrimaryProfileSectionId, Role, SkillCode, UserSkill, UserSkillData } from '../types/profile';
+import { PrimaryProfileSectionId, SkillCode, UserSkill, UserSkillData } from '../types/profile';
 import { profileStructure } from './constants';
 
 /**
@@ -9,23 +11,6 @@ import { profileStructure } from './constants';
  */
 export const capitalizeFirstLetter = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
-};
-
-/**
- * Determine profile sections to display based on user roles
- * @param {Role[]} roles - e.g. ['developer', 'lead'];
- * @returns {PrimaryProfileSectionId[]} - e.g. ['getting-started', 'technical-skills', 'additional-skills'];
- */
-export const getDisplayedProfileSections = (roles: Role[]) => {
-  const sectionsToDisplay: PrimaryProfileSectionId[] = ['getting-started'];
-  if (roles.includes('developer')) {
-    sectionsToDisplay.push('technical-skills');
-  }
-  if (roles.includes('designer')) {
-    sectionsToDisplay.push('design-skills');
-  }
-  sectionsToDisplay.push('additional-skills');
-  return sectionsToDisplay;
 };
 
 /**
@@ -59,6 +44,50 @@ export const parsePhone = (phone: string) => {
 };
 
 /**
+ * Reset state to defaults
+ */
+export const resetAppState = () => {
+  store.dispatch(
+    updateAuth({
+      signedIn: false,
+      updating: false,
+      user: null,
+    })
+  );
+
+  store.dispatch(
+    updateProfile({
+      currentSection: null,
+      data: null,
+    })
+  );
+};
+
+/**
+ * Determine profile sections to display based on user roles
+ * @returns {PrimaryProfileSectionId[]} - e.g. ['getting-started', 'technical-skills', 'additional-skills'];
+ */
+export const getDisplayedProfileSections = () => {
+  const appState = store.getState();
+
+  const roles = appState.profile.data?.roles;
+  const sectionsToDisplay: PrimaryProfileSectionId[] = ['getting-started'];
+
+  if (roles) {
+    if (roles.includes('developer')) {
+      sectionsToDisplay.push('technical-skills');
+    }
+    if (roles.includes('designer')) {
+      sectionsToDisplay.push('design-skills');
+    }
+  }
+
+  sectionsToDisplay.push('additional-skills');
+
+  return sectionsToDisplay;
+};
+
+/**
  * Determine the next profile view to display based on the current view
  * Returns the ID of the next section to display (e.g. 'technical-skills'),
  * or a boolean value: false if we can't perform the operation, true if the
@@ -74,12 +103,8 @@ export const getNextProfileSectionId = () => {
     return false;
   }
 
-  // Get user roles
-  const userData = appState.auth.user;
-  const userRoles = userData?.profile?.roles ?? [];
-
   // Get expected profile sections to display
-  const displayedSections = getDisplayedProfileSections(userRoles);
+  const displayedSections = getDisplayedProfileSections();
 
   // Get index of current section
   const currentSectionIndex = displayedSections.findIndex((section) => {
@@ -114,12 +139,8 @@ export const getPreviousProfileSection = () => {
     return;
   }
 
-  // Get user roles
-  const userData = appState.auth.user;
-  const userRoles = userData?.profile?.roles ?? [];
-
   // Get expected profile sections to display
-  const displayedSections = getDisplayedProfileSections(userRoles);
+  const displayedSections = getDisplayedProfileSections();
 
   // Get index of current section
   const currentSectionIndex = displayedSections.findIndex((section) => {

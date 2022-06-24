@@ -55,8 +55,6 @@ export interface ProfileSkill {
 }
 
 export interface Profile {
-  currentSection?: string; // e.g. 'gettingStarted'
-  lastUpdate?: string; // ISO date
   completionDate?: string; // ISO date
   roles: Role[];
   linkedInUrl?: string;

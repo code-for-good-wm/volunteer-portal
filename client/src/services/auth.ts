@@ -7,6 +7,8 @@ import { SignInParams, RecoverPasswordParams } from '../types/services';
 
 import { store } from '../store/store';
 import { updateAuth } from '../store/authSlice';
+import { updateProfile } from '../store/profileSlice';
+import { resetAppState } from '../helpers/functions';
 
 export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
   const appState = store.getState();
@@ -63,23 +65,21 @@ export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
         const profileData = await profileResponse.json() as Profile;
 
         store.dispatch(
+          updateProfile({
+            data: profileData,
+          })
+        );
+
+        store.dispatch(
           updateAuth({
             signedIn: true,
-            user: {
-              ...userData,
-              profile: profileData,
-            },
+            user: userData,
             updating: false,
           })
         );
       } catch (error) {
-        store.dispatch(
-          updateAuth({
-            signedIn: false,
-            user: null,
-            updating: false,
-          })
-        );
+        // Reset app state
+        resetAppState();
 
         // Sign out user
         if (auth.currentUser) {
@@ -207,12 +207,15 @@ export const createNewUser = async (params: SignInParams) => {
     const profileData = await profileResponse.json() as Profile;
 
     store.dispatch(
+      updateProfile({
+        data: profileData
+      })
+    );
+
+    store.dispatch(
       updateAuth({
         signedIn: true,
-        user: {
-          ...userData,
-          profile: profileData,
-        },
+        user: userData,
         updating: false,
       })
     );
@@ -223,6 +226,13 @@ export const createNewUser = async (params: SignInParams) => {
   } catch (error) {
     const authError = error as FirebaseError;
     const { code } = authError;
+
+    // Set updating to false
+    store.dispatch(
+      updateAuth({
+        updating: false,
+      })
+    );
 
     // If signed in, sign out user
     if (auth.currentUser) {

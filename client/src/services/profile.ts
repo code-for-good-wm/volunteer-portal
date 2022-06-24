@@ -2,8 +2,7 @@ import { store } from '../store/store';
 
 import { convertSkillDataToArray, convertSkillDataToObject, parsePhone } from '../helpers/functions';
 import { Profile, UserSkill, UserSkillData } from '../types/profile';
-import { User } from '../types/user';
-import { updateAuth } from '../store/authSlice';
+import { updateProfile } from '../store/profileSlice';
 
 /**
  * Pull the user's saved profile and return an object with
@@ -12,14 +11,15 @@ import { updateAuth } from '../store/authSlice';
 export const getGettingStartedProfileData = () => {
   const appState = store.getState();
   const { user } = appState.auth;
+  const profile = appState.profile.data;
 
-  // If no user data, return undefined
-  if (!user) {
+  // If no data, return undefined
+  if (!user || !profile) {
     return;
   }
 
   // Pull profile and return data
-  const { name, phone, profile } = user;
+  const { name, phone } = user;
   const {
     linkedInUrl,
     websiteUrl,
@@ -62,23 +62,12 @@ export const getGettingStartedProfileData = () => {
  */
 export const getUserSkills = () => {
   const appState = store.getState();
-  const { user } = appState.auth;
-
-  // If no user data, return undefined
-  if (!user) {
-    return;
-  }
-
-  // Pull profile and return data
-  const { profile } = user;
-
-  return profile.skills;
+  const profile = appState.profile.data;
+  return profile?.skills;
 };
 
 /**
- * Update the users' profile based on an array of
- * other experience skill data and additional skill content
- * @param {UserSkill[]} [update]
+ * Update the users' skills settings based on an array of skill data
  */
 export const updateUserSkills = (update?: UserSkill[]) => {
   if (!update) {
@@ -86,15 +75,13 @@ export const updateUserSkills = (update?: UserSkill[]) => {
   }
 
   const appState = store.getState();
-  const { user } = appState.auth;
+  const profile = appState.profile.data;
 
-  // If no user data, return undefined
-  if (!user) {
+  if (!profile) {
     return;
   }
 
   // Pull current skill data
-  const { profile } = user;
   const currentSkills = profile.skills;
 
   // Convert to objects for merge
@@ -114,13 +101,8 @@ export const updateUserSkills = (update?: UserSkill[]) => {
     skills: updatedSkills
   };
 
-  const userUpdate: User = {
-    ...user,
-    profile: profileUpdate
-  };
-
-  store.dispatch(updateAuth({
-    user: userUpdate
+  store.dispatch(updateProfile({
+    data: profileUpdate
   }));
 
   return true;
@@ -132,34 +114,23 @@ export const updateUserSkills = (update?: UserSkill[]) => {
  */
 export const getAdditionalSkills = () => {
   const appState = store.getState();
-  const { user } = appState.auth;
-
-  // If no user data, return undefined
-  if (!user) {
-    return;
-  }
-
-  // Pull profile and return data
-  const { profile } = user;
-  return profile.additionalSkills;
+  const profile = appState.profile.data;
+  return profile?.additionalSkills;
 };
 
 /**
- * Update the users' skills settings based on an array of skill data
- * @param {UserSkill[]} otherExperience
- * @param {string} additionalSkills
+ * Update the users' profile based on an array of
+ * other experience skill data and additional skill content
  */
 export const updateAdditionalSkills = (otherExperience: UserSkill[], additionalSkills: string) => {
   const appState = store.getState();
-  const { user } = appState.auth;
+  const profile = appState.profile.data;
 
-  // If no user data, return undefined
-  if (!user) {
+  if (!profile) {
     return;
   }
 
   // Pull current skill data
-  const { profile } = user;
   const currentSkills = profile.skills;
 
   // Convert to objects for merge
@@ -174,23 +145,20 @@ export const updateAdditionalSkills = (otherExperience: UserSkill[], additionalS
   // Convert back to array and update user data
   const updatedSkills = convertSkillDataToArray(updatedSkillsObj);
 
-  const timestamp = new Date().toISOString();
-
   const profileUpdate: Profile = {
     ...profile,
-    lastUpdate: timestamp,
-    completionDate: timestamp,
     skills: updatedSkills,
     additionalSkills
   };
 
-  const userUpdate: User = {
-    ...user,
-    profile: profileUpdate
-  };
+  // If this is the first completion of the profile section, add a timestamp
+  if (!profile.completionDate) {
+    const timestamp = new Date().toISOString();
+    profileUpdate.completionDate = timestamp;
+  }
 
-  store.dispatch(updateAuth({
-    user: userUpdate
+  store.dispatch(updateProfile({
+    data: profileUpdate
   }));
 
   return true;

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
 import { updateAuth, user } from '../../../../store/authSlice';
-import { updateProfile } from '../../../../store/profileSlice';
+import { updateProfile, profile } from '../../../../store/profileSlice';
 
 import { User } from '../../../../types/user';
 import { Agreement, Agreements, DietaryRestriction, Profile, ShirtSize } from '../../../../types/profile';
@@ -83,6 +83,7 @@ const GettingStarted = () => {
   const [processing, setProcessing] = useState(false);
 
   const userData = useAppSelector(user);
+  const profileData = useAppSelector(profile);
 
   const dispatch = useAppDispatch();
 
@@ -276,7 +277,7 @@ const GettingStarted = () => {
 
   const handleNext = () => {
     // TODO: Replace with actual user update functionality
-    if (userData) {
+    if (userData && profileData) {
       setProcessing(true);
 
       const name = basicInfoForm.name.trim();
@@ -291,9 +292,9 @@ const GettingStarted = () => {
 
       let agreementsUpdate: Agreements = {};
 
-      if (userData.profile.agreements) {
+      if (profileData.agreements) {
         agreementsUpdate = {
-          ...userData.profile.agreements
+          ...profileData.agreements
         };
       }
 
@@ -310,7 +311,7 @@ const GettingStarted = () => {
       }
 
       const profileUpdate: Profile = {
-        ...userData.profile,
+        ...profileData,
         linkedInUrl,
         websiteUrl,
         portfolioUrl,
@@ -325,8 +326,13 @@ const GettingStarted = () => {
         ...userData,
         name,
         phone,
-        profile: profileUpdate,
       };
+
+      dispatch(
+        updateProfile({
+          data: profileUpdate,
+        })
+      );
 
       dispatch(
         updateAuth({

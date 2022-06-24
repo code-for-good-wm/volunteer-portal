@@ -1,17 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PrimaryProfileSectionId } from '../types/profile';
+import { PrimaryProfileSectionId, Profile } from '../types/profile';
 import { RootState } from './store';
 
 interface ProfileState {
   currentSection: PrimaryProfileSectionId | null;
+  data: Profile | null;
 }
 
 interface ProfileUpdate {
   currentSection?: PrimaryProfileSectionId | null;
+  data?: Profile | null;
 }
 
 const initialState: ProfileState = {
   currentSection: null,
+  data: null,
 };
 
 /**
@@ -28,6 +31,9 @@ export const profileSlice = createSlice({
       if (action.payload.currentSection !== undefined) {
         draftState.currentSection = action.payload.currentSection;
       }
+      if (action.payload.data !== undefined) {
+        draftState.data = action.payload.data;
+      }
     },
   },
 });
@@ -35,5 +41,6 @@ export const profileSlice = createSlice({
 export const { updateProfile } = profileSlice.actions;
 
 export const currentSection = (state: RootState) => state.profile.currentSection;
+export const profile = (state: RootState) => state.profile.data;
 
 export default profileSlice.reducer;

@@ -4,16 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import PageLayout from '../../../layouts/PageLayout';
 
 import { useAppSelector } from '../../../store/hooks';
-import { user } from '../../../store/authSlice';
+import { profile } from '../../../store/profileSlice';
 
 import StandardButton from '../../../components/buttons/StandardButton';
 
+
 const Dashboard = () => {
-  const userData = useAppSelector(user);
-
-  console.log('Here is the user data stored in state: ', userData);
-
-  const profile = userData?.profile;
+  const profileData = useAppSelector(profile);
 
   const navigate = useNavigate();
 
@@ -24,7 +21,7 @@ const Dashboard = () => {
   // Build UI
   const contentCard = (
     <div className="contentCard dashboardCard">
-      { profile?.completionDate ? (
+      { profileData?.completionDate ? (
         <>
           <p className="center">
             Thank you for registering as a volunteer for Code for Good.
@@ -52,7 +49,7 @@ const Dashboard = () => {
     </div>
   );
 
-  const buttonLabel = profile?.completionDate ? 'Update my info' : 'Let\'s do this!';
+  const buttonLabel = profileData?.completionDate ? 'Update my info' : 'Let\'s do this!';
 
   return (
     <PageLayout>

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
-import { user } from '../../../../store/authSlice';
+import { useAppDispatch } from '../../../../store/hooks';
 import { updateProfile } from '../../../../store/profileSlice';
 
 import { ProfileSkill, UserSkill } from '../../../../types/profile';
@@ -24,8 +23,6 @@ const DesignSkills = () => {
   const [development, setDevelopment] = useState<ProfileSkill[]>([]);
 
   const [processing, setProcessing] = useState(false);
-
-  const userData = useAppSelector(user);
 
   const dispatch = useAppDispatch();
 
@@ -139,43 +136,41 @@ const DesignSkills = () => {
 
   const handleNext = () => {
     // TODO: Replace with actual user update functionality
-    if (userData) {
-      setProcessing(true);
+    setProcessing(true);
 
-      const skillUpdate: UserSkill[] = [];
+    const skillUpdate: UserSkill[] = [];
 
-      experienceLevels.forEach((setting) => {
-        const { code, level } = setting;
-        skillUpdate.push({
-          code,
-          level
-        });
+    experienceLevels.forEach((setting) => {
+      const { code, level } = setting;
+      skillUpdate.push({
+        code,
+        level
       });
+    });
 
-      tools.forEach((setting) => {
-        const { code, level } = setting;
-        skillUpdate.push({
-          code,
-          level
-        });
+    tools.forEach((setting) => {
+      const { code, level } = setting;
+      skillUpdate.push({
+        code,
+        level
       });
+    });
 
-      development.forEach((setting) => {
-        const { code, level } = setting;
-        skillUpdate.push({
-          code,
-          level
-        });
+    development.forEach((setting) => {
+      const { code, level } = setting;
+      skillUpdate.push({
+        code,
+        level
       });
+    });
 
-      const updateResult = updateUserSkills(skillUpdate);
+    const updateResult = updateUserSkills(skillUpdate);
 
-      if (!updateResult) {
-        // TODO: Handle errors
-      }
-
-      setProcessing(false);
+    if (!updateResult) {
+      // TODO: Handle errors
     }
+
+    setProcessing(false);
 
     // Determine next view to display
     const nextSection = getNextProfileSectionId() ?? '';
