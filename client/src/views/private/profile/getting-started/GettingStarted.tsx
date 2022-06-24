@@ -284,7 +284,7 @@ const GettingStarted = () => {
       const phone = parsePhone(basicInfoForm.phone).number;
       const linkedInUrl = contactInfoForm.linkedInUrl.trim();
       const websiteUrl = contactInfoForm.websiteUrl.trim();
-      const portfolioUrl = contactInfoForm.websiteUrl.trim();
+      const portfolioUrl = contactInfoForm.portfolioUrl.trim();
       const { previousVolunteer, shirtSize, dietaryRestrictions } = extraStuff;
       const { termsAndConditions, photoRelease, codeOfConduct } = agreements;
 
