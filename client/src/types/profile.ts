@@ -44,6 +44,7 @@ export interface Skill {
 }
 
 export interface UserSkill {
+  _id?: string; // ID of user skill document in database
   code: SkillCode;
   level: SkillLevel;
 }

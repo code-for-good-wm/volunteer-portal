@@ -11,6 +11,68 @@ import { updateAlert } from '../store/alertSlice';
 
 import { convertSkillDataToArray, convertSkillDataToObject, parsePhone } from '../helpers/functions';
 
+/**
+ * Pull the user's saved profile and return an object with
+ * data organized for the 'getting started' view
+ */
+export const getGettingStartedProfileData = () => {
+  const appState = store.getState();
+  const { user } = appState.auth;
+  const profile = appState.profile.data;
+
+  // If no data, return undefined
+  if (!user || !profile) {
+    return;
+  }
+
+  // Pull profile and return data
+  const { name, phone } = user;
+  const {
+    linkedInUrl,
+    websiteUrl,
+    portfolioUrl,
+    previousVolunteer,
+    shirtSize,
+    dietaryRestrictions,
+    accessibilityRequirements,
+    agreements
+  } = profile;
+
+  return (
+    {
+      basicInfo: {
+        name,
+        phone: parsePhone(phone).formatted,
+      },
+      contactInfo: {
+        linkedInUrl: linkedInUrl ?? '',
+        websiteUrl: websiteUrl ?? '',
+        portfolioUrl: portfolioUrl ?? '',
+      },
+      extraStuff: {
+        previousVolunteer: !!previousVolunteer, // Could be undefined
+        shirtSize: shirtSize ?? '',
+        dietaryRestrictions,
+      },
+      accessibilityRequirements: accessibilityRequirements ?? '',
+      agreements: {
+        termsAndConditions: !!agreements?.termsAndConditions, // Convert to boolean
+        photoRelease: !!agreements?.photoRelease, // Convert to boolean
+        codeOfConduct: !!agreements?.codeOfConduct, // Convert to boolean
+      }
+    }
+  );
+};
+
+/**
+ * Pull the user's saved profile and return the user's skills array
+ */
+export const getUserSkills = () => {
+  const appState = store.getState();
+  const profile = appState.profile.data;
+  return profile?.skills;
+};
+
 export const updateUserRoles = async (params: UpdateUserRolesParams) => {
   const {
     roles,
@@ -78,56 +140,13 @@ export const updateUserRoles = async (params: UpdateUserRolesParams) => {
 };
 
 /**
- * Pull the user's saved profile and return an object with
- * data organized for the 'getting started' view
+ * Pull the user's saved profile and return the profile's
+ * additionalSkills (a string)
  */
-export const getGettingStartedProfileData = () => {
+export const getAdditionalSkills = () => {
   const appState = store.getState();
-  const { user } = appState.auth;
   const profile = appState.profile.data;
-
-  // If no data, return undefined
-  if (!user || !profile) {
-    return;
-  }
-
-  // Pull profile and return data
-  const { name, phone } = user;
-  const {
-    linkedInUrl,
-    websiteUrl,
-    portfolioUrl,
-    previousVolunteer,
-    shirtSize,
-    dietaryRestrictions,
-    accessibilityRequirements,
-    agreements
-  } = profile;
-
-  return (
-    {
-      basicInfo: {
-        name,
-        phone: parsePhone(phone).formatted,
-      },
-      contactInfo: {
-        linkedInUrl: linkedInUrl ?? '',
-        websiteUrl: websiteUrl ?? '',
-        portfolioUrl: portfolioUrl ?? '',
-      },
-      extraStuff: {
-        previousVolunteer: !!previousVolunteer, // Could be undefined
-        shirtSize: shirtSize ?? '',
-        dietaryRestrictions,
-      },
-      accessibilityRequirements: accessibilityRequirements ?? '',
-      agreements: {
-        termsAndConditions: !!agreements?.termsAndConditions, // Convert to boolean
-        photoRelease: !!agreements?.photoRelease, // Convert to boolean
-        codeOfConduct: !!agreements?.codeOfConduct, // Convert to boolean
-      }
-    }
-  );
+  return profile?.additionalSkills;
 };
 
 export const updateGettingStartedProfileData = async (params: UpdateGettingStartedProfileDataParams) => {
@@ -219,18 +238,6 @@ export const updateGettingStartedProfileData = async (params: UpdateGettingStart
   }
 };
 
-/**
- * Pull the user's saved profile and return the user's skills array
- */
-export const getUserSkills = () => {
-  const appState = store.getState();
-  const profile = appState.profile.data;
-  return profile?.skills;
-};
-
-/**
- * Update the users' skills settings based on an array of skill data
- */
 export const updateUserSkills = (update?: UserSkill[]) => {
   if (!update) {
     return;
@@ -246,38 +253,27 @@ export const updateUserSkills = (update?: UserSkill[]) => {
   // Pull current skill data
   const currentSkills = profile.skills;
 
-  // Convert to objects for merge
-  const currentSkillsObj = convertSkillDataToObject(currentSkills);
-  const updateObj = convertSkillDataToObject(update);
+  // Pull document ID's for existing data and apply to update if possible
+  const skillUpdate = update.map((updatedSkill) => {
+    let merge: UserSkill;
+    const existing = currentSkills.find((existingSkill) => {
+      existingSkill.code === updatedSkill.code;
+    });
+    if (existing) {
+      merge = {
+        _id: existing._id,
+        code: updatedSkill.code,
+        level: updatedSkill.level
+      };
+    } else {
+      merge = updatedSkill;
+    }
+    return merge;
+  });
 
-  const updatedSkillsObj: UserSkillData = {
-    ...currentSkillsObj,
-    ...updateObj,
-  };
 
-  // Convert back to array and update user data
-  const updatedSkills = convertSkillDataToArray(updatedSkillsObj);
 
-  const profileUpdate: Profile = {
-    ...profile,
-    skills: updatedSkills
-  };
 
-  store.dispatch(updateProfile({
-    data: profileUpdate
-  }));
-
-  return true;
-};
-
-/**
- * Pull the user's saved profile and return the profile's
- * additionalSkills (a string)
- */
-export const getAdditionalSkills = () => {
-  const appState = store.getState();
-  const profile = appState.profile.data;
-  return profile?.additionalSkills;
 };
 
 /**
