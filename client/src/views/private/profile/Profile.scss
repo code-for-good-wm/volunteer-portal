@@ -4,6 +4,7 @@
     max-width: calc(220px + 600px + ($gutterMedium * 3)); /* Don't ask. */
     display: flex;
     justify-content: space-between;
+    align-items: flex-start; /* Allows sticky progress bar */
     padding: $gutterMedium;
     padding-top: 0;
   }
@@ -62,6 +63,8 @@
   }
 
   @media screen and (min-width: 768px) {
+    position: sticky;
+    top: calc(89px + $gutterLarge); /* Height of header bar + margin */
     display: flex;
     flex-direction: column;
     min-width: 220px;
@@ -508,5 +511,69 @@
   @media screen and (min-width: 768px) {
     align-items: flex-end;
     margin: 0;
+  }
+}
+
+.completionImageContainer {
+  text-align: center;
+  margin-bottom: 28px;
+
+  img {
+    width: 119px;
+    height: 119px;
+  }
+}
+
+.profileCompletionCard {
+  max-width: 675px;
+
+  .completionThanks {
+    @include AvenirHeavy;
+    font-size: 0.875rem;
+    line-height: 1rem;
+    letter-spacing: 1.25px;
+    color: rgba(0, 0, 0, 0.6);
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: $gutterSmall;
+  }
+
+  .completionHeading {
+    @include AvenirHeavy;
+    color: $primaryMain;
+    font-size: 1.5rem;
+    line-height: normal;
+    letter-spacing: 0;
+    text-align: center;
+  }
+
+  .completionDivider {
+    width: 210px;
+    margin: 0 auto $gutterMedium;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  @media screen and (min-width: 768px) {
+    .completionThanks {
+      padding-top: 8px;
+      margin-bottom: 8px;
+    }
+
+    .completionHeading {
+      font-size: 2.125rem;
+    }
+
+    .completionDivider {
+      width: 470px;
+    }
+  }
+}
+
+.profileCompletionButtonContainer {
+  max-width: 430px;
+  margin: 0 auto;
+
+  @media screen and (min-width: 768px) {
+    padding-top: 8px;
   }
 }

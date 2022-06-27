@@ -5,5 +5,8 @@
 .dashboardButtonContainer {
   max-width: 430px;
   margin: 0 auto;
-  padding-top: 8px;
+
+  @media screen and (min-width: 768px) {
+    padding-top: 8px;
+  }
 }

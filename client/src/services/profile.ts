@@ -174,8 +174,12 @@ export const updateAdditionalSkills = (otherExperience: UserSkill[], additionalS
   // Convert back to array and update user data
   const updatedSkills = convertSkillDataToArray(updatedSkillsObj);
 
+  const timestamp = new Date().toISOString();
+
   const profileUpdate: Profile = {
     ...profile,
+    lastUpdate: timestamp,
+    completionDate: timestamp,
     skills: updatedSkills,
     additionalSkills
   };
