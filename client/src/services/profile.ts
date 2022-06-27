@@ -2,7 +2,9 @@ import { store } from '../store/store';
 import { getAuth } from 'firebase/auth';
 
 import { Profile, UserSkill, UserSkillData } from '../types/profile';
-import { UpdateUserRolesParams } from '../types/services';
+import { User } from '../types/user';
+import { updateAuth } from '../store/authSlice';
+import { UpdateGettingStartedProfileDataParams, UpdateUserRolesParams } from '../types/services';
 
 import { updateProfile } from '../store/profileSlice';
 import { updateAlert } from '../store/alertSlice';
@@ -26,7 +28,7 @@ export const updateUserRoles = async (params: UpdateUserRolesParams) => {
 
     const userId = appState.auth.user?._id;
 
-    // Prep fetch call
+    // Attempt profile update
     const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/profile`;
     const body = JSON.stringify({
       roles,
@@ -45,11 +47,12 @@ export const updateUserRoles = async (params: UpdateUserRolesParams) => {
       throw new Error('Failed to update user profile.');
     }
 
-    const profileUpdate = await profileResponse.json() as Profile;
+    const newProfileData = await profileResponse.json() as Profile;
 
+    // Update local data
     store.dispatch(
       updateProfile({
-        data: profileUpdate,
+        data: newProfileData,
       })
     );
 
@@ -125,6 +128,95 @@ export const getGettingStartedProfileData = () => {
       }
     }
   );
+};
+
+export const updateGettingStartedProfileData = async (params: UpdateGettingStartedProfileDataParams) => {
+  const {
+    userUpdate,
+    profileUpdate,
+    success,
+    failure
+  } = params;
+
+  const auth = getAuth();
+  const appState = store.getState();
+
+  try {
+    // Acquire bearer token
+    const fbUser = auth.currentUser;
+    const token = await fbUser?.getIdToken() || '';
+
+    const userId = appState.auth.user?._id;
+
+    // Attempt user update
+    const userUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/`;
+
+    const userResponse = await fetch(userUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(userUpdate)
+    });
+
+    if (!userResponse.ok) {
+      throw new Error('Failed to update user data.');
+    }
+
+    const newUserData = await userResponse.json() as User;
+
+    // Update local data
+    store.dispatch(
+      updateAuth({
+        user: newUserData,
+      })
+    );
+
+    // Attempt profile update
+    const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/profile`;
+
+    const profileResponse = await fetch(profileUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(profileUpdate),
+    });
+
+    if (!profileResponse.ok) {
+      throw new Error('Failed to update user profile.');
+    }
+
+    const newProfileData = await profileResponse.json() as Profile;
+
+    // Update local data
+    store.dispatch(
+      updateProfile({
+        data: newProfileData,
+      })
+    );
+
+    if (success) {
+      success();
+    }
+  } catch (error) {
+    const message = 'An error occurred while updating user data.';
+
+    // Show alert
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: message,
+      })
+    );
+
+    if (failure) {
+      failure(message);
+    }
+  }
 };
 
 /**

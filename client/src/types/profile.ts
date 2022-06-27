@@ -69,6 +69,21 @@ export interface Profile {
   additionalSkills?: string;
 }
 
+export interface ProfileUpdate {
+  completionDate?: string; // ISO date
+  roles?: Role[];
+  linkedInUrl?: string;
+  websiteUrl?: string;
+  portfolioUrl?: string;
+  previousVolunteer?: boolean;
+  shirtSize?: ShirtSize;
+  dietaryRestrictions?: DietaryRestriction[];
+  accessibilityRequirements?: string;
+  agreements?: Agreements;
+  skills?: UserSkill[];
+  additionalSkills?: string;
+}
+
 export interface RoleData {
   id: Role;
   description: string;

@@ -1,4 +1,5 @@
-import { Role } from './profile';
+import { ProfileUpdate, Role } from './profile';
+import { UserUpdate } from './user';
 
 export interface ServiceParams {
   success?: () => void,
@@ -16,4 +17,9 @@ export interface RecoverPasswordParams extends ServiceParams {
 
 export interface UpdateUserRolesParams extends ServiceParams {
   roles: Role[],
+}
+
+export interface UpdateGettingStartedProfileDataParams extends ServiceParams {
+  userUpdate: UserUpdate,
+  profileUpdate: ProfileUpdate
 }

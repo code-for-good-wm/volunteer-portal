@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
+import { useAppSelector } from '../../../../store/hooks';
 import { profile } from '../../../../store/profileSlice';
 
 import { Role } from '../../../../types/profile';
@@ -18,7 +18,6 @@ const Roles = () => {
 
   const profileData = useAppSelector(profile);
 
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   // On mount, determine if any roles are associated with this user
@@ -54,6 +53,8 @@ const Roles = () => {
     const failure = () => {
       setProcessing(false);
     };
+
+    setProcessing(true);
 
     updateUserRoles({
       roles: selectedRoles,

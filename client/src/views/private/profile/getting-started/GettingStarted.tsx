@@ -2,11 +2,10 @@ import React, { useEffect, useState, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
-import { updateAuth, user } from '../../../../store/authSlice';
 import { updateProfile, profile } from '../../../../store/profileSlice';
 
-import { User } from '../../../../types/user';
-import { Agreement, Agreements, DietaryRestriction, Profile, ShirtSize } from '../../../../types/profile';
+import { UserUpdate } from '../../../../types/user';
+import { Agreement, Agreements, DietaryRestriction, ProfileUpdate, ShirtSize } from '../../../../types/profile';
 
 import ProfileLayout from '../../../../layouts/ProfileLayout';
 import { FormControl, FormControlLabel, InputAdornment, Radio, RadioGroup, TextField } from '@mui/material';
@@ -19,7 +18,7 @@ import DietaryRestrictionCard from '../../../../components/elements/DietaryRestr
 import AgreementFormItem from '../../../../components/elements/AgreementFormItem';
 
 import { dietaryRestrictions, shirtSizes } from '../../../../helpers/constants';
-import { getGettingStartedProfileData } from '../../../../services/profile';
+import { getGettingStartedProfileData, updateGettingStartedProfileData } from '../../../../services/profile';
 import { getNextProfileSectionId, parsePhone } from '../../../../helpers/functions';
 import { testPhone } from '../../../../helpers/validation';
 
@@ -82,7 +81,6 @@ const GettingStarted = () => {
 
   const [processing, setProcessing] = useState(false);
 
-  const userData = useAppSelector(user);
   const profileData = useAppSelector(profile);
 
   const dispatch = useAppDispatch();
@@ -276,84 +274,79 @@ const GettingStarted = () => {
   };
 
   const handleNext = () => {
-    // TODO: Replace with actual user update functionality
-    if (userData && profileData) {
-      setProcessing(true);
+    // Prep data
+    const name = basicInfoForm.name.trim();
+    const phone = parsePhone(basicInfoForm.phone).number;
+    const linkedInUrl = contactInfoForm.linkedInUrl.trim();
+    const websiteUrl = contactInfoForm.websiteUrl.trim();
+    const portfolioUrl = contactInfoForm.portfolioUrl.trim();
+    const { previousVolunteer, shirtSize, dietaryRestrictions } = extraStuff;
+    const { termsAndConditions, photoRelease, codeOfConduct } = agreements;
 
-      const name = basicInfoForm.name.trim();
-      const phone = parsePhone(basicInfoForm.phone).number;
-      const linkedInUrl = contactInfoForm.linkedInUrl.trim();
-      const websiteUrl = contactInfoForm.websiteUrl.trim();
-      const portfolioUrl = contactInfoForm.portfolioUrl.trim();
-      const { previousVolunteer, shirtSize, dietaryRestrictions } = extraStuff;
-      const { termsAndConditions, photoRelease, codeOfConduct } = agreements;
+    const timestamp = new Date().toISOString();
 
-      const timestamp = new Date().toISOString();
+    let agreementsUpdate: Agreements = {};
 
-      let agreementsUpdate: Agreements = {};
-
-      if (profileData.agreements) {
-        agreementsUpdate = {
-          ...profileData.agreements
-        };
-      }
-
-      if (termsAndConditions) {
-        agreementsUpdate.termsAndConditions = timestamp;
-      }
-
-      if (photoRelease) {
-        agreementsUpdate.photoRelease = timestamp;
-      }
-
-      if (codeOfConduct) {
-        agreementsUpdate.codeOfConduct = timestamp;
-      }
-
-      const profileUpdate: Profile = {
-        ...profileData,
-        linkedInUrl,
-        websiteUrl,
-        portfolioUrl,
-        previousVolunteer,
-        shirtSize,
-        dietaryRestrictions,
-        accessibilityRequirements: accessibilityRequirements.trim(),
-        agreements: agreementsUpdate,
+    if (profileData?.agreements) {
+      agreementsUpdate = {
+        ...profileData.agreements // Including any existing agreements
       };
+    }
 
-      const userUpdate: User = {
-        ...userData,
-        name,
-        phone,
-      };
+    if (termsAndConditions) {
+      agreementsUpdate.termsAndConditions = timestamp;
+    }
 
-      dispatch(
-        updateProfile({
-          data: profileUpdate,
-        })
-      );
+    if (photoRelease) {
+      agreementsUpdate.photoRelease = timestamp;
+    }
 
-      dispatch(
-        updateAuth({
-          user: userUpdate,
-        })
-      );
+    if (codeOfConduct) {
+      agreementsUpdate.codeOfConduct = timestamp;
+    }
 
+    const profileUpdate: ProfileUpdate = {
+      linkedInUrl,
+      websiteUrl,
+      portfolioUrl,
+      previousVolunteer,
+      shirtSize,
+      dietaryRestrictions,
+      accessibilityRequirements: accessibilityRequirements.trim(),
+      agreements: agreementsUpdate,
+    };
+
+    const userUpdate: UserUpdate = {
+      name,
+      phone,
+    };
+
+    // Build callbacks
+    const success = () => {
       setProcessing(false);
-    }
+      // Determine next view to display
+      const nextSection = getNextProfileSectionId() ?? '';
+      if (!nextSection || nextSection === true) {
+        // If next section cannot be determined or does not exist,
+        // navigate to completion screen
+        navigate('/profile/complete');
+      } else {
+        navigate(`/profile/${nextSection}`);
+      }
+    };
 
-    // Determine next view to display
-    const nextSection = getNextProfileSectionId() ?? '';
-    if (!nextSection) {
-      // TODO: If something bad happens here, what do we do?
-      return;
-    }
-    if (nextSection === true) {
-      navigate('/profile/complete');
-    } else {
-      navigate(`/profile/${nextSection}`);
-    }
+    const failure = () => {
+      setProcessing(false);
+    };
+
+    setProcessing(true);
+
+    updateGettingStartedProfileData({
+      userUpdate,
+      profileUpdate,
+      success,
+      failure
+    });
   };
 
   // Build shirt sizes

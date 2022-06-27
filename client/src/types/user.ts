@@ -4,3 +4,9 @@ export interface User {
   email: string;
   phone: string; // Ten numerical digits
 }
+
+export interface UserUpdate {
+  name?: string;
+  email?: string;
+  phone?: string;
+}
