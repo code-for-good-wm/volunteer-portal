@@ -1,4 +1,4 @@
-import { ProfileUpdate, Role } from './profile';
+import { ProfileUpdate, Role, UserSkill } from './profile';
 import { UserUpdate } from './user';
 
 export interface ServiceParams {
@@ -22,4 +22,8 @@ export interface UpdateUserRolesParams extends ServiceParams {
 export interface UpdateGettingStartedProfileDataParams extends ServiceParams {
   userUpdate: UserUpdate,
   profileUpdate: ProfileUpdate
+}
+
+export interface UpdateUserSkillsParams extends ServiceParams {
+  skills: UserSkill[]
 }

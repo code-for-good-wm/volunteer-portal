@@ -105,9 +105,7 @@ const TechnicalSkills = () => {
   };
 
   const handleNext = () => {
-    // TODO: Replace with actual user update functionality
-    setProcessing(true);
-
+    // Prep data
     const skillUpdate: UserSkill[] = [];
 
     experienceLevels.forEach((setting) => {
@@ -125,6 +123,13 @@ const TechnicalSkills = () => {
         level
       });
     });
+
+    
+
+
+    setProcessing(true);
+
+
 
     const updateResult = updateUserSkills(skillUpdate);
 

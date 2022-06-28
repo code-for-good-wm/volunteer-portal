@@ -4,6 +4,7 @@ import { Result } from '../core';
 import { connect, profileStore, skillStore } from '../models/store';
 import { Profile } from '../models/profile';
 import { checkBindingDataUserId, checkRequestAuth } from '../helpers';
+import { UserSkill } from '../models/user-skill';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   const logger = context.log;
@@ -158,7 +159,7 @@ async function updateProfile(context: Context, userIdent: string): Promise<Resul
 
   const profileId = profile._id;
   const profileUpdate = context.req?.body;
-  const skillsUpdate = profileUpdate?.skills;
+  const skillsUpdate = profileUpdate?.skills as UserSkill[];
   delete profileUpdate?.skills;
 
   // Attempt profile update
@@ -178,12 +179,43 @@ async function updateProfile(context: Context, userIdent: string): Promise<Resul
   }
 
   // Attempt skills update
-  // TODO: Build a gentler method of doing this
   if (skillsUpdate) {
-    // Wipe out current skills
-    await skillStore.deleteAllForUser(userId);
-    // Update with new data
-    await skillStore.createMany(userId, skillsUpdate);
+    // Here we need to handle both possible new skills and/or
+    // updates to existing skills documents for this user.
+    // We'll assume the existence of an _id in the skill object
+    // means we're updating an existing user skill document.
+    const newSkills: UserSkill[] = [];
+    const existingSkills: UserSkill[] = [];
+
+    skillsUpdate.forEach(({_id, code, level}) => {
+      if (code && level !== undefined) {
+        if (_id) {
+          existingSkills.push({
+            _id,
+            user: userId,
+            code,
+            level
+          });
+        } else {
+          newSkills.push({
+            user: userId,
+            code,
+            level
+          });
+        }
+      }
+    });
+
+    // Create and update data
+    if (newSkills.length > 0) {
+      await skillStore.createMany(userId, newSkills);
+    }
+    if (existingSkills.length > 0) {
+      for (let i = 0; i < existingSkills.length; i++) {
+        const s = existingSkills[i];
+        await skillStore.update(s._id as any, userId, s);
+      }
+    }
   }
 
   // Acquire updated data

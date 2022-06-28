@@ -1,9 +1,8 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { Result, tryGetUserIdent } from '../core';
-import { checkBindingDataUserId } from '../helpers';
-import { connect, skillStore } from '../models/store'
-import { User } from '../models/user';
-import { UserSkill, UserSkillModel } from '../models/user-skill';
+import { Result } from '../core';
+import { checkBindingDataUserId, checkRequestAuth } from '../helpers';
+import { connect, skillStore } from '../models/store';
+import { UserSkill } from '../models/user-skill';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   const logger = context.log;
@@ -145,7 +144,8 @@ async function createUserSkills(context: Context, userIdent: string): Promise<Re
   }
 
   // Treat as a single skill
-  const {code, level} = skills;
+  const code = skills?.code;
+  const level = skills?.level;
 
   if (!code || level === undefined) {
     return { 
@@ -195,14 +195,16 @@ async function updateUserSkills(context: Context, userIdent: string): Promise<Re
       });
   } else {
     // Treat as a single skill
-    const {_id, code, level} = skills;
+    if (skills?._id && skills?.code && skills?.level) {
+      const {_id, code, level} = skills;
 
-    newSkills.push({
-      _id,
-      user: userId,
-      code,
-      level
-    } as UserSkill);
+      newSkills.push({
+        _id,
+        user: userId,
+        code,
+        level
+      } as UserSkill);
+    }
   }
 
   if (newSkills.length === 0) {
@@ -220,27 +222,36 @@ async function updateUserSkills(context: Context, userIdent: string): Promise<Re
   // Attempt updates
   const updatedSkills: UserSkill[] = [];
 
-  newSkills.forEach(async (s) => {
+  for (let i = 0; i < newSkills.length; i++) {
+    const s = newSkills[i];
     const updateResult = await skillStore.update(s._id as any, userId, s);
     if (updateResult.nModified === 1) {
       updatedSkills.push(s);
     }
-  });
+  }
 
   return { body: updatedSkills, status: updatedSkills.length > 0 ? 201 : 404 };
 }
 
 async function deleteUserSkills(context: Context, userIdent: string): Promise<Result> {
-  const userId = context.bindingData.userId;
+  // For MVP we're allowing users to access only their own data
+  const checkResult = await checkBindingDataUserId(context, userIdent);
+  if (checkResult.body.error) {
+    return checkResult;
+  }
+  
+  const userId = checkResult.body._id;
   const skillCode = context.bindingData.skillCode;
-  const { _id } = context.req?.body;
+  const skillId = context.req?.body?._id;
 
-  if (_id) {
-    await skillStore.delete(_id, userId);
+  // This endpoint allows us to 1) delete by skill ID,
+  // 2) delete by skill code, or 3) delete all skills for a user.
+  if (skillId) {
+    await skillStore.delete(skillId, userId); // Remove a specific skill document
   } else if (skillCode)  {
-    await skillStore.deleteByCode(userId, skillCode);
+    await skillStore.deleteByCode(userId, skillCode); // Remove all skills with passed skill code
   } else {
-    await skillStore.deleteAllForUser(userId);
+    await skillStore.deleteAllForUser(userId); // Remove all skill documents for user
   }
   
   return { body: null, status: 202 };

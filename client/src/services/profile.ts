@@ -4,7 +4,7 @@ import { getAuth } from 'firebase/auth';
 import { Profile, UserSkill, UserSkillData } from '../types/profile';
 import { User } from '../types/user';
 import { updateAuth } from '../store/authSlice';
-import { UpdateGettingStartedProfileDataParams, UpdateUserRolesParams } from '../types/services';
+import { UpdateGettingStartedProfileDataParams, UpdateUserRolesParams, UpdateUserSkillsParams } from '../types/services';
 
 import { updateProfile } from '../store/profileSlice';
 import { updateAlert } from '../store/alertSlice';
@@ -238,42 +238,96 @@ export const updateGettingStartedProfileData = async (params: UpdateGettingStart
   }
 };
 
-export const updateUserSkills = (update?: UserSkill[]) => {
-  if (!update) {
-    return;
-  }
+export const updateUserSkills = async (params: UpdateUserSkillsParams) => {
+  const {
+    skills,
+    success,
+    failure
+  } = params;
 
+  const auth = getAuth();
   const appState = store.getState();
   const profile = appState.profile.data;
 
   if (!profile) {
-    return;
+    throw new Error('User profile data unavailable.');
   }
 
   // Pull current skill data
   const currentSkills = profile.skills;
 
   // Pull document ID's for existing data and apply to update if possible
-  const skillUpdate = update.map((updatedSkill) => {
+  const skillUpdate = skills.map((skill) => {
     let merge: UserSkill;
     const existing = currentSkills.find((existingSkill) => {
-      existingSkill.code === updatedSkill.code;
+      existingSkill.code === skill.code;
     });
     if (existing) {
       merge = {
         _id: existing._id,
-        code: updatedSkill.code,
-        level: updatedSkill.level
+        code: skill.code,
+        level: skill.level
       };
     } else {
-      merge = updatedSkill;
+      merge = skill;
     }
     return merge;
   });
 
+  try {
+    // Acquire bearer token
+    const fbUser = auth.currentUser;
+    const token = await fbUser?.getIdToken() || '';
 
+    const userId = appState.auth.user?._id;
 
+    // Attempt profile update
+    const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/profile`;
+    const body = JSON.stringify({
+      skills: skillUpdate,
+    });
 
+    const profileResponse = await fetch(profileUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body,
+    });
+
+    if (!profileResponse.ok) {
+      throw new Error('Failed to update user profile.');
+    }
+
+    const newProfileData = await profileResponse.json() as Profile;
+
+    // Update local data
+    store.dispatch(
+      updateProfile({
+        data: newProfileData,
+      })
+    );
+
+    if (success) {
+      success();
+    }
+  } catch (error) {
+    const message = 'An error occurred while updating user data.';
+
+    // Show alert
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: message,
+      })
+    );
+
+    if (failure) {
+      failure(message);
+    }
+  }
 };
 
 /**
