@@ -281,6 +281,15 @@ export const getUserSkills = () => {
 };
 
 /**
+ * Determine if this user is a developer based on their roles
+ */
+export const isUserDev = () => {
+  const appState = store.getState();
+  const profile = appState.profile.data;
+  return profile?.roles.includes('developer');
+};
+
+/**
  * Pull the user's saved profile and return the profile's
  * additionalSkills (a string)
  */

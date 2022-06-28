@@ -11,7 +11,7 @@ import ProfileLayout from '../../../../layouts/ProfileLayout';
 import StandardButton from '../../../../components/buttons/StandardButton';
 import SkillCard from '../../../../components/elements/SkillCard';
 
-import { convertSkillDataToObject, getUserSkills, navigateToNextProfileSection } from '../../../../helpers/functions';
+import { convertSkillDataToObject, getUserSkills, isUserDev, navigateToNextProfileSection } from '../../../../helpers/functions';
 import { updateUserSkills } from '../../../../services/profile';
 import { skillLevels, designSkills } from '../../../../helpers/constants';
 
@@ -21,6 +21,8 @@ const DesignSkills = () => {
   const [tools, setTools] = useState<ProfileSkill[]>([]);
 
   const [development, setDevelopment] = useState<ProfileSkill[]>([]);
+
+  const [showDevSection, setShowDevSection] = useState(true);
 
   const [processing, setProcessing] = useState(false);
 
@@ -74,9 +76,12 @@ const DesignSkills = () => {
       return merge;
     });
 
+    const isDeveloper = isUserDev();
+
     setExperienceLevels(populatedExperienceLevels);
     setTools(populatedTools);
     setDevelopment(populatedDevelopment);
+    setShowDevSection(!isDeveloper);
   }, []);
 
   const handleExperienceLevelUpdate = (skillData: UserSkill) => {
@@ -265,7 +270,7 @@ const DesignSkills = () => {
 
           {/* Tools */}
 
-          <section className="skillsSectionSpacing">
+          <section className={`${showDevSection ? 'skillsSectionSpacing' : ''}`}>
             <div className="profileQuestionWrapper">
               <p className="profileQuestion">
                 <span className="question">
@@ -286,28 +291,30 @@ const DesignSkills = () => {
             </div>
           </section>
 
-          {/* Tools */}
+          {/* Development */}
 
-          <section>
-            <div className="profileQuestionWrapper">
-              <p className="profileQuestion">
-                <span className="question">
-                  What development experience do you have?<span className="red">*</span>
-                </span>
-              </p>
-              <form className="profileForm">
-                <div className="skillLevelLabels">
-                  <div className="spacer" />
-                  <div className="labels">
-                    {skillLevelLabels}
+          {showDevSection && (
+            <section>
+              <div className="profileQuestionWrapper">
+                <p className="profileQuestion">
+                  <span className="question">
+                    What development experience do you have?<span className="red">*</span>
+                  </span>
+                </p>
+                <form className="profileForm">
+                  <div className="skillLevelLabels">
+                    <div className="spacer" />
+                    <div className="labels">
+                      {skillLevelLabels}
+                    </div>
                   </div>
-                </div>
-                <div className="skillCards">
-                  {developmentCards}
-                </div>
-              </form>
-            </div>
-          </section>
+                  <div className="skillCards">
+                    {developmentCards}
+                  </div>
+                </form>
+              </div>
+            </section>
+          )}
         </div>
 
         {/* Button Controls */}
