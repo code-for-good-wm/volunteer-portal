@@ -13,8 +13,8 @@ import SkillCard from '../../../../components/elements/SkillCard';
 
 import { TextField } from '@mui/material';
 
-import { convertSkillDataToObject } from '../../../../helpers/functions';
-import { getAdditionalSkills, getUserSkills, updateAdditionalSkills } from '../../../../services/profile';
+import { convertSkillDataToObject, getAdditionalSkills, getUserSkills } from '../../../../helpers/functions';
+import { updateAdditionalSkills } from '../../../../services/profile';
 import { skillLevels, otherExperience } from '../../../../helpers/constants';
 
 const AdditionalSkills = () => {
@@ -87,9 +87,7 @@ const AdditionalSkills = () => {
   };
 
   const handleSubmit = () => {
-    // TODO: Replace with actual user update functionality
-    setProcessing(true);
-
+    // Prep data
     const skillUpdate: UserSkill[] = [];
 
     otherExperienceLevels.forEach((setting) => {
@@ -100,16 +98,25 @@ const AdditionalSkills = () => {
       });
     });
 
-    const updateResult = updateAdditionalSkills(skillUpdate, otherSkills);
+    // Build callbacks
+    const success = () => {
+      setProcessing(false);
+      // Continue to completion screen
+      navigate('/profile/complete');
+    };
 
-    if (!updateResult) {
-      // TODO: Handle errors
-    }
+    const failure = () => {
+      setProcessing(false);
+    };
 
-    setProcessing(false);
+    setProcessing(true);
 
-    // Continue to completion screen
-    navigate('/profile/complete');
+    updateAdditionalSkills({
+      skills: skillUpdate,
+      additionalSkills: otherSkills,
+      success,
+      failure
+    });
   };
 
   // Build UI

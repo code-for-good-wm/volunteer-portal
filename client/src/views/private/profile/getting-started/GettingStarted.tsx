@@ -18,8 +18,8 @@ import DietaryRestrictionCard from '../../../../components/elements/DietaryRestr
 import AgreementFormItem from '../../../../components/elements/AgreementFormItem';
 
 import { dietaryRestrictions, shirtSizes } from '../../../../helpers/constants';
-import { getGettingStartedProfileData, updateGettingStartedProfileData } from '../../../../services/profile';
-import { getNextProfileSectionId, parsePhone } from '../../../../helpers/functions';
+import { updateGettingStartedProfileData } from '../../../../services/profile';
+import { getGettingStartedProfileData, navigateToNextProfileSection, parsePhone } from '../../../../helpers/functions';
 import { testPhone } from '../../../../helpers/validation';
 
 type BasicInfoForm = {
@@ -324,15 +324,7 @@ const GettingStarted = () => {
     // Build callbacks
     const success = () => {
       setProcessing(false);
-      // Determine next view to display
-      const nextSection = getNextProfileSectionId() ?? '';
-      if (!nextSection || nextSection === true) {
-        // If next section cannot be determined or does not exist,
-        // navigate to completion screen
-        navigate('/profile/complete');
-      } else {
-        navigate(`/profile/${nextSection}`);
-      }
+      navigateToNextProfileSection();
     };
 
     const failure = () => {

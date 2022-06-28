@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { updateAuth } from '../store/authSlice';
 import { updateProfile } from '../store/profileSlice';
 import { store } from '../store/store';
@@ -165,6 +166,23 @@ export const getPreviousProfileSection = () => {
 };
 
 /**
+ * Navigate to next profile section
+ * Determines next section based on user roles
+ */
+export const navigateToNextProfileSection = () => {
+  const navigate = useNavigate();
+  // Determine next view to display
+  const nextSection = getNextProfileSectionId() ?? '';
+  if (!nextSection || nextSection === true) {
+    // If next section cannot be determined or does not exist,
+    // navigate to completion screen
+    navigate('/profile/complete');
+  } else {
+    navigate(`/profile/${nextSection}`);
+  }
+};
+
+/**
  * Convert an array of user skill data to an object
  * @param {UserSkill[]} skillData
  * @returns {UserSkillData}
@@ -198,4 +216,76 @@ export const convertSkillDataToArray = (skillData: UserSkillData) => {
   });
 
   return arr;
+};
+
+/**
+ * Pull the user's saved profile and return an object with
+ * data organized for the 'getting started' view
+ */
+export const getGettingStartedProfileData = () => {
+  const appState = store.getState();
+  const { user } = appState.auth;
+  const profile = appState.profile.data;
+
+  // If no data, return undefined
+  if (!user || !profile) {
+    return;
+  }
+
+  // Pull profile and return data
+  const { name, phone } = user;
+  const {
+    linkedInUrl,
+    websiteUrl,
+    portfolioUrl,
+    previousVolunteer,
+    shirtSize,
+    dietaryRestrictions,
+    accessibilityRequirements,
+    agreements
+  } = profile;
+
+  return (
+    {
+      basicInfo: {
+        name,
+        phone: parsePhone(phone).formatted,
+      },
+      contactInfo: {
+        linkedInUrl: linkedInUrl ?? '',
+        websiteUrl: websiteUrl ?? '',
+        portfolioUrl: portfolioUrl ?? '',
+      },
+      extraStuff: {
+        previousVolunteer: !!previousVolunteer, // Could be undefined
+        shirtSize: shirtSize ?? '',
+        dietaryRestrictions,
+      },
+      accessibilityRequirements: accessibilityRequirements ?? '',
+      agreements: {
+        termsAndConditions: !!agreements?.termsAndConditions, // Convert to boolean
+        photoRelease: !!agreements?.photoRelease, // Convert to boolean
+        codeOfConduct: !!agreements?.codeOfConduct, // Convert to boolean
+      }
+    }
+  );
+};
+
+/**
+ * Pull the user's saved profile and return the user's skills array
+ */
+export const getUserSkills = () => {
+  const appState = store.getState();
+  const profile = appState.profile.data;
+  return profile?.skills;
+};
+
+/**
+ * Pull the user's saved profile and return the profile's
+ * additionalSkills (a string)
+ */
+export const getAdditionalSkills = () => {
+  const appState = store.getState();
+  const profile = appState.profile.data;
+  return profile?.additionalSkills;
 };

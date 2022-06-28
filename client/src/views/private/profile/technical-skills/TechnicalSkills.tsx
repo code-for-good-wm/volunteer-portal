@@ -11,8 +11,8 @@ import ProfileLayout from '../../../../layouts/ProfileLayout';
 import StandardButton from '../../../../components/buttons/StandardButton';
 import SkillCard from '../../../../components/elements/SkillCard';
 
-import { convertSkillDataToObject, getNextProfileSectionId } from '../../../../helpers/functions';
-import { getUserSkills, updateUserSkills } from '../../../../services/profile';
+import { convertSkillDataToObject, getUserSkills, navigateToNextProfileSection } from '../../../../helpers/functions';
+import { updateUserSkills } from '../../../../services/profile';
 import { skillLevels, technicalSkills } from '../../../../helpers/constants';
 
 const TechnicalSkills = () => {
@@ -124,32 +124,23 @@ const TechnicalSkills = () => {
       });
     });
 
-    
+    // Build callbacks
+    const success = () => {
+      setProcessing(false);
+      navigateToNextProfileSection();
+    };
 
+    const failure = () => {
+      setProcessing(false);
+    };
 
     setProcessing(true);
 
-
-
-    const updateResult = updateUserSkills(skillUpdate);
-
-    if (!updateResult) {
-      // TODO: Handle errors
-    }
-
-    setProcessing(false);
-
-    // Determine next view to display
-    const nextSection = getNextProfileSectionId() ?? '';
-    if (!nextSection) {
-      // TODO: If something bad happens here, what do we do?
-      return;
-    }
-    if (nextSection === true) {
-      navigate('/profile/complete');
-    } else {
-      navigate(`/profile/${nextSection}`);
-    }
+    updateUserSkills({
+      skills: skillUpdate,
+      success,
+      failure
+    });
   };
 
   // Build UI

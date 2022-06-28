@@ -27,3 +27,8 @@ export interface UpdateGettingStartedProfileDataParams extends ServiceParams {
 export interface UpdateUserSkillsParams extends ServiceParams {
   skills: UserSkill[]
 }
+
+export interface UpdateAdditionalSkillsParams extends ServiceParams {
+  skills: UserSkill[]
+  additionalSkills: string;
+}
