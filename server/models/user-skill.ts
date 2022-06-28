@@ -10,7 +10,7 @@ export interface UserSkill {
 }
 
 export const UserSkillModel = model<UserSkill>('UserSkill', new Schema({
-  userId: { type: Types.ObjectId, required: true },
+  user: { type: Types.ObjectId, required: true, ref: 'User' },
   code: { type: String, required: true },
   level: { type: Number, required: true }
 }, MongooseOpts));

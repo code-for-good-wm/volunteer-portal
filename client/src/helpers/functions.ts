@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { NavigateFunction } from 'react-router-dom';
 import { updateAuth } from '../store/authSlice';
 import { updateProfile } from '../store/profileSlice';
 import { store } from '../store/store';
@@ -168,9 +168,9 @@ export const getPreviousProfileSection = () => {
 /**
  * Navigate to next profile section
  * Determines next section based on user roles
+ * @param {NavigateFunction} navigate
  */
-export const navigateToNextProfileSection = () => {
-  const navigate = useNavigate();
+export const navigateToNextProfileSection = (navigate: NavigateFunction) => {
   // Determine next view to display
   const nextSection = getNextProfileSectionId() ?? '';
   if (!nextSection || nextSection === true) {

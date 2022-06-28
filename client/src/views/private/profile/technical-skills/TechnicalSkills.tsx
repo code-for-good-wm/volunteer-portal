@@ -127,7 +127,7 @@ const TechnicalSkills = () => {
     // Build callbacks
     const success = () => {
       setProcessing(false);
-      navigateToNextProfileSection();
+      navigateToNextProfileSection(navigate);
     };
 
     const failure = () => {
