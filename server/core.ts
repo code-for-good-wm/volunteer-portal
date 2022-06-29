@@ -36,7 +36,29 @@ export function tryGetUserIdent(req: HttpRequest, context: Context): { userIdent
   return { userIdent: userId, status };
 }
 
+export function createSuccessResult(code: number, data: any): Result {
+  return {
+    header: { 'Content-Type': 'application/json' },
+    body: data,
+    status: code 
+  };
+}
+
+export function createErrorResult(code: number, message: string | null): Result {
+  return { 
+    header: { 'Content-Type': 'application/json' },
+    body: { 
+      'error': {
+        'code': code,
+        'message': message
+      }
+    }, 
+    status: code 
+  };
+}
+
 export interface Result {
+  header?: {[key: string]: string},
   body: any,
   status: number
 }
