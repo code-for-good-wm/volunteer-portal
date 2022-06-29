@@ -179,7 +179,7 @@ async function updateProfile(context: Context, userIdent: string): Promise<Resul
     updatedProfile.skills = await skillStore.list(userId);
   }
 
-  return createSuccessResult(200, updateProfile);
+  return createSuccessResult(200, updatedProfile);
 }
 
 async function deleteProfile(context: Context, userIdent: string): Promise<Result> {
