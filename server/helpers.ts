@@ -1,6 +1,6 @@
 import { Context, Logger } from '@azure/functions';
 import { getAuth, DecodedIdToken } from 'firebase-admin/auth';
-import { Result } from './core';
+import { createErrorResult, createSuccessResult, Result } from './core';
 import { userStore } from './models/store';
 
 type CheckRequestAuth = (authorization: string | undefined, logger: Logger) => Promise<DecodedIdToken | null>
@@ -50,44 +50,20 @@ export const checkBindingDataUserId: CheckBindingDataUserId = async (context: Co
   // Attempt to acquire user data from userIdent
   const user = await userStore.list(userIdent);
   if (!user) {
-    return {
-      body: {
-        'error' : {
-          'code' : 404,
-          'message' : 'User not found'
-        }
-      },
-      status: 404,
-    };
+    return createErrorResult(404, 'User not found');
   }
 
   // Acquire user ID from binding data
   const userId = context.bindingData.userId;
   if (!userId) {
-    return {
-      body: {
-        'error': {
-          'code' : 400,
-          'message' : 'Missing required parameter',
-        }
-      },
-      status: 400,
-    };
+    return createErrorResult(400, 'Missing required parameter');
   }
 
   // Compare; if requestor and userId are not the same, return error
   // IMPORTANT: We're ignoring type here; the _id field is technically an object
   if (userId != user._id) {
-    return {
-      body: {
-        'error': {
-          'code' : 403,
-          'message' : 'Forbidden',
-        }
-      },
-      status: 403,
-    };
+    return createErrorResult(403, 'Forbidden');
   }
 
-  return { body: user, status: 200 };
+  return createSuccessResult(200, user);
 };

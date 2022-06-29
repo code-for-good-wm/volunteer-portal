@@ -1,6 +1,6 @@
 
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { Result } from '../core';
+import { createErrorResult, createSuccessResult, Result } from '../core';
 import { connect, profileStore, skillStore } from '../models/store';
 import { Profile } from '../models/profile';
 import { checkBindingDataUserId, checkRequestAuth } from '../helpers';
@@ -8,13 +8,6 @@ import { UserSkill } from '../models/user-skill';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   const logger = context.log;
-
-  // Set return value to JSON
-  context.res = {
-    header: {
-      'Content-Type': 'application/json'
-    }
-  };
 
   // Attempt to capture caller information from token
   let uid = '';
@@ -25,13 +18,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const decodedToken = await checkRequestAuth(authorization, logger);
 
     if (!decodedToken?.uid) {
-      context.res.status = 401;
-      context.res.body = {
-        'error' : {
-          'code' : 401,
-          'message' : 'Unauthorized'
-        }
-      };
+      context.res = createErrorResult(401, 'Unauthorized')
       return;
     }
 
@@ -39,13 +26,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     uid = decodedToken.uid;
   } catch (error) {
     logger('Authentication error: ', error);
-    context.res.status = 500;
-    context.res.body = {
-      'error' : {
-        'code' : 500,
-        'message' : 'Internal error'
-      }
-    };
+    context.res = createErrorResult(500, 'Internal error');
     return;
   }
 
@@ -54,13 +35,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     await connect(logger);
   } catch (error) {
     logger('Database error: ', error);
-    context.res.status = 500;
-    context.res.body = {
-      'error' : {
-        'code' : 500,
-        'message' : 'Internal error'
-      }
-    };
+    context.res = createErrorResult(500, 'Internal error');
     return;
   }
 
@@ -82,8 +57,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 
   if (result) {
-    context.res.status = result.status;
-    context.res.body = result.body;
+    context.res = result;
   }
 };
 
@@ -102,14 +76,11 @@ async function getProfile(context: Context, userIdent: string): Promise<Result> 
     profile.skills = await skillStore.list(userId);
   }
 
-  const body = profile ?? {
-    'error' : {
-      'code' : 404,
-      'message' : 'Profile data not found'
-    }
-  };
+  if (!profile) {
+    return createErrorResult(404, 'Profile data not found');
+  }
 
-  return { body, status: profile ? 200 : 404 };
+  return createSuccessResult(200, profile);
 }
 
 async function createProfile(context: Context, userIdent: string): Promise<Result> {
@@ -131,7 +102,7 @@ async function createProfile(context: Context, userIdent: string): Promise<Resul
 
   const profileData = await profileStore.create(newProfile);
 
-  return { body: profileData, status: 201 };
+  return createSuccessResult(201, profileData);
 }
 
 async function updateProfile(context: Context, userIdent: string): Promise<Result> {
@@ -146,15 +117,7 @@ async function updateProfile(context: Context, userIdent: string): Promise<Resul
   // Pull this user's corresponding profile data
   const profile = await profileStore.list(userId);
   if (!profile) {
-    return {
-      body: {
-        'error' : {
-          'code' : 404,
-          'message' : 'Profile data not found'
-        }
-      },
-      status: 404,
-    };
+    return createErrorResult(404, 'Profile data not found');
   }
 
   const profileId = profile._id;
@@ -167,15 +130,7 @@ async function updateProfile(context: Context, userIdent: string): Promise<Resul
 
   if (profileUpdateResult.nModified !== 1) {
     // Profile not found, status 404
-    return {
-      body: {
-        'error' : {
-          'code' : 404,
-          'message' : 'Profile data not found'
-        }
-      },
-      status: 404,
-    };
+    return createErrorResult(404, 'Profile data not found');
   }
 
   // Attempt skills update
@@ -224,10 +179,7 @@ async function updateProfile(context: Context, userIdent: string): Promise<Resul
     updatedProfile.skills = await skillStore.list(userId);
   }
 
-  return {
-    body: updatedProfile,
-    status: 200,
-  };
+  return createSuccessResult(200, updateProfile);
 }
 
 async function deleteProfile(context: Context, userIdent: string): Promise<Result> {
@@ -242,21 +194,14 @@ async function deleteProfile(context: Context, userIdent: string): Promise<Resul
   // Pull this user's corresponding profile data
   const profile = await profileStore.list(userId);
   if (!profile) {
-    return {
-      body: {
-        'error' : {
-          'code' : 404,
-          'message' : 'Profile data not found'
-        }
-      },
-      status: 404,
-    };
+    // should this be an error?
+    return createErrorResult(404, 'Profile data not found');
   }
 
   const profileId = profile._id;
   await profileStore.delete(profileId, userId);
   await skillStore.deleteAllForUser(userId);
-  return { body: null, status: 202 };
+  return createSuccessResult(202, null);
 }
 
 export default httpTrigger;
