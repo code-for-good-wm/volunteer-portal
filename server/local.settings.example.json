@@ -2,14 +2,16 @@
   "IsEncrypted": false,
   "Host": {
     "LocalHttpPort": 7071,
-    "FUNCTIONS_WORKER_RUNTIME": "node",
     "AzureWebJobsStorage": "",
-    "NODE_ENV": "local",
+    "CORS": "*",
+    "CORSCredentials": false
+  },
+  "Values": {
     "GOOGLE_APPLICATION_CREDENTIALS": "fb-credentials.dev.json",
     "DATABASE_URI": "mongodb://localhost:27017",
     "DATABASE_PASS": "redacted",
     "DATABASE_NAME": "cfg-volunteers",
-    "CORS": "*",
-    "CORSCredentials": false
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "NODE_ENV": "local"
   }
 }
