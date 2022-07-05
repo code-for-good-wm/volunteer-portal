@@ -29,6 +29,7 @@ const HeaderBar = () => {
 
   const handleAccountSettings = () => {
     toggleAccountMenu();
+    navigate('/account');
     // Do stuff
   };
 

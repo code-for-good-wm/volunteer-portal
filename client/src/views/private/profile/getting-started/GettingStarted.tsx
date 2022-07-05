@@ -377,10 +377,10 @@ const GettingStarted = () => {
         <h1>
           Tell us a little about <span className="highlight">yourself</span>.
         </h1>
+
+        {/* Basic Information */}
+
         <div className="contentCard profileCard basicInformationProfileCard">
-
-          {/* Basic Information */}
-
           <div className="cardHeadingWithNote">
             <h2>
               Basic Information

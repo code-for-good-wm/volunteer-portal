@@ -38,6 +38,7 @@
 
 /* Import view-specific stylesheets */
 @import '../views/public/sign-in/SignIn.scss';
+@import '../views/private/account/Account.scss';
 @import '../views/private/dashboard/Dashboard.scss';
 @import '../views/private/profile/Profile.scss';
 @import '../views/private/profile/roles/Roles.scss';

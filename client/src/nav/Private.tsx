@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 
 // Import views
 import Dashboard from '../views/private/dashboard/Dashboard';
+import Account from '../views/private/account/Account';
 import AdditionalSkills from '../views/private/profile/additional-skills/AdditionalSkills';
 import ProfileComplete from '../views/private/profile/complete/Complete';
 import DesignSkills from '../views/private/profile/design-skills/DesignSkills';
@@ -15,6 +16,7 @@ const Private = () => {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />
+      <Route path="/account" element={<Account />} />
       <Route path="/profile" element={<Profile />}>
         <Route index element={<Roles />} />
         <Route path="getting-started" element={<GettingStarted />} />
