@@ -1,4 +1,6 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+
+import { getAuth } from 'firebase/auth';
 
 import { FormAlertState } from '../../../../types/forms';
 
@@ -8,7 +10,9 @@ import FormAlert from '../../../../components/elements/FormAlert';
 
 import { FormControl, TextField } from '@mui/material';
 
-import { testEmail, testPassword } from '../../../../helpers/validation';
+import { testEmail } from '../../../../helpers/validation';
+import { updateUserEmail } from '../../../../services/account';
+
 
 type UpdateEmailForm = {
   email: string,
@@ -27,16 +31,22 @@ const UpdateEmail = () => {
   });
   const [processing, setProcessing] = useState(false);
 
+  const auth = getAuth();
+
   // Test for form validity
   useEffect(() => {
     const emailTrimmed = form.email.trim();
     const passwordTrimmed = form.password.trim();
-    if (testEmail(emailTrimmed) && passwordTrimmed) {
+
+    const fbUser = auth.currentUser;
+    const currentEmail = fbUser?.email;
+
+    if (testEmail(emailTrimmed) && passwordTrimmed && (emailTrimmed !== currentEmail)) {
       setSubmitDisabled(false);
     } else {
       setSubmitDisabled(true);
     }
-  }, [form]);
+  }, [form, auth]);
 
   const resetAlert = () => {
     setAlert({
@@ -67,8 +77,44 @@ const UpdateEmail = () => {
     }
   };
 
-  const handleSubmit = () => {
-    // Do things
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+
+    const emailTrimmed = form.email.trim();
+    const passwordTrimmed = form.password.trim();
+
+    // Build callbacks
+    const success = () => {
+      setProcessing(false);
+      setForm((prevState) => ({
+        ...prevState,
+        email: '',
+        password: ''
+      }));
+      setAlert({
+        show: true,
+        text: 'Email updated sucessfully.',
+        severity: 'success'
+      });
+    };
+
+    const failure = (message: string) => {
+      setProcessing(false);
+      setAlert({
+        show: true,
+        text: message,
+        severity: 'error'
+      });
+    };
+
+    // Attempt update
+    setProcessing(true);
+    updateUserEmail({
+      email: emailTrimmed,
+      password: passwordTrimmed,
+      success,
+      failure,
+    });
   };
 
   return (

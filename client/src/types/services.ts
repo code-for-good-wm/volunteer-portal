@@ -15,6 +15,11 @@ export interface RecoverPasswordParams extends ServiceParams {
   email: string,
 }
 
+export interface UpdateUserEmailParams extends ServiceParams {
+  email: string,
+  password: string,
+}
+
 export interface UpdateUserRolesParams extends ServiceParams {
   roles: Role[],
 }

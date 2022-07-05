@@ -1,4 +1,5 @@
 import { NavigateFunction } from 'react-router-dom';
+import { updateAlert } from '../store/alertSlice';
 import { updateAuth } from '../store/authSlice';
 import { updateProfile } from '../store/profileSlice';
 import { store } from '../store/store';
@@ -60,6 +61,12 @@ export const resetAppState = () => {
     updateProfile({
       currentSection: null,
       data: null,
+    })
+  );
+
+  store.dispatch(
+    updateAlert({
+      visible: false
     })
   );
 };
