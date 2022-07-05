@@ -141,13 +141,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 $gutterSmall;
   margin-bottom: $gutterMedium;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14);
 
   .logoButtonContainer {
+    padding-left: $gutterSmall;
     height: 40px;
-    width: 100px;
+    width: 130px;
 
     button, img {
       height: 100%;
@@ -155,18 +155,23 @@ body {
   }
 
   .accountButtonContainer {
-    width: 100px;
+    width: 130px;
     display: flex;
     justify-content: flex-end;
+    padding-right: 12px;
   }
 
   @media screen and (min-width: 768px) {
     height: 89px;
-    padding: 0 $gutterMedium;
     margin-bottom: $gutterLarge;
 
     .logoButtonContainer {
+      padding-left: $gutterMedium;
       height: 60px;
+    }
+
+    .accountButtonContainer {
+      padding-right: 20px;
     }
   }
 }

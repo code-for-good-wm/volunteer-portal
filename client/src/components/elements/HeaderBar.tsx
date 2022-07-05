@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { getAuth, signOut } from 'firebase/auth';
 
@@ -28,10 +28,12 @@ const HeaderBar = () => {
   };
 
   const handleAccountSettings = () => {
+    toggleAccountMenu();
     // Do stuff
   };
 
   const handleSignOut = () => {
+    toggleAccountMenu();
     signOut(auth).catch((e) => console.error(e));
   };
 
