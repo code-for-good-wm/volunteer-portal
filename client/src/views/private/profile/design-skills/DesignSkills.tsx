@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
-import { user } from '../../../../store/authSlice';
+import { useAppDispatch } from '../../../../store/hooks';
 import { updateProfile } from '../../../../store/profileSlice';
 
 import { ProfileSkill, UserSkill } from '../../../../types/profile';
@@ -12,8 +11,8 @@ import ProfileLayout from '../../../../layouts/ProfileLayout';
 import StandardButton from '../../../../components/buttons/StandardButton';
 import SkillCard from '../../../../components/elements/SkillCard';
 
-import { convertSkillDataToObject, getNextProfileSectionId } from '../../../../helpers/functions';
-import { getUserSkills, updateUserSkills } from '../../../../services/profile';
+import { convertSkillDataToObject, getUserSkills, isUserDev, navigateToNextProfileSection } from '../../../../helpers/functions';
+import { updateUserSkills } from '../../../../services/profile';
 import { skillLevels, designSkills } from '../../../../helpers/constants';
 
 const DesignSkills = () => {
@@ -23,9 +22,9 @@ const DesignSkills = () => {
 
   const [development, setDevelopment] = useState<ProfileSkill[]>([]);
 
-  const [processing, setProcessing] = useState(false);
+  const [showDevSection, setShowDevSection] = useState(true);
 
-  const userData = useAppSelector(user);
+  const [processing, setProcessing] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -77,9 +76,12 @@ const DesignSkills = () => {
       return merge;
     });
 
+    const isDeveloper = isUserDev();
+
     setExperienceLevels(populatedExperienceLevels);
     setTools(populatedTools);
     setDevelopment(populatedDevelopment);
+    setShowDevSection(!isDeveloper);
   }, []);
 
   const handleExperienceLevelUpdate = (skillData: UserSkill) => {
@@ -138,56 +140,50 @@ const DesignSkills = () => {
   };
 
   const handleNext = () => {
-    // TODO: Replace with actual user update functionality
-    if (userData) {
-      setProcessing(true);
+    // Prep data
+    const skillUpdate: UserSkill[] = [];
 
-      const skillUpdate: UserSkill[] = [];
-
-      experienceLevels.forEach((setting) => {
-        const { code, level } = setting;
-        skillUpdate.push({
-          code,
-          level
-        });
+    experienceLevels.forEach((setting) => {
+      const { code, level } = setting;
+      skillUpdate.push({
+        code,
+        level
       });
+    });
 
-      tools.forEach((setting) => {
-        const { code, level } = setting;
-        skillUpdate.push({
-          code,
-          level
-        });
+    tools.forEach((setting) => {
+      const { code, level } = setting;
+      skillUpdate.push({
+        code,
+        level
       });
+    });
 
-      development.forEach((setting) => {
-        const { code, level } = setting;
-        skillUpdate.push({
-          code,
-          level
-        });
+    development.forEach((setting) => {
+      const { code, level } = setting;
+      skillUpdate.push({
+        code,
+        level
       });
+    });
 
-      const updateResult = updateUserSkills(skillUpdate);
-
-      if (!updateResult) {
-        // TODO: Handle errors
-      }
-
+    // Build callbacks
+    const success = () => {
       setProcessing(false);
-    }
+      navigateToNextProfileSection(navigate);
+    };
 
-    // Determine next view to display
-    const nextSection = getNextProfileSectionId() ?? '';
-    if (!nextSection) {
-      // TODO: If something bad happens here, what do we do?
-      return;
-    }
-    if (nextSection === true) {
-      navigate('/profile/complete');
-    } else {
-      navigate(`/profile/${nextSection}`);
-    }
+    const failure = () => {
+      setProcessing(false);
+    };
+
+    setProcessing(true);
+
+    updateUserSkills({
+      skills: skillUpdate,
+      success,
+      failure
+    });
   };
 
   // Build UI
@@ -274,7 +270,7 @@ const DesignSkills = () => {
 
           {/* Tools */}
 
-          <section className="skillsSectionSpacing">
+          <section className={`${showDevSection ? 'skillsSectionSpacing' : ''}`}>
             <div className="profileQuestionWrapper">
               <p className="profileQuestion">
                 <span className="question">
@@ -295,28 +291,30 @@ const DesignSkills = () => {
             </div>
           </section>
 
-          {/* Tools */}
+          {/* Development */}
 
-          <section>
-            <div className="profileQuestionWrapper">
-              <p className="profileQuestion">
-                <span className="question">
-                  What development experience do you have?<span className="red">*</span>
-                </span>
-              </p>
-              <form className="profileForm">
-                <div className="skillLevelLabels">
-                  <div className="spacer" />
-                  <div className="labels">
-                    {skillLevelLabels}
+          {showDevSection && (
+            <section>
+              <div className="profileQuestionWrapper">
+                <p className="profileQuestion">
+                  <span className="question">
+                    What development experience do you have?<span className="red">*</span>
+                  </span>
+                </p>
+                <form className="profileForm">
+                  <div className="skillLevelLabels">
+                    <div className="spacer" />
+                    <div className="labels">
+                      {skillLevelLabels}
+                    </div>
                   </div>
-                </div>
-                <div className="skillCards">
-                  {developmentCards}
-                </div>
-              </form>
-            </div>
-          </section>
+                  <div className="skillCards">
+                    {developmentCards}
+                  </div>
+                </form>
+              </div>
+            </section>
+          )}
         </div>
 
         {/* Button Controls */}

@@ -1,32 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
-import { updateAuth, user } from '../../../../store/authSlice';
+import { useAppSelector } from '../../../../store/hooks';
+import { profile } from '../../../../store/profileSlice';
 
-import { Profile, Role } from '../../../../types/profile';
+import { Role } from '../../../../types/profile';
 
 import RoleCard from '../../../../components/elements/RoleCard';
 import StandardButton from '../../../../components/buttons/StandardButton';
 
 import { roles } from '../../../../helpers/constants';
-import { User } from '../../../../types/user';
+import { updateUserRoles } from '../../../../services/profile';
 
 const Roles = () => {
   const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
   const [processing, setProcessing] = useState(false);
 
-  const userData = useAppSelector(user);
-  const profile = userData?.profile;
+  const profileData = useAppSelector(profile);
 
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   // On mount, determine if any roles are associated with this user
   useEffect(() => {
-    const userRoles = profile?.roles ?? [];
+    const userRoles = profileData?.roles ?? [];
     setSelectedRoles(userRoles);
-  }, [profile]);
+  }, [profileData]);
 
   // Build handlers
   const handleCard = (role?: Role) => {
@@ -47,29 +45,22 @@ const Roles = () => {
   };
 
   const handleNext = () => {
-    // TODO: Replace with actual user update functionality
-    if (userData) {
-      setProcessing(true);
-
-      const profileUpdate: Profile = {
-        ...userData.profile,
-        roles: selectedRoles,
-      };
-      const userUpdate: User = {
-        ...userData,
-        profile: profileUpdate,
-      };
-
-      dispatch(
-        updateAuth({
-          user: userUpdate,
-        })
-      );
-
+    const success = () => {
       setProcessing(false);
-    }
+      navigate('/profile/getting-started');
+    };
 
-    navigate('/profile/getting-started');
+    const failure = () => {
+      setProcessing(false);
+    };
+
+    setProcessing(true);
+
+    updateUserRoles({
+      roles: selectedRoles,
+      success,
+      failure,
+    });
   };
 
   // Build cards

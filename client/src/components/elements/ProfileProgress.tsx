@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { user } from '../../store/authSlice';
 import { currentSection } from '../../store/profileSlice';
 import { useAppSelector } from '../../store/hooks';
 
@@ -17,9 +16,7 @@ const ProfileProgress = () => {
 
   // Pull roles from the current user data,
   // then dynamically update the UI based on the user roles
-  const userData = useAppSelector(user);
-  const userRoles = userData?.profile?.roles ?? [];
-  const displayedSections = getDisplayedProfileSections(userRoles);
+  const displayedSections = getDisplayedProfileSections();
 
   // Build UI
   const content = profileStructure.map((primarySection, index) => {

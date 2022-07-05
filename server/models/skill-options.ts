@@ -9,9 +9,5 @@ export interface SkillOption {
 export const SkillOptionModel = model<SkillOption>('SkillOption', new Schema({
   code: { type: String, required: true },
   description: { type: String, required: true },
-  category: { type: String, required: true }
-}, {
-  timestamps: {
-    createdAt: "createdDate"
-  }
+  category: { type: String, required: true },
 }));

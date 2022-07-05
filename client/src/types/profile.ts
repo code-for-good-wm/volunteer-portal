@@ -4,9 +4,9 @@ export type SecondaryProfileSectionId = 'basic-information' | 'accessibility' | 
 
 export type Role = 'designer' | 'developer' | 'support' | 'lead';
 
-export type ShirtSize = 'small' | 'medium' | 'large' | 'xl' | 'xxl' | '';
+export type ShirtSize = 'small' | 'medium' | 'large' | 'xl' | 'xxl' | '3xl' | '';
 
-export type DietaryRestriction = 'vegan' | 'vegetarian' | 'dairy' | 'gluten' | 'kosher' | 'nuts' | 'fish' | 'eggs'; // Soy? Corn?
+export type DietaryRestriction = 'vegan' | 'vegetarian' | 'dairy' | 'gluten' | 'kosher' | 'nuts' | 'fish' | 'eggs' | 'soy' | 'corn';
 
 export type Agreement = 'termsAndConditions' | 'photoRelease' | 'codeOfConduct';
 
@@ -44,6 +44,7 @@ export interface Skill {
 }
 
 export interface UserSkill {
+  _id?: string; // ID of user skill document in database
   code: SkillCode;
   level: SkillLevel;
 }
@@ -55,20 +56,33 @@ export interface ProfileSkill {
 }
 
 export interface Profile {
-  currentSection: string; // e.g. 'gettingStarted'
-  lastUpdate: string; // ISO date
-  completionDate: string; // ISO date
+  completionDate?: string; // ISO date
   roles: Role[];
-  linkedInUrl: string;
-  websiteUrl: string;
-  portfolioUrl: string;
+  linkedInUrl?: string;
+  websiteUrl?: string;
+  portfolioUrl?: string;
   previousVolunteer?: boolean; // Likely we will remove this later
-  shirtSize: ShirtSize;
+  shirtSize?: ShirtSize;
   dietaryRestrictions: DietaryRestriction[];
-  accessibilityRequirements: string;
+  accessibilityRequirements?: string;
   agreements?: Agreements;
   skills: UserSkill[];
-  additionalSkills: string;
+  additionalSkills?: string;
+}
+
+export interface ProfileUpdate {
+  completionDate?: string; // ISO date
+  roles?: Role[];
+  linkedInUrl?: string;
+  websiteUrl?: string;
+  portfolioUrl?: string;
+  previousVolunteer?: boolean;
+  shirtSize?: ShirtSize;
+  dietaryRestrictions?: DietaryRestriction[];
+  accessibilityRequirements?: string;
+  agreements?: Agreements;
+  skills?: UserSkill[];
+  additionalSkills?: string;
 }
 
 export interface RoleData {

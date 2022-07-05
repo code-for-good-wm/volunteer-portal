@@ -1,27 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import PageLayout from '../../../layouts/PageLayout';
 
 import { useAppSelector } from '../../../store/hooks';
-import { user } from '../../../store/authSlice';
+import { profile } from '../../../store/profileSlice';
 
 import StandardButton from '../../../components/buttons/StandardButton';
+import { refreshCurrentUserData } from '../../../services/auth';
 
 const Dashboard = () => {
-  const userData = useAppSelector(user);
-  const profile = userData?.profile;
+  const [processing, setProcessing] = useState(false);
+
+  const profileData = useAppSelector(profile);
 
   const navigate = useNavigate();
 
   const handleButton = () => {
-    navigate('/profile');
+    const success = () => {
+      setProcessing(false);
+      navigate('/profile');
+    };
+
+    const failure = () => {
+      setProcessing(false);
+    };
+
+    refreshCurrentUserData({ success, failure });
   };
 
   // Build UI
   const contentCard = (
     <div className="contentCard dashboardCard">
-      { profile?.completionDate ? (
+      { profileData?.completionDate ? (
         <>
           <p className="center">
             Thank you for registering as a volunteer for Code for Good.
@@ -49,7 +60,7 @@ const Dashboard = () => {
     </div>
   );
 
-  const buttonLabel = profile?.completionDate ? 'Update my info' : 'Let\'s do this!';
+  const buttonLabel = profileData?.completionDate ? 'Update my info' : 'Let\'s do this!';
 
   return (
     <PageLayout>
@@ -63,6 +74,7 @@ const Dashboard = () => {
             <StandardButton
               label={buttonLabel}
               handler={handleButton}
+              disabled={processing}
             />
           </div>
         </div>

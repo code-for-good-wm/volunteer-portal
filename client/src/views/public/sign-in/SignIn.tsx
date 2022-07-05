@@ -78,6 +78,9 @@ const SignIn = () => {
 
   const handleNewUser = () => {
     setNewUser(prevState => !prevState);
+    if (alert.show) {
+      resetAlert();
+    }
   };
 
   const handleSubmit = (event: FormEvent) => {

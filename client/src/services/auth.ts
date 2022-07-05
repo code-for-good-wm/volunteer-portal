@@ -1,31 +1,54 @@
 import { FirebaseError } from '@firebase/util';
-import { createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword, User } from 'firebase/auth';
-import { SignInParams, RecoverPasswordParams } from '../types/services';
+import { createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword, User as FirebaseUser } from 'firebase/auth';
+
+import { Profile } from '../types/profile';
+import { User } from '../types/user';
+import { SignInParams, RecoverPasswordParams, ServiceParams } from '../types/services';
+
 import { store } from '../store/store';
 import { updateAuth } from '../store/authSlice';
-import { testUserData } from '../helpers/constants';
+import { updateProfile } from '../store/profileSlice';
+import { resetAppState } from '../helpers/functions';
+import { updateAlert } from '../store/alertSlice';
 
-export const handleAuthStateChange = (fbUser: User | null) => {
+export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
   const appState = store.getState();
   const { signedIn, updating, user } = appState.auth;
 
+  const auth = getAuth();
+
   if (fbUser) {
     if (!updating && !user) {
-      // TODO: Pull data for this user from our database
-      // Set updating to true while pulling data; show loader in UI
+      // Set updating to true while pulling data
       store.dispatch(
         updateAuth({
           updating: true,
         })
       );
-      // TODO: Pull user data from database, then update store
-      store.dispatch(
-        updateAuth({
-          signedIn: true,
-          user: testUserData,
-          updating: false,
-        })
-      );
+      
+      try {
+        // Acquire bearer token
+        const token = await fbUser.getIdToken();
+
+        // Pull user data and store in state
+        await getUserData(token);
+
+        // Set updating to false and sign in user
+        store.dispatch(
+          updateAuth({
+            signedIn: true,
+            updating: false,
+          })
+        );
+      } catch (error) {
+        // Reset app state
+        resetAppState();
+
+        // Sign out user
+        if (auth.currentUser) {
+          auth.signOut();
+        }
+      }
     } else {
       // Ignore other cases?
     }
@@ -53,14 +76,44 @@ export const signInUser = async (params: SignInParams) => {
   const auth = getAuth();
   
   try {
+    // Set updating to true to avoid automatic data load
+    store.dispatch(
+      updateAuth({
+        updating: true,
+      })
+    );
+
     await signInWithEmailAndPassword(auth, email, password);
-    // We'll use an auth listener to handle changes
+  
+    // Acquire bearer token
+    const fbUser = auth.currentUser;
+    const token = await fbUser?.getIdToken() || '';
+
+    // Pull user data and store in state
+    await getUserData(token);
+
+    // Set updating to false and sign in user
+    store.dispatch(
+      updateAuth({
+        signedIn: true,
+        updating: false,
+      })
+    );
+
     if (success) {
       success();
     }
   } catch (error) {
     const authError = error as FirebaseError;
     const { code } = authError;
+
+    // Reset app state
+    resetAppState();
+
+    // If signed in, sign out user
+    if (auth.currentUser) {
+      auth.signOut();
+    }
 
     // Build custom error messaging
     let message = 'Could not sign in at this time.  Check your network connection and try again later.';
@@ -91,18 +144,87 @@ export const createNewUser = async (params: SignInParams) => {
   const auth = getAuth();
   
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    // TODO: We will also need to create a user document
-    // with the user's email and default settings
-    // Once complete, fire success
+    // Set updating to true to avoid automatic data load
+    store.dispatch(
+      updateAuth({
+        updating: true,
+      })
+    );
+    
+    // Create the new Firebase user
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-    // We'll use an auth listener to handle changes
+    // Acquire bearer token
+    const { user } = userCredential;
+    const token = await user.getIdToken();
+
+    // Prep fetch call
+    const userUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user`;
+    const body = JSON.stringify({
+      email,
+    });
+
+    const userResponse = await fetch(userUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body
+    });
+
+    if (!userResponse.ok) {
+      // TODO: Possible 400 and 401 responses here; should we create custom messaging?
+      throw new Error('Failed to create a new user document.');
+    }
+
+    const userData = await userResponse.json() as User;
+
+    // Acquire user profile
+    const { _id } = userData;
+    const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${_id}/profile`;
+
+    const profileResponse = await fetch(profileUrl, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!profileResponse.ok) {
+      throw new Error('Failed to acquire user profile.');
+    }
+
+    const profileData = await profileResponse.json() as Profile;
+
+    store.dispatch(
+      updateProfile({
+        data: profileData
+      })
+    );
+
+    store.dispatch(
+      updateAuth({
+        signedIn: true,
+        user: userData,
+        updating: false,
+      })
+    );
+
     if (success) {
       success();
     }
   } catch (error) {
     const authError = error as FirebaseError;
     const { code } = authError;
+
+    // Reset app state
+    resetAppState();
+
+    // If signed in, sign out user
+    if (auth.currentUser) {
+      auth.signOut();
+    }
 
     // Build custom error messaging
     let message = 'Could not create account at this time.  Check your network connection and try again later.';
@@ -111,6 +233,43 @@ export const createNewUser = async (params: SignInParams) => {
     } else if (code === 'auth/invalid-email') {
       message = 'The email address is invalid and cannot be used to create an account.';
     }
+
+    if (failure) {
+      failure(message);
+    }
+  }
+};
+
+export const refreshCurrentUserData = async(params: ServiceParams) => {
+  const {
+    success,
+    failure,
+  } = params;
+
+  const auth = getAuth();
+  
+  try {  
+    // Acquire bearer token
+    const fbUser = auth.currentUser;
+    const token = await fbUser?.getIdToken() || '';
+
+    // Pull user data and store in state
+    await getUserData(token);
+
+    if (success) {
+      success();
+    }
+  } catch (error) {
+    const message = 'An error occurred while refreshing user data.';
+ 
+    // Show alert
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: message,
+      })
+    );
 
     if (failure) {
       failure(message);
@@ -149,4 +308,56 @@ export const recoverPassword = async (params: RecoverPasswordParams) => {
       failure(message);
     }
   }
+};
+
+/**
+ * Pull user data from server and store in state
+ */
+const getUserData = async (token: string) => {
+  // Acquire user document
+  const userUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user`;
+
+  const userResponse = await fetch(userUrl, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!userResponse.ok) {
+    throw new Error('Failed to acquire user data.');
+  }
+
+  const userData = await userResponse.json() as User;
+
+  // Acquire user profile
+  const { _id } = userData;
+  const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${_id}/profile`;
+
+  const profileResponse = await fetch(profileUrl, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!profileResponse.ok) {
+    throw new Error('Failed to acquire user profile.');
+  }
+
+  const profileData = await profileResponse.json() as Profile;
+
+  store.dispatch(
+    updateProfile({
+      data: profileData,
+    })
+  );
+
+  store.dispatch(
+    updateAuth({
+      user: userData,
+    })
+  );
+
+  return true;
 };

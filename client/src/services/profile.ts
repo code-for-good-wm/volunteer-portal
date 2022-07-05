@@ -1,197 +1,360 @@
 import { store } from '../store/store';
+import { getAuth } from 'firebase/auth';
 
-import { convertSkillDataToArray, convertSkillDataToObject, parsePhone } from '../helpers/functions';
-import { Profile, UserSkill, UserSkillData } from '../types/profile';
+import { Profile, ProfileUpdate, UserSkill } from '../types/profile';
 import { User } from '../types/user';
 import { updateAuth } from '../store/authSlice';
+import { UpdateAdditionalSkillsParams, UpdateGettingStartedProfileDataParams, UpdateUserRolesParams, UpdateUserSkillsParams } from '../types/services';
 
-/**
- * Pull the user's saved profile and return an object with
- * data organized for the 'getting started' view
- */
-export const getGettingStartedProfileData = () => {
-  const appState = store.getState();
-  const { user } = appState.auth;
+import { updateProfile } from '../store/profileSlice';
+import { updateAlert } from '../store/alertSlice';
 
-  // If no user data, return undefined
-  if (!user) {
-    return;
-  }
-
-  // Pull profile and return data
-  const { name, phone, profile } = user;
+export const updateUserRoles = async (params: UpdateUserRolesParams) => {
   const {
-    linkedInUrl,
-    websiteUrl,
-    portfolioUrl,
-    previousVolunteer,
-    shirtSize,
-    dietaryRestrictions,
-    accessibilityRequirements,
-    agreements
-  } = profile;
+    roles,
+    success,
+    failure
+  } = params;
 
-  return (
-    {
-      basicInfo: {
-        name,
-        phone: parsePhone(phone).formatted,
+  const auth = getAuth();
+  const appState = store.getState();
+
+  try {
+    // Acquire bearer token
+    const fbUser = auth.currentUser;
+    const token = await fbUser?.getIdToken() || '';
+
+    const userId = appState.auth.user?._id;
+
+    // Attempt profile update
+    const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/profile`;
+    const body = JSON.stringify({
+      roles,
+    });
+
+    const profileResponse = await fetch(profileUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
-      contactInfo: {
-        linkedInUrl,
-        websiteUrl,
-        portfolioUrl,
-      },
-      extraStuff: {
-        previousVolunteer: !!previousVolunteer, // Could be undefined
-        shirtSize,
-        dietaryRestrictions,
-      },
-      accessibilityRequirements,
-      agreements: {
-        termsAndConditions: !!agreements?.termsAndConditions, // Convert to boolean
-        photoRelease: !!agreements?.photoRelease, // Convert to boolean
-        codeOfConduct: !!agreements?.codeOfConduct, // Convert to boolean
-      }
+      body,
+    });
+
+    if (!profileResponse.ok) {
+      throw new Error('Failed to update user profile.');
     }
-  );
+
+    const newProfileData = await profileResponse.json() as Profile;
+
+    // Update local data
+    store.dispatch(
+      updateProfile({
+        data: newProfileData,
+      })
+    );
+
+    if (success) {
+      success();
+    }
+  } catch (error) {
+    const message = 'An error occurred while updating user data.';
+
+    // Show alert
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: message,
+      })
+    );
+
+    if (failure) {
+      failure(message);
+    }
+  }
 };
 
-/**
- * Pull the user's saved profile and return the user's skills array
- */
-export const getUserSkills = () => {
+export const updateGettingStartedProfileData = async (params: UpdateGettingStartedProfileDataParams) => {
+  const {
+    userUpdate,
+    profileUpdate,
+    success,
+    failure
+  } = params;
+
+  const auth = getAuth();
   const appState = store.getState();
-  const { user } = appState.auth;
 
-  // If no user data, return undefined
-  if (!user) {
-    return;
+  try {
+    // Acquire bearer token
+    const fbUser = auth.currentUser;
+    const token = await fbUser?.getIdToken() || '';
+
+    const userId = appState.auth.user?._id;
+
+    // Attempt user update
+    const userUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/`;
+
+    const userResponse = await fetch(userUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(userUpdate)
+    });
+
+    if (!userResponse.ok) {
+      throw new Error('Failed to update user data.');
+    }
+
+    const newUserData = await userResponse.json() as User;
+
+    // Update local data
+    store.dispatch(
+      updateAuth({
+        user: newUserData,
+      })
+    );
+
+    // Attempt profile update
+    const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/profile`;
+
+    const profileResponse = await fetch(profileUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(profileUpdate),
+    });
+
+    if (!profileResponse.ok) {
+      throw new Error('Failed to update user profile.');
+    }
+
+    const newProfileData = await profileResponse.json() as Profile;
+
+    // Update local data
+    store.dispatch(
+      updateProfile({
+        data: newProfileData,
+      })
+    );
+
+    if (success) {
+      success();
+    }
+  } catch (error) {
+    const message = 'An error occurred while updating user data.';
+
+    // Show alert
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: message,
+      })
+    );
+
+    if (failure) {
+      failure(message);
+    }
   }
-
-  // Pull profile and return data
-  const { profile } = user;
-
-  return profile.skills;
 };
 
-/**
- * Update the users' profile based on an array of
- * other experience skill data and additional skill content
- * @param {UserSkill[]} [update]
- */
-export const updateUserSkills = (update?: UserSkill[]) => {
-  if (!update) {
-    return;
-  }
+export const updateUserSkills = async (params: UpdateUserSkillsParams) => {
+  const {
+    skills,
+    success,
+    failure
+  } = params;
 
+  const auth = getAuth();
   const appState = store.getState();
-  const { user } = appState.auth;
+  const profile = appState.profile.data;
 
-  // If no user data, return undefined
-  if (!user) {
-    return;
+  if (!profile) {
+    throw new Error('User profile data unavailable.');
   }
 
   // Pull current skill data
-  const { profile } = user;
   const currentSkills = profile.skills;
 
-  // Convert to objects for merge
-  const currentSkillsObj = convertSkillDataToObject(currentSkills);
-  const updateObj = convertSkillDataToObject(update);
+  // Pull document ID's for existing data and apply to update if possible
+  const skillUpdate = skills.map((skill) => {
+    let merge: UserSkill;
+    const existing = currentSkills.find((existingSkill) => {
+      existingSkill.code === skill.code;
+    });
+    if (existing) {
+      merge = {
+        _id: existing._id,
+        code: skill.code,
+        level: skill.level
+      };
+    } else {
+      merge = skill;
+    }
+    return merge;
+  });
 
-  const updatedSkillsObj: UserSkillData = {
-    ...currentSkillsObj,
-    ...updateObj,
-  };
+  try {
+    // Acquire bearer token
+    const fbUser = auth.currentUser;
+    const token = await fbUser?.getIdToken() || '';
 
-  // Convert back to array and update user data
-  const updatedSkills = convertSkillDataToArray(updatedSkillsObj);
+    const userId = appState.auth.user?._id;
 
-  const profileUpdate: Profile = {
-    ...profile,
-    skills: updatedSkills
-  };
+    // Attempt profile update
+    const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/profile`;
+    const body = JSON.stringify({
+      skills: skillUpdate,
+    });
 
-  const userUpdate: User = {
-    ...user,
-    profile: profileUpdate
-  };
+    const profileResponse = await fetch(profileUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body,
+    });
 
-  store.dispatch(updateAuth({
-    user: userUpdate
-  }));
+    if (!profileResponse.ok) {
+      throw new Error('Failed to update user profile.');
+    }
 
-  return true;
-};
+    const newProfileData = await profileResponse.json() as Profile;
 
-/**
- * Pull the user's saved profile and return the profile's
- * additionalSkills (a string)
- */
-export const getAdditionalSkills = () => {
-  const appState = store.getState();
-  const { user } = appState.auth;
+    // Update local data
+    store.dispatch(
+      updateProfile({
+        data: newProfileData,
+      })
+    );
 
-  // If no user data, return undefined
-  if (!user) {
-    return;
+    if (success) {
+      success();
+    }
+  } catch (error) {
+    const message = 'An error occurred while updating user data.';
+
+    // Show alert
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: message,
+      })
+    );
+
+    if (failure) {
+      failure(message);
+    }
   }
-
-  // Pull profile and return data
-  const { profile } = user;
-  return profile.additionalSkills;
 };
 
-/**
- * Update the users' skills settings based on an array of skill data
- * @param {UserSkill[]} otherExperience
- * @param {string} additionalSkills
- */
-export const updateAdditionalSkills = (otherExperience: UserSkill[], additionalSkills: string) => {
+export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParams) => {
+  const {
+    skills,
+    additionalSkills,
+    success,
+    failure
+  } = params;
+  
+  const auth = getAuth();
   const appState = store.getState();
-  const { user } = appState.auth;
+  const profile = appState.profile.data;
 
-  // If no user data, return undefined
-  if (!user) {
-    return;
+  if (!profile) {
+    throw new Error('User profile data unavailable.');
   }
 
   // Pull current skill data
-  const { profile } = user;
   const currentSkills = profile.skills;
 
-  // Convert to objects for merge
-  const currentSkillsObj = convertSkillDataToObject(currentSkills);
-  const updateObj = convertSkillDataToObject(otherExperience);
+  // Pull document ID's for existing data and apply to update if possible
+  const skillUpdate = skills.map((skill) => {
+    let merge: UserSkill;
+    const existing = currentSkills.find((existingSkill) => {
+      existingSkill.code === skill.code;
+    });
+    if (existing) {
+      merge = {
+        _id: existing._id,
+        code: skill.code,
+        level: skill.level
+      };
+    } else {
+      merge = skill;
+    }
+    return merge;
+  });
 
-  const updatedSkillsObj: UserSkillData = {
-    ...currentSkillsObj,
-    ...updateObj,
-  };
+  try {
+    // Acquire bearer token
+    const fbUser = auth.currentUser;
+    const token = await fbUser?.getIdToken() || '';
 
-  // Convert back to array and update user data
-  const updatedSkills = convertSkillDataToArray(updatedSkillsObj);
+    const userId = appState.auth.user?._id;
 
-  const timestamp = new Date().toISOString();
+    // Build data for profile update
+    const profileUpdate: ProfileUpdate = {
+      skills: skillUpdate,
+      additionalSkills,
+    };
 
-  const profileUpdate: Profile = {
-    ...profile,
-    lastUpdate: timestamp,
-    completionDate: timestamp,
-    skills: updatedSkills,
-    additionalSkills
-  };
+    // If this is the first completion of the profile section, add a timestamp
+    if (!profile.completionDate) {
+      const timestamp = new Date().toISOString();
+      profileUpdate.completionDate = timestamp;
+    }
 
-  const userUpdate: User = {
-    ...user,
-    profile: profileUpdate
-  };
+    // Attempt profile update
+    const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/profile`;
+    const body = JSON.stringify(profileUpdate);
 
-  store.dispatch(updateAuth({
-    user: userUpdate
-  }));
+    const profileResponse = await fetch(profileUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body,
+    });
 
-  return true;
+    if (!profileResponse.ok) {
+      throw new Error('Failed to update user profile.');
+    }
+
+    const newProfileData = await profileResponse.json() as Profile;
+
+    // Update local data
+    store.dispatch(
+      updateProfile({
+        data: newProfileData,
+      })
+    );
+
+    if (success) {
+      success();
+    }
+  } catch (error) {
+    const message = 'An error occurred while updating user data.';
+
+    // Show alert
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: message,
+      })
+    );
+
+    if (failure) {
+      failure(message);
+    }
+  }
 };

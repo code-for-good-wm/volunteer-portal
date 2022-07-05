@@ -15,6 +15,8 @@ const configureMongoose = async function (log: Logger): Promise<void> {
     virtuals: true,
     versionKey: false
   });
+  mongoose.set('useNewUrlParser', true);
+  mongoose.set('useCreateIndex', true);
 
   try {
     const db = mongoose.connection;
@@ -81,11 +83,9 @@ export const userStore = {
 
 export const profileStore = {
   list: async(userId: mongoose.Types.ObjectId) => {
-    // TODO: include skills with populate
     return await ProfileModel.findOne({user: userId});
   },
-  create: async(userId: mongoose.Types.ObjectId, profile: Profile) => {
-    profile.user = userId;
+  create: async(profile: Profile) => {
     return await ProfileModel.create(profile);
   },
   update: async(_id: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId, profile: Profile) => {
@@ -93,7 +93,6 @@ export const profileStore = {
     return await ProfileModel.updateOne({_id, user: userId}, profile);
   },
   delete: async(_id: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {
-    // TODO: clean up other items?
     return await ProfileModel.deleteOne({_id, user: userId});
   }
 };

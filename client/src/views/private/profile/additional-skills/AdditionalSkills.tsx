@@ -1,8 +1,7 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
-import { user } from '../../../../store/authSlice';
+import { useAppDispatch } from '../../../../store/hooks';
 import { updateProfile } from '../../../../store/profileSlice';
 
 import { ProfileSkill, UserSkill } from '../../../../types/profile';
@@ -14,8 +13,8 @@ import SkillCard from '../../../../components/elements/SkillCard';
 
 import { TextField } from '@mui/material';
 
-import { convertSkillDataToObject } from '../../../../helpers/functions';
-import { getAdditionalSkills, getUserSkills, updateAdditionalSkills } from '../../../../services/profile';
+import { convertSkillDataToObject, getAdditionalSkills, getUserSkills } from '../../../../helpers/functions';
+import { updateAdditionalSkills } from '../../../../services/profile';
 import { skillLevels, otherExperience } from '../../../../helpers/constants';
 
 const AdditionalSkills = () => {
@@ -24,8 +23,6 @@ const AdditionalSkills = () => {
   const [otherSkills, setOtherSkills] = useState('');
 
   const [processing, setProcessing] = useState(false);
-
-  const userData = useAppSelector(user);
 
   const dispatch = useAppDispatch();
 
@@ -90,31 +87,36 @@ const AdditionalSkills = () => {
   };
 
   const handleSubmit = () => {
-    // TODO: Replace with actual user update functionality
-    if (userData) {
-      setProcessing(true);
+    // Prep data
+    const skillUpdate: UserSkill[] = [];
 
-      const skillUpdate: UserSkill[] = [];
-
-      otherExperienceLevels.forEach((setting) => {
-        const { code, level } = setting;
-        skillUpdate.push({
-          code,
-          level
-        });
+    otherExperienceLevels.forEach((setting) => {
+      const { code, level } = setting;
+      skillUpdate.push({
+        code,
+        level
       });
+    });
 
-      const updateResult = updateAdditionalSkills(skillUpdate, otherSkills);
-
-      if (!updateResult) {
-        // TODO: Handle errors
-      }
-
+    // Build callbacks
+    const success = () => {
       setProcessing(false);
-    }
+      // Continue to completion screen
+      navigate('/profile/complete');
+    };
 
-    // Continue to completion screen
-    navigate('/profile/complete');
+    const failure = () => {
+      setProcessing(false);
+    };
+
+    setProcessing(true);
+
+    updateAdditionalSkills({
+      skills: skillUpdate,
+      additionalSkills: otherSkills,
+      success,
+      failure
+    });
   };
 
   // Build UI

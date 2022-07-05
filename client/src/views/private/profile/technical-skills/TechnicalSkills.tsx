@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
-import { user } from '../../../../store/authSlice';
+import { useAppDispatch } from '../../../../store/hooks';
 import { updateProfile } from '../../../../store/profileSlice';
 
 import { ProfileSkill, UserSkill } from '../../../../types/profile';
@@ -12,8 +11,8 @@ import ProfileLayout from '../../../../layouts/ProfileLayout';
 import StandardButton from '../../../../components/buttons/StandardButton';
 import SkillCard from '../../../../components/elements/SkillCard';
 
-import { convertSkillDataToObject, getNextProfileSectionId } from '../../../../helpers/functions';
-import { getUserSkills, updateUserSkills } from '../../../../services/profile';
+import { convertSkillDataToObject, getUserSkills, navigateToNextProfileSection } from '../../../../helpers/functions';
+import { updateUserSkills } from '../../../../services/profile';
 import { skillLevels, technicalSkills } from '../../../../helpers/constants';
 
 const TechnicalSkills = () => {
@@ -22,8 +21,6 @@ const TechnicalSkills = () => {
   const [toolsAndLanguages, setToolsAndLanguages] = useState<ProfileSkill[]>([]);
 
   const [processing, setProcessing] = useState(false);
-
-  const userData = useAppSelector(user);
 
   const dispatch = useAppDispatch();
 
@@ -108,48 +105,42 @@ const TechnicalSkills = () => {
   };
 
   const handleNext = () => {
-    // TODO: Replace with actual user update functionality
-    if (userData) {
-      setProcessing(true);
+    // Prep data
+    const skillUpdate: UserSkill[] = [];
 
-      const skillUpdate: UserSkill[] = [];
-
-      experienceLevels.forEach((setting) => {
-        const { code, level } = setting;
-        skillUpdate.push({
-          code,
-          level
-        });
+    experienceLevels.forEach((setting) => {
+      const { code, level } = setting;
+      skillUpdate.push({
+        code,
+        level
       });
+    });
 
-      toolsAndLanguages.forEach((setting) => {
-        const { code, level } = setting;
-        skillUpdate.push({
-          code,
-          level
-        });
+    toolsAndLanguages.forEach((setting) => {
+      const { code, level } = setting;
+      skillUpdate.push({
+        code,
+        level
       });
+    });
 
-      const updateResult = updateUserSkills(skillUpdate);
-
-      if (!updateResult) {
-        // TODO: Handle errors
-      }
-
+    // Build callbacks
+    const success = () => {
       setProcessing(false);
-    }
+      navigateToNextProfileSection(navigate);
+    };
 
-    // Determine next view to display
-    const nextSection = getNextProfileSectionId() ?? '';
-    if (!nextSection) {
-      // TODO: If something bad happens here, what do we do?
-      return;
-    }
-    if (nextSection === true) {
-      navigate('/profile/complete');
-    } else {
-      navigate(`/profile/${nextSection}`);
-    }
+    const failure = () => {
+      setProcessing(false);
+    };
+
+    setProcessing(true);
+
+    updateUserSkills({
+      skills: skillUpdate,
+      success,
+      failure
+    });
   };
 
   // Build UI
