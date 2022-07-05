@@ -55,10 +55,25 @@ export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
   } else {
     // No active user; sign out if needed
     if (signedIn) {
+      // Reset auth
       store.dispatch(
         updateAuth({
           signedIn: false,
           user: null,
+          updating: false
+        })
+      );
+      // Reset profile
+      store.dispatch(
+        updateProfile({
+          currentSection: null,
+          data: null
+        })
+      );
+      // Reset global alert
+      store.dispatch(
+        updateAlert({
+          visible: false,
         })
       );
     }
