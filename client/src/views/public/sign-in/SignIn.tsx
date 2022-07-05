@@ -1,25 +1,21 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 
+import { FormAlertState } from '../../../types/forms';
+
 import PageLayout from '../../../layouts/PageLayout';
 import StandardButton from '../../../components/buttons/StandardButton';
 import TextButton from '../../../components/buttons/TextButton';
 import TextFieldLabel from '../../../components/elements/TextFieldLabel';
+import FormAlert from '../../../components/elements/FormAlert';
 
 import { Checkbox, FormControl, FormControlLabel, TextField } from '@mui/material';
 
 import { signInUser, createNewUser, recoverPassword } from '../../../services/auth';
 import { testEmail, testPassword } from '../../../helpers/validation';
-import FormAlert from '../../../components/elements/FormAlert';
 
 type SignInForm = {
   email: string,
   password: string,
-}
-
-type FormAlert = {
-  show: boolean,
-  text: string,
-  severity?: 'error' | 'warning' | 'info' | 'success'
 }
 
 const SignIn = () => {
@@ -29,7 +25,7 @@ const SignIn = () => {
     email: '',
     password: '',
   });
-  const [alert, setAlert] = useState<FormAlert>({
+  const [alert, setAlert] = useState<FormAlertState>({
     show: false,
     text: '',
   });
