@@ -6,7 +6,7 @@ import { profile } from '../../../../store/profileSlice';
 
 import { Role } from '../../../../types/profile';
 
-import RoleCard from '../../../../components/elements/RoleCard';
+import RoleCard from '../../../../components/cards/RoleCard';
 import StandardButton from '../../../../components/buttons/StandardButton';
 
 import { roles } from '../../../../helpers/constants';

@@ -62,7 +62,7 @@ div.divider {
 
 html {
   min-height: 100%; /* Is this the right approach? */
-  min-width: 375px; /* Up for debate; could arguably be 350px */
+  min-width: $minAppWidth;
 }
 
 body {
@@ -127,6 +127,54 @@ body {
     line-height: 1rem;
     letter-spacing: 0.4px;
     margin-left: $gutterSmall;
+  }
+}
+
+/* Dialog Alert */
+
+.dialogAlert {
+  width: 300px;
+  padding: $gutterMedium $gutterSmall;
+  background-color: $white;
+
+  .message {
+    margin-bottom: $gutterSmall;
+  }
+
+  .controls {
+    display: flex;
+    flex-direction: column;
+
+    .buttonContainer {
+      width: 100%;
+    }
+
+    .spacing {
+      margin-top: 9px;
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    width: 380px;
+    padding: $gutterMedium;
+
+    .message {
+      margin-bottom: $gutterMedium;
+    }
+
+    .controls {
+      flex-direction: row-reverse;
+      justify-content: space-between;
+  
+      .buttonContainer {
+        min-width: 110px;
+      }
+
+      .spacing {
+        margin-top: 0;
+        margin-right: $gutterMedium;
+      }
+    }
   }
 }
 

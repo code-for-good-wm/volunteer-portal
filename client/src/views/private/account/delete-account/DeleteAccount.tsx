@@ -7,6 +7,7 @@ import { FormAlertState } from '../../../../types/forms';
 import TextFieldLabel from '../../../../components/elements/TextFieldLabel';
 import StandardButton from '../../../../components/buttons/StandardButton';
 import FormAlert from '../../../../components/elements/FormAlert';
+import DialogAlert from '../../../../components/elements/DialogAlert';
 
 import { FormControl, TextField } from '@mui/material';
 
@@ -25,6 +26,7 @@ const DeleteAccount = () => {
     show: false,
     text: '',
   });
+  const [showModal, setShowModal] = useState(false);
   const [processing, setProcessing] = useState(false);
 
   // Test for form validity
@@ -45,6 +47,10 @@ const DeleteAccount = () => {
     });
   };
 
+  const toggleModal = () => {
+    setShowModal(prevState => !prevState);
+  };
+
   const handlePassword = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setForm((prevState) => ({
@@ -58,6 +64,11 @@ const DeleteAccount = () => {
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
+    toggleModal();
+  };
+
+  const handleConfirm = () => {
+    toggleModal();
 
     const auth = getAuth();
     const passwordTrimmed = form.password.trim();
@@ -92,44 +103,55 @@ const DeleteAccount = () => {
   };
 
   return (
-    <div className="contentCard accountCard">
-      <h2>
-        Delete Account
-      </h2>
-      <div className="divider" />
-      <form className="accountForm" onSubmit={handleSubmit}>
-        <TextField
-          variant="outlined"
-          fullWidth
-          margin="dense"
-          size="medium"
-          id="deleteAccountPassword"
-          name="deleteAccountPassword"
-          type="password"
-          label={<TextFieldLabel label="Current Password" />}
-          value={form.password}
-          onChange={handlePassword}
-        />
-        <FormControl
-          fullWidth
-          margin="normal"
-        >
-          <StandardButton
-            type="submit"
-            theme="warning"
-            label="Delete Account"
-            disabled={submitDisabled || processing}
+    <>
+      <DialogAlert
+        visible={showModal}
+        title="Are you sure?"
+        message="Deleting your account will remove all account and profile data.  This cannot be undone."
+        okLabel="Yes, Delete"
+        handleClose={toggleModal}
+        handleCancel={toggleModal}
+        handleOk={handleConfirm}
+      />
+      <div className="contentCard accountCard">
+        <h2>
+          Delete Account
+        </h2>
+        <div className="divider" />
+        <form className="accountForm" onSubmit={handleSubmit}>
+          <TextField
+            variant="outlined"
+            fullWidth
+            margin="dense"
+            size="medium"
+            id="deleteAccountPassword"
+            name="deleteAccountPassword"
+            type="password"
+            label={<TextFieldLabel label="Current Password" />}
+            value={form.password}
+            onChange={handlePassword}
           />
-        </FormControl>
-        { alert.show && (
-          <FormAlert
-            theme={alert.severity}
-            spacing="tight"
-            content={alert.text}
-          />
-        )}
-      </form>
-    </div>
+          <FormControl
+            fullWidth
+            margin="normal"
+          >
+            <StandardButton
+              type="submit"
+              theme="warning"
+              label="Delete Account"
+              disabled={submitDisabled || processing}
+            />
+          </FormControl>
+          { alert.show && (
+            <FormAlert
+              theme={alert.severity}
+              spacing="tight"
+              content={alert.text}
+            />
+          )}
+        </form>
+      </div>
+    </>
   );
 };
 

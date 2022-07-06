@@ -9,7 +9,7 @@ import { ProfileSkill, UserSkill } from '../../../../types/profile';
 import ProfileLayout from '../../../../layouts/ProfileLayout';
 
 import StandardButton from '../../../../components/buttons/StandardButton';
-import SkillCard from '../../../../components/elements/SkillCard';
+import SkillCard from '../../../../components/cards/SkillCard';
 
 import { TextField } from '@mui/material';
 

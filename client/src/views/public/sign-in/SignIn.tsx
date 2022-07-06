@@ -12,6 +12,7 @@ import { Checkbox, FormControl, FormControlLabel, TextField } from '@mui/materia
 
 import { signInUser, createNewUser, recoverPassword } from '../../../services/auth';
 import { testEmail, testPassword } from '../../../helpers/validation';
+import DialogAlert from '../../../components/elements/DialogAlert';
 
 type SignInForm = {
   email: string,
