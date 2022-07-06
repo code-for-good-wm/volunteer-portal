@@ -173,6 +173,11 @@ export const deleteUserAccount = async (params: DeleteUserAccountParams) => {
       throw new Error('User email unavailable.');
     }
 
+    // Re-authenticate user
+    // https://firebase.google.com/docs/auth/web/manage-users#re-authenticate_a_user
+    const credential = EmailAuthProvider.credential(email, password);
+    await reauthenticateWithCredential(fbUser, credential);
+
     // Acquire bearer token
     const token = await fbUser?.getIdToken() || '';
 
@@ -192,11 +197,6 @@ export const deleteUserAccount = async (params: DeleteUserAccountParams) => {
     if (!userResponse.ok) {
       throw new Error('Failed to delete user data.');
     }
-
-    // Re-authenticate user
-    // https://firebase.google.com/docs/auth/web/manage-users#re-authenticate_a_user
-    const credential = EmailAuthProvider.credential(email, password);
-    await reauthenticateWithCredential(fbUser, credential);
 
     // Delete user account in Firebase
     await deleteUser(fbUser);
