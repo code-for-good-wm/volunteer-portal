@@ -1,6 +1,7 @@
 import React from 'react';
 
 import PageLayout from '../../../layouts/PageLayout';
+import DeleteAccount from './delete-account/DeleteAccount';
 
 import UpdateEmail from './update-email/UpdateEmail';
 import UpdatePassword from './update-password/UpdatePassword';
@@ -13,22 +14,9 @@ const Account = () => {
           <h1>
             Need to make changes to your <span className="highlight">account</span>?
           </h1>
-
-          {/* Update Email */}
-
           <UpdateEmail />
-
-          {/* Update Password */}
-
           <UpdatePassword />
-
-          {/* Delete Account */}
-
-          <div className="contentCard accountCard">
-            <h2>
-              Delete Account
-            </h2>
-          </div>
+          <DeleteAccount />
         </div>
       </div>
     </PageLayout>

@@ -85,6 +85,8 @@ export const updateUserEmail = async (params: UpdateUserEmailParams) => {
       message = 'An account already exists for this email address.';
     } else if (code === 'auth/invalid-email') {
       message = 'The email address is invalid and cannot be used.';
+    } else if (code === 'auth/wrong-password') {
+      message = 'The current password you entered is incorrect; please try again.';
     }
 
     if (failure) {
@@ -135,7 +137,9 @@ export const updateUserPassword = async (params: UpdateUserPasswordParams) => {
 
     // Build custom error messaging
     let message = 'Could not update password at this time.  Check your network connection and try again later.';
-    if (code === 'auth/invalid-password') {
+    if (code === 'auth/wrong-password') {
+      message = 'The current password you entered is incorrect; please try again.';
+    } else if (code === 'auth/invalid-password') {
       message = 'The submitted password does not meet minimum requirements.';
     }
 
@@ -203,7 +207,14 @@ export const deleteUserAccount = async (params: DeleteUserAccountParams) => {
       success();
     }
   } catch (error) {
-    const message = 'Could not remove account at this time.  Check your network connection and try again later.';
+    const authError = error as FirebaseError;
+    const { code } = authError;
+
+    // Build custom error messaging
+    let message = 'Could not remove account at this time.  Check your network connection and try again later.';
+    if (code === 'auth/wrong-password') {
+      message = 'The current password you entered is incorrect; please try again.';
+    }
 
     if (failure) {
       failure(message);

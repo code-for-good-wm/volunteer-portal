@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 
-import { getAuth } from 'firebase/auth';
+import { getAuth, signOut } from 'firebase/auth';
 
 import { FormAlertState } from '../../../../types/forms';
 
@@ -10,18 +10,15 @@ import FormAlert from '../../../../components/elements/FormAlert';
 
 import { FormControl, TextField } from '@mui/material';
 
-import { testEmail } from '../../../../helpers/validation';
-import { updateUserEmail } from '../../../../services/account';
+import { deleteUserAccount } from '../../../../services/account';
 
-type UpdateEmailForm = {
-  email: string,
+type DeleteAccountForm = {
   password: string,
 };
 
-const UpdateEmail = () => {
+const DeleteAccount = () => {
   const [submitDisabled, setSubmitDisabled] = useState(true);
-  const [form, setForm] = useState<UpdateEmailForm>({
-    email: '',
+  const [form, setForm] = useState<DeleteAccountForm>({
     password: '',
   });
   const [alert, setAlert] = useState<FormAlertState>({
@@ -30,36 +27,22 @@ const UpdateEmail = () => {
   });
   const [processing, setProcessing] = useState(false);
 
-  const auth = getAuth();
-
   // Test for form validity
   useEffect(() => {
-    const emailTrimmed = form.email.trim();
     const passwordTrimmed = form.password.trim();
 
-    if (testEmail(emailTrimmed) && passwordTrimmed) {
+    if (passwordTrimmed) {
       setSubmitDisabled(false);
     } else {
       setSubmitDisabled(true);
     }
-  }, [form, auth]);
+  }, [form]);
 
   const resetAlert = () => {
     setAlert({
       show: false,
       text: '',
     });
-  };
-
-  const handleEmail = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    setForm((prevState) => ({
-      ...prevState,
-      email: value,
-    }));
-    if (alert.show) {
-      resetAlert();
-    }
   };
 
   const handlePassword = (event: ChangeEvent<HTMLInputElement>) => {
@@ -76,35 +59,18 @@ const UpdateEmail = () => {
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
 
-    const emailTrimmed = form.email.trim();
+    const auth = getAuth();
     const passwordTrimmed = form.password.trim();
-
-    // Test to see if the entered email is the user's current email
-    const fbUser = auth.currentUser;
-    const currentEmail = fbUser?.email;
-
-    if (currentEmail === emailTrimmed) {
-      setAlert({
-        show: true,
-        text: 'The new email must be different than your current email.',
-        severity: 'error'
-      });
-      return;
-    }
 
     // Build callbacks
     const success = () => {
       setProcessing(false);
       setForm((prevState) => ({
         ...prevState,
-        email: '',
-        password: ''
+        password: '',
       }));
-      setAlert({
-        show: true,
-        text: 'Email updated sucessfully.',
-        severity: 'success'
-      });
+      // Sign user out of application
+      signOut(auth).catch((e) => console.error(e));
     };
 
     const failure = (message: string) => {
@@ -116,10 +82,9 @@ const UpdateEmail = () => {
       });
     };
 
-    // Attempt update
+    // Attempt deletion
     setProcessing(true);
-    updateUserEmail({
-      email: emailTrimmed,
+    deleteUserAccount({
       password: passwordTrimmed,
       success,
       failure,
@@ -129,22 +94,10 @@ const UpdateEmail = () => {
   return (
     <div className="contentCard accountCard">
       <h2>
-        Update Email
+        Delete Account
       </h2>
       <div className="divider" />
       <form className="accountForm" onSubmit={handleSubmit}>
-        <TextField
-          variant="outlined"
-          fullWidth
-          margin="dense"
-          size="medium"
-          id="email"
-          name="email"
-          type="email"
-          label={<TextFieldLabel label="New Email" />}
-          value={form.email}
-          onChange={handleEmail}
-        />
         <TextField
           variant="outlined"
           fullWidth
@@ -163,7 +116,8 @@ const UpdateEmail = () => {
         >
           <StandardButton
             type="submit"
-            label="Update Email"
+            theme="warning"
+            label="Delete Account"
             disabled={submitDisabled || processing}
           />
         </FormControl>
@@ -179,4 +133,4 @@ const UpdateEmail = () => {
   );
 };
 
-export default UpdateEmail;
+export default DeleteAccount;

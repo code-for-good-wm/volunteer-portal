@@ -11,7 +11,6 @@ import { FormControl, TextField } from '@mui/material';
 import { testPassword } from '../../../../helpers/validation';
 import { updateUserPassword } from '../../../../services/account';
 
-
 type UpdatePasswordForm = {
   password: string,
   newPassword: string
