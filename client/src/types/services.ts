@@ -20,6 +20,14 @@ export interface UpdateUserEmailParams extends ServiceParams {
   password: string,
 }
 
+export interface UpdateUserPasswordParams extends ServiceParams {
+  password: string,
+  newPassword: string,
+}
+
+export interface DeleteUserAccountParams extends ServiceParams {
+  password: string,
+}
 export interface UpdateUserRolesParams extends ServiceParams {
   roles: Role[],
 }

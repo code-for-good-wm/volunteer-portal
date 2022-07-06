@@ -227,6 +227,8 @@ export const createNewUser = async (params: SignInParams) => {
       message = 'An account already exists for this email address.';
     } else if (code === 'auth/invalid-email') {
       message = 'The email address is invalid and cannot be used to create an account.';
+    } else if (code === 'auth/invalid-password') {
+      message = 'The submitted password does not meet minimum requirements.';
     }
 
     if (failure) {
