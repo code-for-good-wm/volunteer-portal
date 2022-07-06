@@ -131,8 +131,8 @@ const UpdatePassword = () => {
           fullWidth
           margin="dense"
           size="medium"
-          id="password"
-          name="password"
+          id="currentPassword"
+          name="currentPassword"
           type="password"
           label={<TextFieldLabel label="Current Password" />}
           value={form.password}

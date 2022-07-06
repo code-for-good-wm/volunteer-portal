@@ -103,8 +103,8 @@ const DeleteAccount = () => {
           fullWidth
           margin="dense"
           size="medium"
-          id="password"
-          name="password"
+          id="deleteAccountPassword"
+          name="deleteAccountPassword"
           type="password"
           label={<TextFieldLabel label="Current Password" />}
           value={form.password}

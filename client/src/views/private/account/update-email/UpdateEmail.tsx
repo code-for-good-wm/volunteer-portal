@@ -150,8 +150,8 @@ const UpdateEmail = () => {
           fullWidth
           margin="dense"
           size="medium"
-          id="password"
-          name="password"
+          id="updateEmailPassword"
+          name="updateEmailPassword"
           type="password"
           label={<TextFieldLabel label="Current Password" />}
           value={form.password}
