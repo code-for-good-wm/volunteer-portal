@@ -1,5 +1,5 @@
-import { Schema, model, Types } from "mongoose";
-import { MongooseOpts } from "./default-opts";
+import { Schema, model, Types } from 'mongoose';
+import { MongooseOpts } from './default-opts';
 
 export interface User {
   _id?: Types.ObjectId,
