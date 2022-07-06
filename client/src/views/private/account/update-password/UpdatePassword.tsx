@@ -1,7 +1,5 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 
-import { getAuth } from 'firebase/auth';
-
 import { FormAlertState } from '../../../../types/forms';
 
 import TextFieldLabel from '../../../../components/elements/TextFieldLabel';
@@ -10,20 +8,20 @@ import FormAlert from '../../../../components/elements/FormAlert';
 
 import { FormControl, TextField } from '@mui/material';
 
-import { testEmail } from '../../../../helpers/validation';
-import { updateUserEmail } from '../../../../services/account';
+import { testPassword } from '../../../../helpers/validation';
+import { updateUserPassword } from '../../../../services/account';
 
 
-type UpdateEmailForm = {
-  email: string,
+type UpdatePasswordForm = {
   password: string,
+  newPassword: string
 };
 
-const UpdateEmail = () => {
+const UpdatePassword = () => {
   const [submitDisabled, setSubmitDisabled] = useState(true);
-  const [form, setForm] = useState<UpdateEmailForm>({
-    email: '',
+  const [form, setForm] = useState<UpdatePasswordForm>({
     password: '',
+    newPassword: ''
   });
   const [alert, setAlert] = useState<FormAlertState>({
     show: false,
@@ -31,36 +29,23 @@ const UpdateEmail = () => {
   });
   const [processing, setProcessing] = useState(false);
 
-  const auth = getAuth();
-
   // Test for form validity
   useEffect(() => {
-    const emailTrimmed = form.email.trim();
     const passwordTrimmed = form.password.trim();
+    const newPasswordTrimmed = form.newPassword.trim();
 
-    if (testEmail(emailTrimmed) && passwordTrimmed) {
+    if (passwordTrimmed && testPassword(newPasswordTrimmed)) {
       setSubmitDisabled(false);
     } else {
       setSubmitDisabled(true);
     }
-  }, [form, auth]);
+  }, [form]);
 
   const resetAlert = () => {
     setAlert({
       show: false,
       text: '',
     });
-  };
-
-  const handleEmail = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    setForm((prevState) => ({
-      ...prevState,
-      email: value,
-    }));
-    if (alert.show) {
-      resetAlert();
-    }
   };
 
   const handlePassword = (event: ChangeEvent<HTMLInputElement>) => {
@@ -74,20 +59,28 @@ const UpdateEmail = () => {
     }
   };
 
+  const handleNewPassword = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setForm((prevState) => ({
+      ...prevState,
+      newPassword: value,
+    }));
+    if (alert.show) {
+      resetAlert();
+    }
+  };
+
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
 
-    const emailTrimmed = form.email.trim();
     const passwordTrimmed = form.password.trim();
+    const newPasswordTrimmed = form.newPassword.trim();
 
-    // Test to see if the entered email is the user's current email
-    const fbUser = auth.currentUser;
-    const currentEmail = fbUser?.email;
-
-    if (currentEmail === emailTrimmed) {
+    // Test to see if the entered passwords are the same
+    if (passwordTrimmed === newPasswordTrimmed) {
       setAlert({
         show: true,
-        text: 'The new email must be different than your current email.',
+        text: 'The new password must be different than your current password.',
         severity: 'error'
       });
       return;
@@ -98,12 +91,12 @@ const UpdateEmail = () => {
       setProcessing(false);
       setForm((prevState) => ({
         ...prevState,
-        email: '',
-        password: ''
+        password: '',
+        newPassword: ''
       }));
       setAlert({
         show: true,
-        text: 'Email updated sucessfully.',
+        text: 'Password updated sucessfully.',
         severity: 'success'
       });
     };
@@ -119,9 +112,9 @@ const UpdateEmail = () => {
 
     // Attempt update
     setProcessing(true);
-    updateUserEmail({
-      email: emailTrimmed,
+    updateUserPassword({
       password: passwordTrimmed,
+      newPassword: newPasswordTrimmed,
       success,
       failure,
     });
@@ -130,22 +123,10 @@ const UpdateEmail = () => {
   return (
     <div className="contentCard accountCard">
       <h2>
-        Update Email
+        Update Password
       </h2>
       <div className="divider" />
       <form className="accountForm" onSubmit={handleSubmit}>
-        <TextField
-          variant="outlined"
-          fullWidth
-          margin="dense"
-          size="medium"
-          id="email"
-          name="email"
-          type="email"
-          label={<TextFieldLabel label="New Email" />}
-          value={form.email}
-          onChange={handleEmail}
-        />
         <TextField
           variant="outlined"
           fullWidth
@@ -158,13 +139,25 @@ const UpdateEmail = () => {
           value={form.password}
           onChange={handlePassword}
         />
+        <TextField
+          variant="outlined"
+          fullWidth
+          margin="dense"
+          size="medium"
+          id="newPassword"
+          name="newPassword"
+          type="password"
+          label={<TextFieldLabel label="New Password" />}
+          value={form.newPassword}
+          onChange={handleNewPassword}
+        />
         <FormControl
           fullWidth
           margin="normal"
         >
           <StandardButton
             type="submit"
-            label="Update Email"
+            label="Update Password"
             disabled={submitDisabled || processing}
           />
         </FormControl>
@@ -180,4 +173,4 @@ const UpdateEmail = () => {
   );
 };
 
-export default UpdateEmail;
+export default UpdatePassword;

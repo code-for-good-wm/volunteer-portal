@@ -1,17 +1,11 @@
-import { TextField } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 
 import PageLayout from '../../../layouts/PageLayout';
 
-import { useAppSelector } from '../../../store/hooks';
-import { profile } from '../../../store/profileSlice';
 import UpdateEmail from './update-email/UpdateEmail';
+import UpdatePassword from './update-password/UpdatePassword';
 
 const Account = () => {
-  const [processing, setProcessing] = useState(false);
-
-  const profileData = useAppSelector(profile);
-
   return (
     <PageLayout>
       <div className="viewContainer">
@@ -26,11 +20,7 @@ const Account = () => {
 
           {/* Update Password */}
 
-          <div className="contentCard accountCard">
-            <h2>
-              Update Password
-            </h2>
-          </div>
+          <UpdatePassword />
 
           {/* Delete Account */}
 
