@@ -62,7 +62,7 @@ div.divider {
 
 html {
   min-height: 100%; /* Is this the right approach? */
-  min-width: 375px; /* Up for debate; could arguably be 350px */
+  min-width: $minAppWidth;
 }
 
 body {
@@ -130,6 +130,54 @@ body {
   }
 }
 
+/* Dialog Alert */
+
+.dialogAlert {
+  width: 300px;
+  padding: $gutterMedium $gutterSmall;
+  background-color: $white;
+
+  .message {
+    margin-bottom: $gutterSmall;
+  }
+
+  .controls {
+    display: flex;
+    flex-direction: column;
+
+    .buttonContainer {
+      width: 100%;
+    }
+
+    .spacing {
+      margin-top: 9px;
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    width: 380px;
+    padding: $gutterMedium;
+
+    .message {
+      margin-bottom: $gutterMedium;
+    }
+
+    .controls {
+      flex-direction: row-reverse;
+      justify-content: space-between;
+  
+      .buttonContainer {
+        min-width: 110px;
+      }
+
+      .spacing {
+        margin-top: 0;
+        margin-right: $gutterMedium;
+      }
+    }
+  }
+}
+
 /* Header Bar */
 
 .headerBar {
@@ -141,39 +189,51 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 $gutterSmall;
   margin-bottom: $gutterMedium;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14);
 
   .logoButtonContainer {
+    padding-left: $gutterSmall;
     height: 40px;
-    width: 100px;
+    width: 130px;
 
     button, img {
       height: 100%;
     }
   }
 
-  .signOutButtonContainer {
-    width: 100px;
+  .accountButtonContainer {
+    width: 130px;
     display: flex;
     justify-content: flex-end;
-
-    .signOutButton {
-      color: $primaryDark;
-      font-weight: 700;
-    }
+    padding-right: 12px;
   }
 
   @media screen and (min-width: 768px) {
     height: 89px;
-    padding: 0 $gutterMedium;
     margin-bottom: $gutterLarge;
 
     .logoButtonContainer {
+      padding-left: $gutterMedium;
       height: 60px;
     }
+
+    .accountButtonContainer {
+      padding-right: 20px;
+    }
   }
+}
+
+/* Menus */
+
+.menuOptionLabel {
+  @include AvenirHeavy;
+  font-size: 0.875rem;
+  line-height: 1rem;
+  letter-spacing: 1.25px;
+  text-transform: uppercase;
+  color: $primaryDark;
+  margin-left: 4px;
 }
 
 /* Buttons */

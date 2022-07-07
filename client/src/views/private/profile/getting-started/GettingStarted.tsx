@@ -13,8 +13,8 @@ import { BadgeOutlined, LocalPhoneOutlined, LinkedIn, Link } from '@mui/icons-ma
 
 import StandardButton from '../../../../components/buttons/StandardButton';
 import TextFieldLabel from '../../../../components/elements/TextFieldLabel';
-import ShirtSizeCard from '../../../../components/elements/ShirtSizeCard';
-import DietaryRestrictionCard from '../../../../components/elements/DietaryRestrictionCard';
+import ShirtSizeCard from '../../../../components/cards/ShirtSizeCard';
+import DietaryRestrictionCard from '../../../../components/cards/DietaryRestrictionCard';
 import AgreementFormItem from '../../../../components/elements/AgreementFormItem';
 
 import { dietaryRestrictions, shirtSizes } from '../../../../helpers/constants';
@@ -377,10 +377,10 @@ const GettingStarted = () => {
         <h1>
           Tell us a little about <span className="highlight">yourself</span>.
         </h1>
+
+        {/* Basic Information */}
+
         <div className="contentCard profileCard basicInformationProfileCard">
-
-          {/* Basic Information */}
-
           <div className="cardHeadingWithNote">
             <h2>
               Basic Information

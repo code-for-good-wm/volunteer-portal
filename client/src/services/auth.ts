@@ -53,14 +53,9 @@ export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
       // Ignore other cases?
     }
   } else {
-    // No active user; sign out if needed
+    // No active user; sign out and reset app state if needed
     if (signedIn) {
-      store.dispatch(
-        updateAuth({
-          signedIn: false,
-          user: null,
-        })
-      );
+      resetAppState();
     }
   }
 };
@@ -232,6 +227,8 @@ export const createNewUser = async (params: SignInParams) => {
       message = 'An account already exists for this email address.';
     } else if (code === 'auth/invalid-email') {
       message = 'The email address is invalid and cannot be used to create an account.';
+    } else if (code === 'auth/invalid-password') {
+      message = 'The submitted password does not meet minimum requirements.';
     }
 
     if (failure) {
