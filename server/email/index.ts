@@ -2,7 +2,7 @@
 import { AzureFunction, Context, HttpRequest, Logger } from '@azure/functions';
 import { createErrorResult, Result } from '../core';
 import { connect, userStore } from '../models/store';
-import { checkRequestAuth, sendTestEmail } from '../helpers';
+import { checkRequestAuth, sendTemplateEmail, sendTestEmail } from '../helpers';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   const logger = context.log;
@@ -92,7 +92,8 @@ async function createEmail(context: Context, userIdent: string, logger: Logger):
   // Get template data from request body
   const templateData = context.req?.body ?? {};
 
-  const result = await sendTestEmail(recipientEmail, logger);
+  // const result = await sendTestEmail(recipientEmail, logger);
+  const result = await sendTemplateEmail(recipientEmail, templateId, templateData, logger);
 
   return result;
 }
