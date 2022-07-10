@@ -13,9 +13,9 @@ pool:
 
 # load variables based on environment using compile-time conditionals
 variables:
-- ${{ if eq(variables['build.SourceBranchName'], 'main') }}:
+- ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
   - group: cfg-volunteer-prod
-- ${{ if ne(variables['build.SourceBranchName'], 'main') }}:
+- ${{ if ne(variables['Build.SourceBranchName'], 'main') }}:
   - group: cfg-volunteer-dev
 
 steps:
@@ -69,5 +69,6 @@ steps:
     secureFile: '$(fb-creds-name)'
 
 - script: |
-    echo "Including firebase credential secret file"
-    cp $(fbCreds.secureFilePath) $(System.DefaultWorkingDirectory)/server
+    echo "Including firebase credential secret file: $(fb-creds-name)"
+    cp $(fbCreds.secureFilePath) $(System.DefaultWorkingDirectory)/server/dist
+  displayName: 'Apply firebase credentials'
