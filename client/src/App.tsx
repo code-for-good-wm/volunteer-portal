@@ -1,38 +1,21 @@
 import React from 'react';
 
-import { useIsAuthenticated, useMsal } from '@azure/msal-react';
-import { loginRequest } from './authConfig';
-import { IPublicClientApplication } from '@azure/msal-browser';
+import { ThemeProvider } from '@mui/material';
+import { muiTheme } from './material/theme';
 
-function App() {
-  const { instance } = useMsal();
-  const isAuthenticated = useIsAuthenticated();
+import { store } from './store/store';
+import { Provider } from 'react-redux';
 
-  const signIn = (instance: IPublicClientApplication) => {
-    instance.loginRedirect(loginRequest).catch((e) => console.error(e));
-  };
+import NavSwitch from './nav/NavSwitch';
 
-  const signOut = (instance: IPublicClientApplication) => {
-    instance.logoutRedirect().catch((e) => console.error(e));
-  };
-
-  // Build button
-  // Note: This is currently only used for Microsoft and GitHub accounts
-  const authButton = isAuthenticated ? (
-    <button type="button" onClick={() => signOut(instance)}>
-      Sign Out
-    </button>
-  ) : (
-    <button type="button" onClick={() => signIn(instance)}>
-      Sign In
-    </button>
-  );
-
+const App = () => {
   return (
-    <div>
-      {authButton}
-    </div>
+    <ThemeProvider theme={muiTheme}>
+      <Provider store={store}>
+        <NavSwitch />
+      </Provider>
+    </ThemeProvider>
   );
-}
+};
 
 export default App;

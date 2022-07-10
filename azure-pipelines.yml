@@ -4,10 +4,19 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
+- dev
 - main
+- feature/*
 
 pool:
   vmImage: ubuntu-latest
+
+# load variables based on environment using compile-time conditionals
+variables:
+- ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
+  - group: cfg-volunteer-prod
+- ${{ if ne(variables['Build.SourceBranchName'], 'main') }}:
+  - group: cfg-volunteer-dev
 
 steps:
 
@@ -19,18 +28,47 @@ steps:
     versionSpec: '16.x'
   displayName: 'Install Node.js'
 
+# npm audit is broken: https://github.com/facebook/create-react-app/issues/11174
+# specifying a custom build path, and moving the config file there
 - script: |
     cd client
-    npm install
-    npm run build
+    npm install --no-audit
+    npm audit --omit=dev
+    BUILD_PATH='../app_dist' npm run build
+    cp ../staticwebapp.config.json ../app_dist/staticwebapp.config.json
   displayName: 'npm install and build'
+  env: # set environment variables that are used during build time here. These are non-secret
+    REACT_APP_MSAL_CLIENT_ID: '$(msal-client-id)'
+    REACT_APP_MSAL_AUTHORITY: '$(msal-authority)'
+    REACT_APP_SIGN_IN_REDIRECT: '$(app-root-url)'
+    REACT_APP_SIGN_OUT_REDIRECT: '$(app-root-url)'
+    REACT_APP_FB_API_KEY: '$(fb-api-key)'
+    REACT_APP_FB_AUTH_DOMAIN: '$(fb-auth-domain)'
+    REACT_APP_FB_PROJECT_ID: '$(fb-project-id)'
+    REACT_APP_FB_STORAGE_BUCKET: '$(fb-storage-bucket)'
+    REACT_APP_FB_MESSAGING_SENDER_ID: '$(fb-msg-sender-id)'
+    REACT_APP_FB_APP_ID: '$(fb-app-id)'
+    REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL: '$(app-root-url)'
 
 - task: AzureStaticWebApp@0
   inputs:
-    app_location: 'build' # App built files cwd
-    api_location: 'api' # Api source code path relative to cwd
-    skip_api_build: true # Don't build the API - there isn't one yet
+    production_branch: 'main' # defines which branch is the main site, other branches get previews
+    app_location: 'app_dist' # App built files cwd
+    api_location: 'server' # Api source code path relative to cwd
+    skip_api_build: false # Build the app backend to Functions 
     skip_app_build: true # handled by react in script step
     output_location: '' # empty because we're skipping the app build
-    cwd: '$(System.DefaultWorkingDirectory)/client' # Working directory - optional
+    cwd: '$(System.DefaultWorkingDirectory)' # Working directory - optional
     azure_static_web_apps_api_token: $(swa_deploy_token)
+
+# Include the firebase credentials from static files
+- task: DownloadSecureFile@1
+  name: fbCreds
+  displayName: 'Download FB credentials'
+  inputs:
+    secureFile: '$(fb-creds-name)'
+
+- script: |
+    echo "Including firebase credential secret file: $(fb-creds-name)"
+    cp $(fbCreds.secureFilePath) $(System.DefaultWorkingDirectory)/server/dist
+  displayName: 'Apply firebase credentials'

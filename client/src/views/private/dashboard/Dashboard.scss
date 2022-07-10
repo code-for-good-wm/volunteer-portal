@@ -1,0 +1,17 @@
+.dashboardCard {
+  max-width: 675px;
+  text-align: center;
+}
+
+.dashboardButtonContainer {
+  max-width: 430px;
+  margin: 0 auto;
+
+  @media screen and (min-width: 768px) {
+    padding-top: 8px;
+  }
+}
+
+.bigNumber {
+  font-size: 2rem;
+}

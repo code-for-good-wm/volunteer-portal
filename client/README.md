@@ -1,46 +1,32 @@
-# Getting Started with Create React App
+# Volunteer Web Portal
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a Single Page Application (SPA) using [React](https://reactjs.org/) and [TypeScript](https://www.typescriptlang.org/docs/handbook/react.html).  We used [Create React App](https://github.com/facebook/create-react-app) to initially spin up the code; we're using [React Router](https://reactrouter.com/) for internal navigation.
 
-## Available Scripts
+## Design
 
-In the project directory, you can run:
+The design is based on a [Zeplin project](https://app.zeplin.io/project/626073e5dd4cd5aa6427ff40) created by [Bethany Paquette](http://www.bethanypaquette.com/).  The design was implemented using [SASS](https://sass-lang.com/) and the [Material UI](https://mui.com/) library.  
 
-### `npm start`
+## App State
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Our MVP is very simple, but later updates will add multiple user roles and significant features.  For this reason, we're using [Redux](https://redux.js.org/) and the [Redux Toolkit](https://redux-toolkit.js.org/) to organize, store, and update app state.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Authentication
 
-### `npm test`
+Coming soon!
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Serverless Back End
 
-### `npm run build`
+Coming soon!
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Getting Started
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+In the root `client` folder, follow these instructions:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Run `npm install` to install necessary dependencies.  We recommend the use of Node 16 for this project.  [Learn how to manage Node versions on your development machine.](https://npm.github.io/installation-setup-docs/installing/using-a-node-version-manager.html)
+- This application uses [environment variables](https://create-react-app.dev/docs/adding-custom-environment-variables/) stored in `.env` files.  These variables are non-secret settings which are environment specific.  For local development, copy the settings from `.env.example` into a `.env.local` file.  React will use settings from `.env.local` as a default if present.
+- With packages installed and environment variables in place, spin up a local development server using `npm start`.  Changes to files should be immediately implemented upon save.
 
-### `npm run eject`
+## Deployment
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Our repo is hosted on [Azure DevOps](https://azure.microsoft.com/en-us/services/devops/); the application is automatically built and deployed using scripts once code is pushed to the `dev` and `main` branches. 
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).

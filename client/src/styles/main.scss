@@ -1,0 +1,44 @@
+/* Fonts */
+@import './fonts.scss';
+
+@mixin AvenirMedium {
+  font-family: 'Avenir-Medium', Arial, Helvetica, sans-serif;
+}
+
+@mixin AvenirBlack {
+  font-family: 'Avenir-Black', Arial, Helvetica, sans-serif;
+}
+
+@mixin AvenirBook {
+  font-family: 'Avenir-Book', Arial, Helvetica, sans-serif;
+}
+
+@mixin AvenirBookOblique {
+  font-family: 'Avenir-BookOblique', Arial, Helvetica, sans-serif;
+}
+
+@mixin AvenirRoman {
+  font-family: 'Avenir-Roman', Arial, Helvetica, sans-serif;
+}
+
+@mixin AvenirHeavy {
+  font-family: 'Avenir-Heavy', Arial, Helvetica, sans-serif;
+}
+
+@mixin AvenirHeavyOblique {
+  font-family: 'Avenir-HeavyOblique', Arial, Helvetica, sans-serif;
+}
+
+/* Import global stylesheets */
+@import './resets.scss';
+@import './colors.scss';
+@import './variables.scss';
+@import './master.scss';
+@import './forms.scss';
+
+/* Import view-specific stylesheets */
+@import '../views/public/sign-in/SignIn.scss';
+@import '../views/private/account/Account.scss';
+@import '../views/private/dashboard/Dashboard.scss';
+@import '../views/private/profile/Profile.scss';
+@import '../views/private/profile/roles/Roles.scss';

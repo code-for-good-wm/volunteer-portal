@@ -20,6 +20,7 @@
         "react",
         "@typescript-eslint"
     ],
+    "ignorePatterns": ["/build/**"],
     "rules": {
         "indent": [
             "error",
