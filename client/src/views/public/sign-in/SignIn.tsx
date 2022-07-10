@@ -36,11 +36,7 @@ const SignIn = () => {
   useEffect(() => {
     const emailTrimmed = form.email.trim();
     const passwordTrimmed = form.password.trim();
-    if (testEmail(emailTrimmed) && passwordTrimmed) {
-      setSubmitDisabled(false);
-    } else {
-      setSubmitDisabled(true);
-    }
+    setSubmitDisabled(!(testEmail(emailTrimmed) && passwordTrimmed));
   }, [form]);
 
   const resetAlert = () => {

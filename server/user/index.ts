@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { Result } from '../core';
+import { createErrorResult, createSuccessResult, Result } from '../core';
 import { checkBindingDataUserId, checkRequestAuth } from '../helpers';
 import { connect, profileStore, skillStore, userStore } from '../models/store';
 import { User } from '../models/user';
@@ -8,13 +8,6 @@ import { Profile } from '../models/profile';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   const logger = context.log;
-
-  // Set return value to JSON
-  context.res = {
-    header: {
-      'Content-Type': 'application/json'
-    }
-  };
 
   // Attempt to capture caller information from token
   let uid = '';
@@ -25,13 +18,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const decodedToken = await checkRequestAuth(authorization, logger);
 
     if (!decodedToken?.uid) {
-      context.res.status = 401;
-      context.res.body = {
-        'error' : {
-          'code' : 401,
-          'message' : 'Unauthorized'
-        }
-      };
+      context.res = createErrorResult(401, 'Unauthorized');
       return;
     }
 
@@ -39,13 +26,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     uid = decodedToken.uid;
   } catch (error) {
     logger('Authentication error: ', error);
-    context.res.status = 500;
-    context.res.body = {
-      'error' : {
-        'code' : 500,
-        'message' : 'Internal error'
-      }
-    };
+    context.res = createErrorResult(500, 'Internal error');
     return;
   }
 
@@ -54,13 +35,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     await connect(logger);
   } catch (error) {
     logger('Database error: ', error);
-    context.res.status = 500;
-    context.res.body = {
-      'error' : {
-        'code' : 500,
-        'message' : 'Internal error'
-      }
-    };
+    context.res = createErrorResult(500, 'Internal error');
     return;
   }
 
@@ -82,8 +57,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 
   if (result) {
-    context.res.status = result.status;
-    context.res.body = result.body;
+    context.res = result;
   }
 };
 
@@ -91,60 +65,28 @@ async function getUser(userIdent: string): Promise<Result> {
   // Attempt to acquire user data
   const user = await userStore.list(userIdent);
   if (!user) {
-    return {
-      body: {
-        'error' : {
-          'code' : 404,
-          'message' : 'User not found',
-        }
-      },
-      status: 404,
-    };
+    return createErrorResult(404, 'User not found');
   }
 
   // For MVP we're allowing users to only access their own data
   if (userIdent !== user.ident) {
-    return {
-      body: {
-        'error': {
-          'code' : 403,
-          'message' : 'Forbidden',
-        }
-      },
-      status: 403,
-    };
+    return createErrorResult(403, 'Forbidden');
   }
 
-  return { body: user, status: 200 };
+  return createSuccessResult(200, user);
 }
 
 async function createUser(context: Context, userIdent: string): Promise<Result> {
   // Check to see if this user already exists; if so, return error
   const user = await userStore.list(userIdent);
   if (user) {
-    return {
-      body: {
-        'error' : {
-          'code' : 400,
-          'message' : 'User document already exists'
-        }
-      },
-      status: 400,
-    };
+    return createErrorResult(400, 'User document already exists');
   }
 
   // Build new user
   const email = context.req?.body?.email ?? '';
   if (!email) {
-    return {
-      body: {
-        'error' : {
-          'code' : 400,
-          'message' : 'Missing required parameters'
-        }
-      },
-      status: 400,
-    };
+    return createErrorResult(400, 'Missing required parameters');
   }
 
   const newUser: User = {
@@ -168,7 +110,7 @@ async function createUser(context: Context, userIdent: string): Promise<Result> 
 
   await profileStore.create(newProfile);
 
-  return { body: userData, status: 201 };
+  return createSuccessResult(201, userData);
 }
 
 async function updateUser(context: Context, userIdent: string): Promise<Result> {

@@ -5,6 +5,7 @@ import { connect, profileStore, skillStore } from '../models/store';
 import { Profile } from '../models/profile';
 import { checkBindingDataUserId, checkRequestAuth } from '../helpers';
 import { UserSkill } from '../models/user-skill';
+import { Types } from 'mongoose';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   const logger = context.log;
@@ -18,7 +19,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const decodedToken = await checkRequestAuth(authorization, logger);
 
     if (!decodedToken?.uid) {
-      context.res = createErrorResult(401, 'Unauthorized')
+      context.res = createErrorResult(401, 'Unauthorized');
       return;
     }
 
@@ -168,7 +169,7 @@ async function updateProfile(context: Context, userIdent: string): Promise<Resul
     if (existingSkills.length > 0) {
       for (let i = 0; i < existingSkills.length; i++) {
         const s = existingSkills[i];
-        await skillStore.update(s._id as any, userId, s);
+        await skillStore.update(s._id as Types.ObjectId, userId, s);
       }
     }
   }
