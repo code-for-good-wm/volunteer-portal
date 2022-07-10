@@ -50,6 +50,18 @@ steps:
     REACT_APP_FB_APP_ID: '$(fb-app-id)'
     REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL: '$(app-root-url)'
 
+# Include the firebase credentials from static files
+- task: DownloadSecureFile@1
+  name: fbCreds
+  displayName: 'Download FB credentials'
+  inputs:
+    secureFile: '$(fb-creds-name)'
+
+- script: |
+    echo "Including firebase credential secret file: $(fb-creds-name)"
+    cp $(fbCreds.secureFilePath) $(System.DefaultWorkingDirectory)/server
+  displayName: 'Apply firebase credentials'
+
 - task: AzureStaticWebApp@0
   inputs:
     production_branch: 'main' # defines which branch is the main site, other branches get previews
@@ -60,15 +72,3 @@ steps:
     output_location: '' # empty because we're skipping the app build
     cwd: '$(System.DefaultWorkingDirectory)' # Working directory - optional
     azure_static_web_apps_api_token: $(swa_deploy_token)
-
-# Include the firebase credentials from static files
-- task: DownloadSecureFile@1
-  name: fbCreds
-  displayName: 'Download FB credentials'
-  inputs:
-    secureFile: '$(fb-creds-name)'
-
-- script: |
-    echo "Including firebase credential secret file: $(fb-creds-name)"
-    cp $(fbCreds.secureFilePath) $(System.DefaultWorkingDirectory)/server/dist
-  displayName: 'Apply firebase credentials'
