@@ -307,10 +307,13 @@ export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParam
       additionalSkills,
     };
 
-    // If this is the first completion of the profile section, add a timestamp
+    // If this is the first completion of the profile section, 
+    // add a timestamp and send a registration completion email
+    let sendCompletionEmail = false;
     if (!profile.completionDate) {
       const timestamp = new Date().toISOString();
       profileUpdate.completionDate = timestamp;
+      sendCompletionEmail = true;
     }
 
     // Attempt profile update
@@ -338,6 +341,20 @@ export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParam
         data: newProfileData,
       })
     );
+
+    // Send completion email
+    if (sendCompletionEmail) {
+      // NOTE: We're allowing this to fail quietly if an error occurs
+      const emailUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/email/${process.env.REACT_APP_REGISTRATION_COMPLETE_EMAIL_TEMPLATE_ID}`;
+
+      await fetch(emailUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+    }
 
     if (success) {
       success();
