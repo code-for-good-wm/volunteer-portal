@@ -1,5 +1,5 @@
 import { FirebaseError } from '@firebase/util';
-import { deleteUser, EmailAuthProvider, getAuth, reauthenticateWithCredential, sendPasswordResetEmail, signInWithEmailAndPassword, updateEmail, updatePassword, User as FirebaseUser } from 'firebase/auth';
+import { deleteUser, EmailAuthProvider, getAuth, reauthenticateWithCredential, updateEmail, updatePassword } from 'firebase/auth';
 
 import { User } from '../types/user';
 import { DeleteUserAccountParams, UpdateUserEmailParams, UpdateUserPasswordParams } from '../types/services';

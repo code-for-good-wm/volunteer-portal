@@ -404,3 +404,9 @@ export const otherExperience: Skill[] = [
     description: 'Videography'
   },
 ];
+
+export const technicalSkillCodes = [...technicalSkills.experienceLevel, ...technicalSkills.toolsAndLanguages].map(s => s.code);
+
+export const designSkillCodes = [...designSkills.experienceLevel, ...designSkills.tools].map(s => s.code);
+
+export const otherSkillCodes = otherExperience.map(s => s.code);
