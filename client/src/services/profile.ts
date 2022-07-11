@@ -8,6 +8,7 @@ import { UpdateAdditionalSkillsParams, UpdateGettingStartedProfileDataParams, Up
 
 import { updateProfile } from '../store/profileSlice';
 import { updateAlert } from '../store/alertSlice';
+import { designSkillCodes, otherSkillCodes, technicalSkillCodes } from '../helpers/constants';
 
 export const updateUserRoles = async (params: UpdateUserRolesParams) => {
   const {
@@ -263,7 +264,7 @@ export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParam
     success,
     failure
   } = params;
-  
+
   const auth = getAuth();
   const appState = store.getState();
   const profile = appState.profile.data;
@@ -357,4 +358,59 @@ export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParam
       failure(message);
     }
   }
+};
+
+export const calculateProfilePercentComplete = (profile: Profile) => {
+  // if there's a completion date, the profile is done
+  if (profile.completionDate) {
+    return 100;
+  }
+
+  let pct = 0;
+
+  // no date and no roles means this is a new user
+  if (profile.roles?.length === 0) {
+    return pct;
+  }
+
+  // figure out how many sections plus (roles + profile) are needed
+  // roles, profile, tech / design skills, additional
+  const sections = 2 + (profile.roles.includes('designer') ? 1 : 0)
+    + (profile.roles.includes('developer') ? 1 : 0) + 1;
+  const increment = Math.ceil(100 / sections);
+
+  pct += increment;
+
+  if (!profile.agreements || !profile.agreements?.codeOfConduct) {
+    return pct;
+  }
+
+  pct += increment;
+
+  // no skills, but profile is complete
+  if (profile.skills?.length === 0) {
+    return pct;
+  }
+
+  // determine which skills sections have been done
+  const skillCodes = profile.skills.filter(s => s.level > 0).map(s => s.code);
+  profile.roles.forEach(r => {
+    switch (r) {
+    case 'designer':
+      if (designSkillCodes.find(s => skillCodes.includes(s))) {
+        pct += increment;
+      }
+      break;
+    case 'developer':
+      if (technicalSkillCodes.find(s => skillCodes.includes(s))) {
+        pct += increment;
+      }
+      break;
+    }
+  });
+  if (otherSkillCodes.find(s => skillCodes.includes(s))) {
+    pct += increment;
+  }
+
+  return Math.min(pct, 100);
 };

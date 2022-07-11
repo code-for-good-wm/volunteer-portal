@@ -1,18 +1,12 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { Result } from '../core';
+import { Types } from 'mongoose';
+import { createErrorResult, createSuccessResult, Result } from '../core';
 import { checkBindingDataUserId, checkRequestAuth } from '../helpers';
 import { connect, skillStore } from '../models/store';
 import { UserSkill } from '../models/user-skill';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   const logger = context.log;
-
-  // Set return value to JSON
-  context.res = {
-    header: {
-      'Content-Type': 'application/json'
-    }
-  };
 
   // Attempt to capture caller information from token
   let uid = '';
@@ -23,13 +17,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const decodedToken = await checkRequestAuth(authorization, logger);
 
     if (!decodedToken?.uid) {
-      context.res.status = 401;
-      context.res.body = {
-        'error' : {
-          'code' : 401,
-          'message' : 'Unauthorized'
-        }
-      };
+      context.res = createErrorResult(401, 'Unauthorized');
       return;
     }
 
@@ -37,13 +25,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     uid = decodedToken.uid;
   } catch (error) {
     logger('Authentication error: ', error);
-    context.res.status = 500;
-    context.res.body = {
-      'error' : {
-        'code' : 500,
-        'message' : 'Internal error'
-      }
-    };
+    context.res = createErrorResult(500, 'Internal error');
     return;
   }
 
@@ -52,13 +34,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     await connect(logger);
   } catch (error) {
     logger('Database error: ', error);
-    context.res.status = 500;
-    context.res.body = {
-      'error' : {
-        'code' : 500,
-        'message' : 'Internal error'
-      }
-    };
+    context.res = createErrorResult(500, 'Internal error');
     return;
   }
 
@@ -80,8 +56,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 
   if (result) {
-    context.res.status = result.status;
-    context.res.body = result.body;
+    context.res = result;
   }
 };
 
@@ -102,7 +77,7 @@ async function getUserSkills(context: Context, userIdent: string): Promise<Resul
     userSkills = userSkills.filter(s => s.code === skillCode);
   }
 
-  return { body: userSkills, status: 200 };
+  return createSuccessResult(200, userSkills);
 }
 
 async function createUserSkills(context: Context, userIdent: string): Promise<Result> {
@@ -127,20 +102,10 @@ async function createUserSkills(context: Context, userIdent: string): Promise<Re
       });
 
     if (newSkills.length === 0) {
-      return { 
-        body: { 
-          'error' : {
-            'code' : 400,
-            'message' : 'Skill data missing expected properties'
-          }
-        }, 
-        status: 400 
-      };
+      return createErrorResult(400, 'Skill data missing expected properties');
     }
 
-    await skillStore.createMany(userId, newSkills);
-
-    return { body: await skillStore.createMany(userId, newSkills), status: 201 };
+    return createSuccessResult(201, await skillStore.createMany(userId, newSkills));
   }
 
   // Treat as a single skill
@@ -148,15 +113,7 @@ async function createUserSkills(context: Context, userIdent: string): Promise<Re
   const level = skills?.level;
 
   if (!code || level === undefined) {
-    return { 
-      body: { 
-        'error' : {
-          'code' : 400,
-          'message' : 'Skill data missing expected properties'
-        }
-      }, 
-      status: 400 
-    };
+    return createErrorResult(400, 'Skill data missing expected properties');
   }
 
   const newSkill = {
@@ -165,7 +122,7 @@ async function createUserSkills(context: Context, userIdent: string): Promise<Re
     level,
   };
 
-  return { body: await skillStore.create(userId, newSkill), status: 201 };
+  return createSuccessResult(201, await skillStore.create(userId, newSkill));
 }
 
 async function updateUserSkills(context: Context, userIdent: string): Promise<Result> {
@@ -208,15 +165,7 @@ async function updateUserSkills(context: Context, userIdent: string): Promise<Re
   }
 
   if (newSkills.length === 0) {
-    return { 
-      body: { 
-        'error' : {
-          'code' : 400,
-          'message' : 'Skill data missing expected properties'
-        }
-      }, 
-      status: 400 
-    };
+    return createErrorResult(400, 'Skill data missing expected properties');
   }
 
   // Attempt updates
@@ -224,13 +173,17 @@ async function updateUserSkills(context: Context, userIdent: string): Promise<Re
 
   for (let i = 0; i < newSkills.length; i++) {
     const s = newSkills[i];
-    const updateResult = await skillStore.update(s._id as any, userId, s);
+    const updateResult = await skillStore.update(s._id as Types.ObjectId, userId, s);
     if (updateResult.nModified === 1) {
       updatedSkills.push(s);
     }
   }
 
-  return { body: updatedSkills, status: updatedSkills.length > 0 ? 201 : 404 };
+  if (updatedSkills.length === 0) {
+    return createErrorResult(404, 'No skills to update');
+  }
+
+  return createSuccessResult(201, updatedSkills);
 }
 
 async function deleteUserSkills(context: Context, userIdent: string): Promise<Result> {
@@ -254,7 +207,7 @@ async function deleteUserSkills(context: Context, userIdent: string): Promise<Re
     await skillStore.deleteAllForUser(userId); // Remove all skill documents for user
   }
   
-  return { body: null, status: 202 };
+  return createSuccessResult(202, null);
 }
 
 export default httpTrigger;

@@ -4,7 +4,9 @@
   },
   "scripts": {
     "dev": "swa start ./client/build --api-location ./server --port 3000",
-    "dev:install": "cd client && npm install --no-audit && npm run build && cp ../staticwebapp.config.json ./build/ && cd ../server && npm install && func init --language typescript --worker-runtime node"
+    "dev:install": "npm run client:build && npm run server:build",
+    "client:build": "cd client && npm install --no-audit && npm run build && cp ../staticwebapp.config.json ./build",
+    "server:build": "cd server && npm install --no-audit && npm run build && func init --language typescript --worker-runtime node"
   },
   "devDependencies": {
     "@azure/static-web-apps-cli": "^1.0.1"
