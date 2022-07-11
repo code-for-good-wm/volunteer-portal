@@ -354,6 +354,13 @@ export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParam
           'Authorization': `Bearer ${token}`,
         },
       });
+
+      // Set showRegistrationComplete flag
+      store.dispatch(
+        updateProfile({
+          showRegistrationComplete: true,
+        })
+      );
     }
 
     if (success) {

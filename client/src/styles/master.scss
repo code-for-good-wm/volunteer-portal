@@ -58,6 +58,15 @@ div.divider {
   margin-bottom: $gutterSmall;
 }
 
+.link {
+  @include AvenirHeavy;
+  color: $primaryMain;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 /* Structural Styles */
 
 html {
