@@ -1,33 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppSelector } from '../../../../store/hooks';
-import { profile } from '../../../../store/profileSlice';
-
 import { refreshCurrentUserData } from '../../../../services/auth';
-import { calculateProfilePercentComplete } from '../../../../services/profile';
 
 import StandardButton from '../../../../components/buttons/StandardButton';
 
-const PercentComplete = () => {
-  const [percentComplete, setPercentComplete] = useState(0);
+type PercentCompleteProps = {
+  percentComplete: number,
+}
+
+const PercentComplete = (props: PercentCompleteProps) => {
+  const { percentComplete } = props;
+
   const [processing, setProcessing] = useState(false);
 
-  const profileData = useAppSelector(profile);
-
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (profileData) {
-      // get percent complete
-      const pct = calculateProfilePercentComplete(profileData);
-      setPercentComplete(pct);
-
-      if (pct === 0) {
-        navigate('/profile');
-      }
-    }
-  }, [profileData]);
 
   const handleButton = () => {
     // Here we should refresh the profile data prior to navigation
@@ -43,7 +30,7 @@ const PercentComplete = () => {
     refreshCurrentUserData({ success, failure });
   };
 
-  const buttonLabel = profileData?.completionDate ? 'Update my info' : 'Let\'s get started!';
+  const buttonLabel = percentComplete === 0 ? 'Let\'s get started!' : 'Update my info';
 
   return (
     <div className="contentCard dashboardCard">
