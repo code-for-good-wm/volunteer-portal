@@ -8,10 +8,11 @@ type StandardButtonProps = {
   disabled?: boolean,
   label?: string,
   handler?: () => void,
+  link?: string,
 };
 
 const StandardButton = (props: StandardButtonProps) => {
-  const { type, theme, disabled, label, handler } = props;
+  const { type, theme, disabled, label, handler, link } = props;
 
   const buttonType = type || 'button';
   const buttonTheme = theme || 'primary';
@@ -30,7 +31,8 @@ const StandardButton = (props: StandardButtonProps) => {
       fullWidth
       variant={variantType}
       disabled={disabled}
-      onClick={buttonType === 'submit' ? undefined : handleButton}
+      onClick={(buttonType === 'submit' || link) ? undefined : handleButton}
+      href={link}
     >
       <span className={buttonTextStyle}>
         {buttonLabel}

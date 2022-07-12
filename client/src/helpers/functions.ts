@@ -61,6 +61,7 @@ export const resetAppState = () => {
     updateProfile({
       currentSection: null,
       data: null,
+      showRegistrationComplete: false,
     })
   );
 

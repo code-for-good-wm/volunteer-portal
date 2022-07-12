@@ -8,6 +8,7 @@
   },
   "Values": {
     "GOOGLE_APPLICATION_CREDENTIALS": "fb-credentials.dev.json",
+    "SENDGRID_API_KEY": "redacted",
     "DATABASE_URI": "mongodb://localhost:27017",
     "DATABASE_PASS": "redacted",
     "DATABASE_NAME": "cfg-volunteers",
