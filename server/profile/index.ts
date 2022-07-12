@@ -1,46 +1,22 @@
 
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { createErrorResult, createSuccessResult, Result } from '../core';
-import { connect, profileStore, skillStore } from '../models/store';
+import { profileStore, skillStore } from '../models/store';
 import { Profile } from '../models/profile';
-import { checkBindingDataUserId, checkRequestAuth } from '../helpers';
+import { checkBindingDataUserId, checkAuthAndConnect } from '../helpers';
 import { UserSkill } from '../models/user-skill';
 import { Types } from 'mongoose';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-  const logger = context.log;
+  // get caller uid from token and connect to DB
+  // eslint-disable-next-line prefer-const
+  let { uid, result } = await checkAuthAndConnect(context, req);
 
-  // Attempt to capture caller information from token
-  let uid = '';
-
-  try {
-    // Check access token from header
-    const authorization = req.headers.authorization;
-    const decodedToken = await checkRequestAuth(authorization, logger);
-
-    if (!decodedToken?.uid) {
-      context.res = createErrorResult(401, 'Unauthorized');
-      return;
-    }
-
-    // Acquire caller Firebase ID from decoded token
-    uid = decodedToken.uid;
-  } catch (error) {
-    logger('Authentication error: ', error);
-    context.res = createErrorResult(500, 'Internal error');
+  // result will be non-null if there was an error
+  if (result) {
+    context.res = result;
     return;
   }
-
-  try {
-    // Connect to database
-    await connect(logger);
-  } catch (error) {
-    logger('Database error: ', error);
-    context.res = createErrorResult(500, 'Internal error');
-    return;
-  }
-
-  let result: Result | null = null;
 
   switch (req.method) {
   case 'GET':
@@ -57,9 +33,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     break;
   }
 
-  if (result) {
-    context.res = result;
-  }
+  context.res = result;
 };
 
 async function getProfile(context: Context, userIdent: string): Promise<Result> {
@@ -78,10 +52,10 @@ async function getProfile(context: Context, userIdent: string): Promise<Result> 
   }
 
   if (!profile) {
-    return createErrorResult(404, 'Profile data not found');
+    return createErrorResult(404, 'Profile data not found', context);
   }
 
-  return createSuccessResult(200, profile);
+  return createSuccessResult(200, profile, context);
 }
 
 async function createProfile(context: Context, userIdent: string): Promise<Result> {
@@ -103,7 +77,7 @@ async function createProfile(context: Context, userIdent: string): Promise<Resul
 
   const profileData = await profileStore.create(newProfile);
 
-  return createSuccessResult(201, profileData);
+  return createSuccessResult(201, profileData, context);
 }
 
 async function updateProfile(context: Context, userIdent: string): Promise<Result> {
@@ -118,7 +92,7 @@ async function updateProfile(context: Context, userIdent: string): Promise<Resul
   // Pull this user's corresponding profile data
   const profile = await profileStore.list(userId);
   if (!profile) {
-    return createErrorResult(404, 'Profile data not found');
+    return createErrorResult(404, 'Profile data not found', context);
   }
 
   const profileId = profile._id;
@@ -131,7 +105,7 @@ async function updateProfile(context: Context, userIdent: string): Promise<Resul
 
   if (profileUpdateResult.nModified !== 1) {
     // Profile not found, status 404
-    return createErrorResult(404, 'Profile data not found');
+    return createErrorResult(404, 'Profile data not found', context);
   }
 
   // Attempt skills update
@@ -180,7 +154,7 @@ async function updateProfile(context: Context, userIdent: string): Promise<Resul
     updatedProfile.skills = await skillStore.list(userId);
   }
 
-  return createSuccessResult(200, updatedProfile);
+  return createSuccessResult(200, updatedProfile, context);
 }
 
 async function deleteProfile(context: Context, userIdent: string): Promise<Result> {
@@ -196,13 +170,13 @@ async function deleteProfile(context: Context, userIdent: string): Promise<Resul
   const profile = await profileStore.list(userId);
   if (!profile) {
     // should this be an error?
-    return createErrorResult(404, 'Profile data not found');
+    return createErrorResult(404, 'Profile data not found', context);
   }
 
   const profileId = profile._id;
   await profileStore.delete(profileId, userId);
   await skillStore.deleteAllForUser(userId);
-  return createSuccessResult(202, null);
+  return createSuccessResult(202, null, context);
 }
 
 export default httpTrigger;

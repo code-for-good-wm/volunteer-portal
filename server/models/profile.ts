@@ -1,10 +1,10 @@
-import { Schema, model, Types } from "mongoose";
-import { MongooseOpts } from "./default-opts";
-import { DietaryRestriction } from "./enums/dietary-restriction.enum";
-import { Role } from "./enums/role.enum";
-import { ShirtSize } from "./enums/shirt-size.enum";
-import { User } from "./user";
-import { UserSkill } from "./user-skill";
+import { Schema, model, Types } from 'mongoose';
+import { MongooseOpts } from './default-opts';
+import { DietaryRestriction } from './enums/dietary-restriction.enum';
+import { Role } from './enums/role.enum';
+import { ShirtSize } from './enums/shirt-size.enum';
+import { User } from './user';
+import { UserSkill } from './user-skill';
 
 export interface Agreements {
   termsAndConditions?: string; // ISO date

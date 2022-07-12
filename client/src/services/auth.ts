@@ -8,7 +8,7 @@ import { SignInParams, RecoverPasswordParams, ServiceParams } from '../types/ser
 import { store } from '../store/store';
 import { updateAuth } from '../store/authSlice';
 import { updateProfile } from '../store/profileSlice';
-import { resetAppState } from '../helpers/functions';
+import { getDefaultRequestHeaders, getApiBaseUrl, resetAppState } from '../helpers/functions';
 import { updateAlert } from '../store/alertSlice';
 
 export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
@@ -154,17 +154,14 @@ export const createNewUser = async (params: SignInParams) => {
     const token = await user.getIdToken();
 
     // Prep fetch call
-    const userUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user`;
+    const userUrl = `${getApiBaseUrl()}/user`;
     const body = JSON.stringify({
       email,
     });
 
     const userResponse = await fetch(userUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: getDefaultRequestHeaders(token),
       body
     });
 
@@ -177,13 +174,10 @@ export const createNewUser = async (params: SignInParams) => {
 
     // Acquire user profile
     const { _id } = userData;
-    const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${_id}/profile`;
+    const profileUrl = `${getApiBaseUrl()}/user/${_id}/profile`;
 
     const profileResponse = await fetch(profileUrl, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: getDefaultRequestHeaders(token),
     });
 
     if (!profileResponse.ok) {
@@ -312,14 +306,10 @@ export const recoverPassword = async (params: RecoverPasswordParams) => {
  */
 const getUserData = async (token: string) => {
   // Acquire user document
-  const userUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user`;
-
-  const userResponse = await fetch(userUrl, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-  });
+  const userUrl = `${getApiBaseUrl()}/user`;
+  
+  const requestInit = { headers: getDefaultRequestHeaders(token) } as RequestInit;
+  const userResponse = await fetch(userUrl, requestInit);
 
   if (!userResponse.ok) {
     throw new Error('Failed to acquire user data.');
@@ -329,14 +319,9 @@ const getUserData = async (token: string) => {
 
   // Acquire user profile
   const { _id } = userData;
-  const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${_id}/profile`;
+  const profileUrl = `${getApiBaseUrl()}/user/${_id}/profile`;
 
-  const profileResponse = await fetch(profileUrl, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-  });
+  const profileResponse = await fetch(profileUrl, requestInit);
 
   if (!profileResponse.ok) {
     throw new Error('Failed to acquire user profile.');

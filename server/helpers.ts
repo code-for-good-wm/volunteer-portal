@@ -1,10 +1,12 @@
-import { Context, Logger } from '@azure/functions';
+import { Context, HttpRequest, Logger } from '@azure/functions';
 import { getAuth, DecodedIdToken } from 'firebase-admin/auth';
+import { fbApp } from './firebase/init';
 import { createErrorResult, createSuccessResult, Result } from './core';
-import { userStore } from './models/store';
+import { connect, userStore } from './models/store';
 
 type CheckRequestAuth = (authorization: string | undefined, logger: Logger) => Promise<DecodedIdToken | null>
 type CheckBindingDataUserId = (context: Context, userIdent: string) => Promise<Result>
+type CheckAuthAndConnect = (context: Context, req: HttpRequest) => Promise<{ uid: string, result?: Result }>
 
 /**
  * Check HTTP authorization
@@ -14,7 +16,7 @@ type CheckBindingDataUserId = (context: Context, userIdent: string) => Promise<R
  * @returns {Promise<DecodedIdToken | null>}
  */
 export const checkRequestAuth: CheckRequestAuth = (authorization, logger) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     let token = '';
 
     // Check header authorization for token
@@ -28,7 +30,7 @@ export const checkRequestAuth: CheckRequestAuth = (authorization, logger) => {
     }
 
     // Verify token with Firebase Admin SDK
-    getAuth().verifyIdToken(token)
+    getAuth(fbApp).verifyIdToken(token)
       .then((decoded) => {
         resolve(decoded);
       })
@@ -50,20 +52,60 @@ export const checkBindingDataUserId: CheckBindingDataUserId = async (context: Co
   // Attempt to acquire user data from userIdent
   const user = await userStore.list(userIdent);
   if (!user) {
-    return createErrorResult(404, 'User not found');
+    return createErrorResult(404, 'User not found', context);
   }
 
   // Acquire user ID from binding data
   const userId = context.bindingData.userId;
   if (!userId) {
-    return createErrorResult(400, 'Missing required parameter');
+    return createErrorResult(400, 'Missing required parameter', context);
   }
 
   // Compare; if requestor and userId are not the same, return error
   // IMPORTANT: We're ignoring type here; the _id field is technically an object
   if (userId != user._id) {
-    return createErrorResult(403, 'Forbidden');
+    return createErrorResult(403, 'Forbidden', context);
   }
 
-  return createSuccessResult(200, user);
+  return createSuccessResult(200, user, context);
+};
+
+/**
+ * Checks the provided auth token and attempts to connect to the database
+ * @param context 
+ * @param req 
+ * @returns The uid, and a result if there was an error
+ */
+export const checkAuthAndConnect: CheckAuthAndConnect = async (context: Context, req: HttpRequest) => {
+  const logger = context.log;
+
+  // Attempt to capture caller information from token
+  let uid = '';
+
+  try {
+    // Check access token from custom header
+    const authorization = req.headers['x-firebase-auth'];
+    const decodedToken = await checkRequestAuth(authorization, logger);
+
+    if (!decodedToken?.uid) {
+      logger.warn('No user id');
+      return { uid, result: createErrorResult(401, 'Unauthorized', context) };
+    }
+
+    // Acquire caller Firebase ID from decoded token
+    uid = decodedToken.uid;
+  } catch (error) {
+    logger.error('Authentication error: ', error);
+    return { uid, result: createErrorResult(500, 'Internal error', context) };
+  }
+
+  try {
+    // Connect to database
+    await connect(logger);
+  } catch (error) {
+    logger.error('Database error: ', error);
+    return { uid, result: createErrorResult(500, 'Internal error', context) };
+  }
+
+  return { uid };
 };

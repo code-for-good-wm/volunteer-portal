@@ -6,6 +6,7 @@ import { DeleteUserAccountParams, UpdateUserEmailParams, UpdateUserPasswordParam
 
 import { store } from '../store/store';
 import { updateAuth } from '../store/authSlice';
+import { getApiBaseUrl, getDefaultRequestHeaders } from '../helpers/functions';
 
 export const updateUserEmail = async (params: UpdateUserEmailParams) => {
   const {
@@ -46,14 +47,11 @@ export const updateUserEmail = async (params: UpdateUserEmailParams) => {
     const userId = appState.auth.user?._id;
 
     // Attempt user update
-    const userUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/`;
+    const userUrl = `${getApiBaseUrl()}/user/${userId}/`;
 
     const userResponse = await fetch(userUrl, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: getDefaultRequestHeaders(token),
       body: JSON.stringify({
         email
       })
@@ -184,14 +182,11 @@ export const deleteUserAccount = async (params: DeleteUserAccountParams) => {
     const userId = appState.auth.user?._id;
 
     // Attempt removal of user data
-    const userUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/`;
+    const userUrl = `${getApiBaseUrl()}/user/${userId}/`;
 
     const userResponse = await fetch(userUrl, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: getDefaultRequestHeaders(token),
     });
 
     if (!userResponse.ok) {
