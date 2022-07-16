@@ -46,7 +46,7 @@ const HeaderBar = () => {
       color="primary"
       aria-controls={showAccountMenu ? 'account-menu' : undefined}
       aria-haspopup="true"
-      aria-expended={showAccountMenu ? 'true' : undefined}
+      aria-expanded={showAccountMenu ? 'true' : undefined}
       onClick={toggleAccountMenu}
     >
       <span className="standardButtonText">
