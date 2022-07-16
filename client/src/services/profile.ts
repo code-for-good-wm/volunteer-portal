@@ -331,14 +331,11 @@ export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParam
     // Send completion email
     if (sendConfirmationEmail) {
       // NOTE: We're allowing this to fail quietly if an error occurs
-      const emailUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/email/${process.env.REACT_APP_REGISTRATION_CONFIRMATION_EMAIL_TEMPLATE_ID}`;
+      const emailUrl = `${getApiBaseUrl()}/user/${userId}/email/${process.env.REACT_APP_REGISTRATION_CONFIRMATION_EMAIL_TEMPLATE_ID}`;
 
       await fetch(emailUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: getDefaultRequestHeaders(token),
       });
 
       // Set showRegistrationComplete flag
