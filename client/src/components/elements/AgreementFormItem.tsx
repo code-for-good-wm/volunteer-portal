@@ -20,8 +20,6 @@ const AgreementFormItem = (props: AgreementFormItemProps) => {
   const checked = !!selected;
   const handleCheckbox = handler ? handler : () => console.log('Checkbox selected.');
 
-  // TODO: Need handler for external link button
-
   // Build UI
   let title: string;
   let content: React.ReactNode;
@@ -48,7 +46,7 @@ const AgreementFormItem = (props: AgreementFormItemProps) => {
         <li>educational videos</li>
       </ul>
       <p>
-        By signing this release I understand this permission signifies that photographic or video recordings of me may be electronically displayed via the Internet or in the public educational setting.
+        By checking the box below I understand this permission signifies that photographic or video recordings of me may be electronically displayed via the Internet or in the public educational setting.
       </p>
     </div>
   );
@@ -62,7 +60,7 @@ const AgreementFormItem = (props: AgreementFormItemProps) => {
         This code of conduct outlines our expectations for all those who participate in our community, as well as the consequences for unacceptable behavior.
       </p>
       <p>
-        We invite all those who participate in Code for Good to help us create safe and positive experiences for everyone.
+        We invite all those who participate in Code for Good to help us create safe and positive experiences for everyone.  Click the link below to read our full Code of Conduct document.
       </p>
     </div>
   );
