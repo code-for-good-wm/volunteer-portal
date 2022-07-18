@@ -143,8 +143,9 @@ const GettingStarted = () => {
     };
 
     const testAgreements = () => {
-      const { termsAndConditions, photoRelease, codeOfConduct } = agreements;
-      if (!termsAndConditions || !photoRelease || !codeOfConduct) {
+      const { termsAndConditions, codeOfConduct } = agreements;
+      // Photo release is optional
+      if (!termsAndConditions || !codeOfConduct) {
         return false;
       }
 
@@ -623,22 +624,21 @@ const GettingStarted = () => {
           <form className="profileForm">
             <AgreementFormItem
               theme="termsAndConditions"
-              required={true}
               selected={agreements.termsAndConditions}
               handler={handleAgreement}
+              required
             />
             <AgreementFormItem
               theme="photoRelease"
-              required={true}
               selected={agreements.photoRelease}
               handler={handleAgreement}
             />
             <AgreementFormItem
               theme="codeOfConduct"
               spacing="tight"
-              required={true}
               selected={agreements.codeOfConduct}
               handler={handleAgreement}
+              required
             />
           </form>
         </div>
