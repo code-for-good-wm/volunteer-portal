@@ -17,7 +17,7 @@ import ShirtSizeCard from '../../../../components/cards/ShirtSizeCard';
 import DietaryRestrictionCard from '../../../../components/cards/DietaryRestrictionCard';
 import AgreementFormItem from '../../../../components/elements/AgreementFormItem';
 
-import { dietaryRestrictions, shirtSizes } from '../../../../helpers/constants';
+import { agreementUrl, dietaryRestrictions, shirtSizes } from '../../../../helpers/constants';
 import { updateGettingStartedProfileData } from '../../../../services/profile';
 import { getGettingStartedProfileData, navigateToNextProfileSection, parsePhone } from '../../../../helpers/functions';
 import { testPhone } from '../../../../helpers/validation';
@@ -626,18 +626,21 @@ const GettingStarted = () => {
               theme="termsAndConditions"
               selected={agreements.termsAndConditions}
               handler={handleAgreement}
+              url={agreementUrl.termsAndConditions}
               required
             />
             <AgreementFormItem
               theme="photoRelease"
               selected={agreements.photoRelease}
               handler={handleAgreement}
+              url={agreementUrl.photoRelease}
             />
             <AgreementFormItem
               theme="codeOfConduct"
               spacing="tight"
               selected={agreements.codeOfConduct}
               handler={handleAgreement}
+              url={agreementUrl.codeOfConduct}
               required
             />
           </form>

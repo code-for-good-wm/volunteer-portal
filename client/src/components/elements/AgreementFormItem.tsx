@@ -10,11 +10,12 @@ type AgreementFormItemProps = {
   spacing?: 'normal' | 'tight',
   required?: boolean,
   selected?: boolean,
+  url?: string,
   handler?: (agreement?: Agreement) => void,
 };
 
 const AgreementFormItem = (props: AgreementFormItemProps) => {
-  const { theme, spacing, required, selected, handler } = props;
+  const { theme, spacing, required, selected, url, handler } = props;
   const noMargin = (spacing === 'tight');
   const checked = !!selected;
   const handleCheckbox = handler ? handler : () => console.log('Checkbox selected.');
@@ -92,6 +93,12 @@ const AgreementFormItem = (props: AgreementFormItemProps) => {
 
   const itemStyle = noMargin ? 'agreementFormItem noMargin' : 'agreementFormItem';
 
+  const iconButton = url ? (
+    <IconButton href={url} target="_blank">
+      <LaunchOutlined color="primary" />
+    </IconButton>
+  ) : null;
+
   return (
     <div className={itemStyle}>
       <h3>
@@ -108,9 +115,7 @@ const AgreementFormItem = (props: AgreementFormItemProps) => {
                   <span>*</span>
                 )}
               </span>
-              <IconButton>
-                <LaunchOutlined color="primary" />
-              </IconButton>
+              {iconButton}
             </span>
           )}
           control={(
