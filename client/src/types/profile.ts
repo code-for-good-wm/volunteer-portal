@@ -64,6 +64,7 @@ export interface Profile {
   previousVolunteer?: boolean; // Likely we will remove this later
   shirtSize?: ShirtSize;
   dietaryRestrictions: DietaryRestriction[];
+  additionalDietaryRestrictions: string;
   accessibilityRequirements?: string;
   agreements?: Agreements;
   skills: UserSkill[];
@@ -79,6 +80,7 @@ export interface ProfileUpdate {
   previousVolunteer?: boolean;
   shirtSize?: ShirtSize;
   dietaryRestrictions?: DietaryRestriction[];
+  additionalDietaryRestrictions?: string;
   accessibilityRequirements?: string;
   agreements?: Agreements;
   skills?: UserSkill[];

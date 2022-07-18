@@ -264,6 +264,7 @@ export const getGettingStartedProfileData = () => {
     previousVolunteer,
     shirtSize,
     dietaryRestrictions,
+    additionalDietaryRestrictions,
     accessibilityRequirements,
     agreements
   } = profile;
@@ -283,6 +284,7 @@ export const getGettingStartedProfileData = () => {
         previousVolunteer: !!previousVolunteer, // Could be undefined
         shirtSize: shirtSize ?? '',
         dietaryRestrictions,
+        additionalDietaryRestrictions: additionalDietaryRestrictions ?? '',
       },
       accessibilityRequirements: accessibilityRequirements ?? '',
       agreements: {

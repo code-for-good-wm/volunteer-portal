@@ -16,6 +16,7 @@ export const testProfileData: Profile = {
   portfolioUrl: '',
   shirtSize: '',
   dietaryRestrictions: [],
+  additionalDietaryRestrictions: '',
   accessibilityRequirements: '',
   skills: [],
   additionalSkills: '',
