@@ -27,8 +27,14 @@ const AgreementFormItem = (props: AgreementFormItemProps) => {
 
   const termsAndConditionsContent = (
     <div>
-      <p>
+      {/* <p>
         Code for Good (CFG) is committed to the safety, good health, and well-being of all CFG members and event attendees across all in-person conferences, curated events and programs.  CFG is taking the following precautionary steps to ensure safe events for all participants.  Click the link below to read more about Code for Good&apos;s Covid-19 Terms and Conditions.
+      </p> */}
+      <p>
+        Code for Good (CFG) is a volunteer-run collective of technology professionals dedicated to creating technical solutions for nonprofit agencies.  In order to ensure that the beneficiaries of our work will have the necessary rights to use the software we create, it is important for us to establish a clear understanding of our respective rights and our beneficiaries&apos; rights in the software that you contribute.
+      </p>
+      <p>
+        To participate as a volunteer at CFG events, you must read and agree with our terms and conditions.  Click the link below to read our full Participant Agreement document.
       </p>
     </div>
   );
@@ -67,9 +73,9 @@ const AgreementFormItem = (props: AgreementFormItemProps) => {
 
   switch (theme) {
   case 'termsAndConditions':
-    title = 'In-Person Event Covid-19 Terms & Conditions';
+    title = 'Participant Agreement';
     content = termsAndConditionsContent;
-    label = 'I agree with CFG\'s Covid-19 Terms & Conditions';
+    label = 'I agree with CFG\'s Terms & Conditions';
     break;
   case 'photoRelease':
     title = 'Photograph & Video Release Form';
