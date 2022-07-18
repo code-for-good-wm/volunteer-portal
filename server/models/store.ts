@@ -76,7 +76,6 @@ export const userStore = {
     return await UserModel.updateOne({_id, ident}, user);
   },
   delete: async(_id: mongoose.Types.ObjectId, ident: string) => {
-    // TODO: clean up other items?
     return await UserModel.deleteOne({_id, ident});
   }
 };

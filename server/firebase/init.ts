@@ -20,8 +20,6 @@ function getFirebaseApp() {
   const decoded = Buffer.from(encodedCred, 'base64').toString('ascii');
   const certObject = JSON.parse(decoded);
 
-  // TODO: remove
-  console.log(certObject);
   return initializeApp({
     credential: cert(certObject),
   });
