@@ -1,44 +1,20 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { Types } from 'mongoose';
 import { createErrorResult, createSuccessResult, Result } from '../core';
-import { checkBindingDataUserId, checkRequestAuth } from '../helpers';
-import { connect, skillStore } from '../models/store';
+import { checkBindingDataUserId, checkAuthAndConnect } from '../helpers';
+import { skillStore } from '../models/store';
 import { UserSkill } from '../models/user-skill';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-  const logger = context.log;
+  // get caller uid from token and connect to DB
+  // eslint-disable-next-line prefer-const
+  let { uid, result } = await checkAuthAndConnect(context, req);
 
-  // Attempt to capture caller information from token
-  let uid = '';
-
-  try {
-    // Check access token from header
-    const authorization = req.headers.authorization;
-    const decodedToken = await checkRequestAuth(authorization, logger);
-
-    if (!decodedToken?.uid) {
-      context.res = createErrorResult(401, 'Unauthorized');
-      return;
-    }
-
-    // Acquire caller Firebase ID from decoded token
-    uid = decodedToken.uid;
-  } catch (error) {
-    logger('Authentication error: ', error);
-    context.res = createErrorResult(500, 'Internal error');
+  // result will be non-null if there was an error
+  if (result) {
+    context.res = result;
     return;
   }
-
-  try {
-    // Connect to database
-    await connect(logger);
-  } catch (error) {
-    logger('Database error: ', error);
-    context.res = createErrorResult(500, 'Internal error');
-    return;
-  }
-
-  let result: Result | null = null;
 
   switch (req.method) {
   case 'GET':
@@ -77,7 +53,7 @@ async function getUserSkills(context: Context, userIdent: string): Promise<Resul
     userSkills = userSkills.filter(s => s.code === skillCode);
   }
 
-  return createSuccessResult(200, userSkills);
+  return createSuccessResult(200, userSkills, context);
 }
 
 async function createUserSkills(context: Context, userIdent: string): Promise<Result> {
@@ -102,10 +78,10 @@ async function createUserSkills(context: Context, userIdent: string): Promise<Re
       });
 
     if (newSkills.length === 0) {
-      return createErrorResult(400, 'Skill data missing expected properties');
+      return createErrorResult(400, 'Skill data missing expected properties', context);
     }
 
-    return createSuccessResult(201, await skillStore.createMany(userId, newSkills));
+    return createSuccessResult(201, await skillStore.createMany(userId, newSkills), context);
   }
 
   // Treat as a single skill
@@ -113,7 +89,7 @@ async function createUserSkills(context: Context, userIdent: string): Promise<Re
   const level = skills?.level;
 
   if (!code || level === undefined) {
-    return createErrorResult(400, 'Skill data missing expected properties');
+    return createErrorResult(400, 'Skill data missing expected properties', context);
   }
 
   const newSkill = {
@@ -122,7 +98,7 @@ async function createUserSkills(context: Context, userIdent: string): Promise<Re
     level,
   };
 
-  return createSuccessResult(201, await skillStore.create(userId, newSkill));
+  return createSuccessResult(201, await skillStore.create(userId, newSkill), context);
 }
 
 async function updateUserSkills(context: Context, userIdent: string): Promise<Result> {
@@ -165,7 +141,7 @@ async function updateUserSkills(context: Context, userIdent: string): Promise<Re
   }
 
   if (newSkills.length === 0) {
-    return createErrorResult(400, 'Skill data missing expected properties');
+    return createErrorResult(400, 'Skill data missing expected properties', context);
   }
 
   // Attempt updates
@@ -180,10 +156,10 @@ async function updateUserSkills(context: Context, userIdent: string): Promise<Re
   }
 
   if (updatedSkills.length === 0) {
-    return createErrorResult(404, 'No skills to update');
+    return createErrorResult(404, 'No skills to update', context);
   }
 
-  return createSuccessResult(201, updatedSkills);
+  return createSuccessResult(201, updatedSkills, context);
 }
 
 async function deleteUserSkills(context: Context, userIdent: string): Promise<Result> {
@@ -207,7 +183,7 @@ async function deleteUserSkills(context: Context, userIdent: string): Promise<Re
     await skillStore.deleteAllForUser(userId); // Remove all skill documents for user
   }
   
-  return createSuccessResult(202, null);
+  return createSuccessResult(202, null, context);
 }
 
 export default httpTrigger;

@@ -1,7 +1,4 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-
-import '../firebase/init'; // Initialize the Firebase Admin SDK
-
 import { checkRequestAuth } from '../helpers';
 
 const AuthTest: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
@@ -14,9 +11,13 @@ const AuthTest: AzureFunction = async function (context: Context, req: HttpReque
     }
   };
 
+  console.log('Request: ', req);
+
   try {
     // Check access token from header
-    const authorization = req.headers.authorization;
+    console.log('Request: ', req);
+    
+    const authorization = req.headers['x-firebase-auth'];
     const decodedToken = await checkRequestAuth(authorization, logger);
 
     if (!decodedToken) {
@@ -25,7 +26,8 @@ const AuthTest: AzureFunction = async function (context: Context, req: HttpReque
         'error' : {
           'code' : 401,
           'message' : 'Unauthorized'
-        }
+        },
+        'trace_id' : context.invocationId
       };
       return;
     }
@@ -34,7 +36,8 @@ const AuthTest: AzureFunction = async function (context: Context, req: HttpReque
 
     context.res.status = 200; // This should be a default
     context.res.body = {
-      'success' : true
+      'success' : true,
+      'trace_id' : context.invocationId
     };
   } catch (error) {
     logger('An error occurred: ', error);
@@ -43,7 +46,8 @@ const AuthTest: AzureFunction = async function (context: Context, req: HttpReque
       'error' : {
         'code' : 500,
         'message' : 'Internal error'
-      }
+      },
+      'trace_id' : context.invocationId
     };
   }
 };

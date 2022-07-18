@@ -6,7 +6,7 @@ const getConfig = async () => {
   // encode a passowrd if it's provided separately
   const databasePassword = process.env.DATABASE_PASS;
   if (databasePassword && databaseConn) {
-    databaseConn = databaseConn.replace("__DB_PASS__", encodeURIComponent(databasePassword));
+    databaseConn = databaseConn.replace('__DB_PASS__', encodeURIComponent(databasePassword));
   }
 
   return {

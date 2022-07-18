@@ -1,14 +1,14 @@
-import { Context, Logger } from '@azure/functions';
+import { Context, HttpRequest, Logger } from '@azure/functions';
 import { getAuth, DecodedIdToken } from 'firebase-admin/auth';
+import { fbApp } from './firebase/init';
 import { createErrorResult, createSuccessResult, Result } from './core';
-import { userStore } from './models/store';
+import { connect, userStore } from './models/store';
 import fetch from 'node-fetch';
-import * as sgMail from '@sendgrid/mail';
 
 type CheckRequestAuth = (authorization: string | undefined, logger: Logger) => Promise<DecodedIdToken | null>
 type CheckBindingDataUserId = (context: Context, userIdent: string) => Promise<Result>
-type SendTemplateEmail = (recipientEmail: string, templateId: string, templateData: any, logger: Logger) => Promise<Result>
-type SendTestEmail = (recipientEmail: string, logger: Logger) => Promise<Result>
+type CheckAuthAndConnect = (context: Context, req: HttpRequest) => Promise<{ uid: string, result?: Result }>
+type SendTemplateEmail = (recipientEmail: string, templateId: string, templateData: any, context: Context) => Promise<Result>
 
 // Set SendGrid variables
 const senderEmail = 'volunteer@codeforgoodwm.org';
@@ -23,7 +23,7 @@ const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY ?? '';
  * @returns {Promise<DecodedIdToken | null>}
  */
 export const checkRequestAuth: CheckRequestAuth = (authorization, logger) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     let token = '';
 
     // Check header authorization for token
@@ -37,7 +37,7 @@ export const checkRequestAuth: CheckRequestAuth = (authorization, logger) => {
     }
 
     // Verify token with Firebase Admin SDK
-    getAuth().verifyIdToken(token)
+    getAuth(fbApp).verifyIdToken(token)
       .then((decoded) => {
         resolve(decoded);
       })
@@ -59,22 +59,62 @@ export const checkBindingDataUserId: CheckBindingDataUserId = async (context: Co
   // Attempt to acquire user data from userIdent
   const user = await userStore.list(userIdent);
   if (!user) {
-    return createErrorResult(404, 'User not found');
+    return createErrorResult(404, 'User not found', context);
   }
 
   // Acquire user ID from binding data
   const userId = context.bindingData.userId;
   if (!userId) {
-    return createErrorResult(400, 'Missing required parameter');
+    return createErrorResult(400, 'Missing required parameter', context);
   }
 
   // Compare; if requestor and userId are not the same, return error
   // IMPORTANT: We're ignoring type here; the _id field is technically an object
   if (userId != user._id) {
-    return createErrorResult(403, 'Forbidden');
+    return createErrorResult(403, 'Forbidden', context);
   }
 
-  return createSuccessResult(200, user);
+  return createSuccessResult(200, user, context);
+};
+
+/**
+ * Checks the provided auth token and attempts to connect to the database
+ * @param context 
+ * @param req 
+ * @returns The uid, and a result if there was an error
+ */
+export const checkAuthAndConnect: CheckAuthAndConnect = async (context: Context, req: HttpRequest) => {
+  const logger = context.log;
+
+  // Attempt to capture caller information from token
+  let uid = '';
+
+  try {
+    // Check access token from custom header
+    const authorization = req.headers['x-firebase-auth'];
+    const decodedToken = await checkRequestAuth(authorization, logger);
+
+    if (!decodedToken?.uid) {
+      logger.warn('No user id');
+      return { uid, result: createErrorResult(401, 'Unauthorized', context) };
+    }
+
+    // Acquire caller Firebase ID from decoded token
+    uid = decodedToken.uid;
+  } catch (error) {
+    logger.error('Authentication error: ', error);
+    return { uid, result: createErrorResult(500, 'Internal error', context) };
+  }
+
+  try {
+    // Connect to database
+    await connect(logger);
+  } catch (error) {
+    logger.error('Database error: ', error);
+    return { uid, result: createErrorResult(500, 'Internal error', context) };
+  }
+
+  return { uid };
 };
 
 /**
@@ -83,24 +123,20 @@ export const checkBindingDataUserId: CheckBindingDataUserId = async (context: Co
  * @param {string} recipientEmail - The email to which the email will be sent
  * @param {string} templateId - A string identifier for the template to be used
  * @param {any} templateData - An object of property/value pairs used by the template
- * @param {Logger} logger - The Azure context.log function
+ * @param {Context} context - The Azure function invocation context
  * @returns {Promise<Result>}
  */
-export const sendTemplateEmail: SendTemplateEmail = async (recipientEmail: string, templateId: string, templateData: any, logger: Logger) => {
+export const sendTemplateEmail: SendTemplateEmail = async (recipientEmail: string, templateId: string, templateData: any, context: Context) => {
   // Build request
   const body = JSON.stringify({
     from: {
-      email: senderEmail,
+      email: senderEmail
     },
     personalizations: [
       {
-        to: [
-          {
-            email: recipientEmail,
-          },
-        ],
+        to: [{ email: recipientEmail }],
         dynamic_template_data: templateData,
-      },
+      }
     ],
     template_id: templateId,
   });
@@ -121,38 +157,9 @@ export const sendTemplateEmail: SendTemplateEmail = async (recipientEmail: strin
       throw new Error('Mail submission not accepted by SendGrid.');
     }
 
-    return createSuccessResult(202, {}); // TODO: Should we return data here, or is this enough?
+    return createSuccessResult(202, {}, context); // TODO: Should we return data here, or is this enough?
   } catch (error) {
-    logger('SendGrid error: ', error);
-    return createErrorResult(500, 'Internal error');
-  }
-};
-
-/**
- * Send test email w/SendGrid
- * Returns a Result based on SendGrid's response
- * @param {string} recipientEmail - The email to which the email will be sent
- * @param {Logger} logger - The Azure context.log function
- * @returns {Promise<Result>}
- */
-export const sendTestEmail: SendTestEmail = async (recipientEmail: string, logger: Logger) => {
-  // Build message
-  const message = {
-    to: recipientEmail,
-    from: senderEmail,
-    subject: 'Sending with SendGrid is Fun',
-    text: 'and easy to do anywhere, even with Node.js',
-    html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-  };
-
-  // Send message via SendGrid
-  try {
-    sgMail.setApiKey(SENDGRID_API_KEY);
-    await sgMail.send(message);
-
-    return createSuccessResult(202, {});
-  } catch (error) {
-    logger('SendGrid error: ', error);
-    return createErrorResult(500, 'Internal error');
+    context.log.error('SendGrid error: ', error);
+    return createErrorResult(500, 'Internal error', context);
   }
 };

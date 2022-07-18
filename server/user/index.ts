@@ -1,49 +1,25 @@
 import * as mongoose from 'mongoose';
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { createErrorResult, createSuccessResult, Result } from '../core';
-import { checkBindingDataUserId, checkRequestAuth } from '../helpers';
-import { connect, profileStore, skillStore, userStore } from '../models/store';
+import { checkBindingDataUserId, checkAuthAndConnect } from '../helpers';
+import { profileStore, skillStore, userStore } from '../models/store';
 import { User } from '../models/user';
 import { Profile } from '../models/profile';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-  const logger = context.log;
+  // get caller uid from token and connect to DB
+  // eslint-disable-next-line prefer-const
+  let { uid, result } = await checkAuthAndConnect(context, req);
 
-  // Attempt to capture caller information from token
-  let uid = '';
-
-  try {
-    // Check access token from header
-    const authorization = req.headers.authorization;
-    const decodedToken = await checkRequestAuth(authorization, logger);
-
-    if (!decodedToken?.uid) {
-      context.res = createErrorResult(401, 'Unauthorized');
-      return;
-    }
-
-    // Acquire caller Firebase ID from decoded token
-    uid = decodedToken.uid;
-  } catch (error) {
-    logger('Authentication error: ', error);
-    context.res = createErrorResult(500, 'Internal error');
+  // result will be non-null if there was an error
+  if (result) {
+    context.res = result;
     return;
   }
-
-  try {
-    // Connect to database
-    await connect(logger);
-  } catch (error) {
-    logger('Database error: ', error);
-    context.res = createErrorResult(500, 'Internal error');
-    return;
-  }
-
-  let result: Result | null = null;
 
   switch (req.method) {
   case 'GET':
-    result = await getUser(uid);
+    result = await getUser(context, uid);
     break;
   case 'POST':
     result = await createUser(context, uid);
@@ -61,32 +37,32 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 };
 
-async function getUser(userIdent: string): Promise<Result> {
+async function getUser(context: Context, userIdent: string): Promise<Result> {
   // Attempt to acquire user data
   const user = await userStore.list(userIdent);
   if (!user) {
-    return createErrorResult(404, 'User not found');
+    return createErrorResult(404, 'User not found', context);
   }
 
   // For MVP we're allowing users to only access their own data
   if (userIdent !== user.ident) {
-    return createErrorResult(403, 'Forbidden');
+    return createErrorResult(403, 'Forbidden', context);
   }
 
-  return createSuccessResult(200, user);
+  return createSuccessResult(200, user, context);
 }
 
 async function createUser(context: Context, userIdent: string): Promise<Result> {
   // Check to see if this user already exists; if so, return error
   const user = await userStore.list(userIdent);
   if (user) {
-    return createErrorResult(400, 'User document already exists');
+    return createErrorResult(400, 'User document already exists', context);
   }
 
   // Build new user
   const email = context.req?.body?.email ?? '';
   if (!email) {
-    return createErrorResult(400, 'Missing required parameters');
+    return createErrorResult(400, 'Missing required parameters', context);
   }
 
   const newUser: User = {
@@ -110,7 +86,7 @@ async function createUser(context: Context, userIdent: string): Promise<Result> 
 
   await profileStore.create(newProfile);
 
-  return createSuccessResult(201, userData);
+  return createSuccessResult(201, userData, context);
 }
 
 async function updateUser(context: Context, userIdent: string): Promise<Result> {
@@ -128,21 +104,10 @@ async function updateUser(context: Context, userIdent: string): Promise<Result> 
 
   if (result.nModified === 1) {
     // User was updated
-    return { 
-      body: await userStore.list(userIdent),
-      status: 200,
-    };
+    return createSuccessResult(200, await userStore.list(userIdent), context);
   } else {
     // User not found, status 404
-    return {
-      body: {
-        'error' : {
-          'code' : 404,
-          'message' : 'User not found'
-        }
-      },
-      status: 404,
-    };
+    return createErrorResult(404, 'User not found', context);
   }
 }
 

@@ -40,8 +40,8 @@ steps:
   env: # set environment variables that are used during build time here. These are non-secret
     REACT_APP_MSAL_CLIENT_ID: '$(msal-client-id)'
     REACT_APP_MSAL_AUTHORITY: '$(msal-authority)'
-    REACT_APP_SIGN_IN_REDIRECT: '$(app-root-url)'
-    REACT_APP_SIGN_OUT_REDIRECT: '$(app-root-url)'
+    REACT_APP_SIGN_IN_REDIRECT: '$(app-redirect-url)'
+    REACT_APP_SIGN_OUT_REDIRECT: '$(app-redirect-url)'
     REACT_APP_FB_API_KEY: '$(fb-api-key)'
     REACT_APP_FB_AUTH_DOMAIN: '$(fb-auth-domain)'
     REACT_APP_FB_PROJECT_ID: '$(fb-project-id)'
@@ -59,7 +59,7 @@ steps:
 
 - script: |
     echo "Including firebase credential secret file: $(fb-creds-name)"
-    cp $(fbCreds.secureFilePath) $(System.DefaultWorkingDirectory)/server
+    cp $(fbCreds.secureFilePath) $(System.DefaultWorkingDirectory)/server/$(fb-creds-name)
   displayName: 'Apply firebase credentials'
 
 - task: AzureStaticWebApp@0

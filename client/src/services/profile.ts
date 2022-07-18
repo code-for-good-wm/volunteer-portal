@@ -9,6 +9,7 @@ import { UpdateAdditionalSkillsParams, UpdateGettingStartedProfileDataParams, Up
 import { updateProfile } from '../store/profileSlice';
 import { updateAlert } from '../store/alertSlice';
 import { designSkillCodes, otherSkillCodes, technicalSkillCodes } from '../helpers/constants';
+import { getApiBaseUrl, getDefaultRequestHeaders } from '../helpers/functions';
 
 export const updateUserRoles = async (params: UpdateUserRolesParams) => {
   const {
@@ -28,17 +29,14 @@ export const updateUserRoles = async (params: UpdateUserRolesParams) => {
     const userId = appState.auth.user?._id;
 
     // Attempt profile update
-    const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/profile`;
+    const profileUrl = `${getApiBaseUrl()}/user/${userId}/profile`;
     const body = JSON.stringify({
       roles,
     });
 
     const profileResponse = await fetch(profileUrl, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: getDefaultRequestHeaders(token),
       body,
     });
 
@@ -95,14 +93,11 @@ export const updateGettingStartedProfileData = async (params: UpdateGettingStart
     const userId = appState.auth.user?._id;
 
     // Attempt user update
-    const userUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/`;
+    const userUrl = `${getApiBaseUrl()}/user/${userId}/`;
 
     const userResponse = await fetch(userUrl, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: getDefaultRequestHeaders(token),
       body: JSON.stringify(userUpdate)
     });
 
@@ -120,14 +115,11 @@ export const updateGettingStartedProfileData = async (params: UpdateGettingStart
     );
 
     // Attempt profile update
-    const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/profile`;
+    const profileUrl = `${getApiBaseUrl()}/user/${userId}/profile`;
 
     const profileResponse = await fetch(profileUrl, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: getDefaultRequestHeaders(token),
       body: JSON.stringify(profileUpdate),
     });
 
@@ -209,17 +201,14 @@ export const updateUserSkills = async (params: UpdateUserSkillsParams) => {
     const userId = appState.auth.user?._id;
 
     // Attempt profile update
-    const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/profile`;
+    const profileUrl = `${getApiBaseUrl()}/user/${userId}/profile`;
     const body = JSON.stringify({
       skills: skillUpdate,
     });
 
     const profileResponse = await fetch(profileUrl, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: getDefaultRequestHeaders(token),
       body,
     });
 
@@ -317,15 +306,12 @@ export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParam
     }
 
     // Attempt profile update
-    const profileUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/profile`;
+    const profileUrl = `${getApiBaseUrl()}/user/${userId}/profile`;
     const body = JSON.stringify(profileUpdate);
 
     const profileResponse = await fetch(profileUrl, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: getDefaultRequestHeaders(token),
       body,
     });
 
@@ -345,14 +331,11 @@ export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParam
     // Send completion email
     if (sendConfirmationEmail) {
       // NOTE: We're allowing this to fail quietly if an error occurs
-      const emailUrl = `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL}/api/user/${userId}/email/${process.env.REACT_APP_REGISTRATION_CONFIRMATION_EMAIL_TEMPLATE_ID}`;
+      const emailUrl = `${getApiBaseUrl()}/user/${userId}/email/${process.env.REACT_APP_REGISTRATION_CONFIRMATION_EMAIL_TEMPLATE_ID}`;
 
       await fetch(emailUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: getDefaultRequestHeaders(token),
       });
 
       // Set showRegistrationComplete flag
