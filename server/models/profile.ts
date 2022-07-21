@@ -23,6 +23,7 @@ export interface Profile {
   previousVolunteer?: boolean;
   shirtSize?: ShirtSize;
   dietaryRestrictions: DietaryRestriction[];
+  additionalDietaryRestrictions?: string;
   accessibilityRequirements?: string;
   agreements?: Agreements;
   skills: Types.ObjectId[] | UserSkill[];
@@ -39,6 +40,7 @@ const profileSchema = new Schema<Profile>({
   previousVolunteer: Boolean,
   shirtSize: { type: String, enum: ShirtSize },
   dietaryRestrictions: [{ type: String, enum: DietaryRestriction }], // array of DietaryRestriction
+  additionalDietaryRestrictions: String,
   accessibilityRequirements: String,
   agreements: new Schema<Agreements>({
     termsAndConditions: String,

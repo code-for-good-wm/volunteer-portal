@@ -17,7 +17,7 @@ import ShirtSizeCard from '../../../../components/cards/ShirtSizeCard';
 import DietaryRestrictionCard from '../../../../components/cards/DietaryRestrictionCard';
 import AgreementFormItem from '../../../../components/elements/AgreementFormItem';
 
-import { dietaryRestrictions, shirtSizes } from '../../../../helpers/constants';
+import { agreementUrl, dietaryRestrictions, shirtSizes } from '../../../../helpers/constants';
 import { updateGettingStartedProfileData } from '../../../../services/profile';
 import { getGettingStartedProfileData, navigateToNextProfileSection, parsePhone } from '../../../../helpers/functions';
 import { testPhone } from '../../../../helpers/validation';
@@ -37,6 +37,7 @@ type ExtraStuff = {
   previousVolunteer: boolean,
   shirtSize: ShirtSize,
   dietaryRestrictions: DietaryRestriction[],
+  additionalDietaryRestrictions: string,
 }
 
 type AgreementForm = {
@@ -67,6 +68,7 @@ const GettingStarted = () => {
     previousVolunteer: false,
     shirtSize: '',
     dietaryRestrictions: [],
+    additionalDietaryRestrictions: '',
   });
 
   const [accessibilityRequirements, setAccessibilityRequirements] = useState('');
@@ -143,8 +145,9 @@ const GettingStarted = () => {
     };
 
     const testAgreements = () => {
-      const { termsAndConditions, photoRelease, codeOfConduct } = agreements;
-      if (!termsAndConditions || !photoRelease || !codeOfConduct) {
+      const { termsAndConditions, codeOfConduct } = agreements;
+      // Photo release is optional
+      if (!termsAndConditions || !codeOfConduct) {
         return false;
       }
 
@@ -251,6 +254,14 @@ const GettingStarted = () => {
     }
   };
 
+  const handleAdditionalDietaryRestrictions = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setExtraStuff((prevState) => ({
+      ...prevState,
+      additionalDietaryRestrictions: value,
+    }));
+  };
+
   const handleAccessibilityRequirements = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setAccessibilityRequirements(value);
@@ -280,7 +291,7 @@ const GettingStarted = () => {
     const linkedInUrl = contactInfoForm.linkedInUrl.trim();
     const websiteUrl = contactInfoForm.websiteUrl.trim();
     const portfolioUrl = contactInfoForm.portfolioUrl.trim();
-    const { previousVolunteer, shirtSize, dietaryRestrictions } = extraStuff;
+    const { previousVolunteer, shirtSize, dietaryRestrictions, additionalDietaryRestrictions } = extraStuff;
     const { termsAndConditions, photoRelease, codeOfConduct } = agreements;
 
     const timestamp = new Date().toISOString();
@@ -312,6 +323,7 @@ const GettingStarted = () => {
       previousVolunteer,
       shirtSize,
       dietaryRestrictions,
+      additionalDietaryRestrictions: additionalDietaryRestrictions.trim(),
       accessibilityRequirements: accessibilityRequirements.trim(),
       agreements: agreementsUpdate,
     };
@@ -380,7 +392,7 @@ const GettingStarted = () => {
 
         {/* Basic Information */}
 
-        <div className="contentCard profileCard basicInformationProfileCard">
+        <div className="contentCard profileCard">
           <div className="cardHeadingWithNote">
             <h2>
               Basic Information
@@ -559,7 +571,7 @@ const GettingStarted = () => {
                 {shirtSizeCards}
               </div>
             </div>
-            <div>
+            <div className="profileQuestionWrapper">
               <p className="profileQuestion">
                 <span className="question">
                   Do you have any dietary restrictions?
@@ -572,6 +584,27 @@ const GettingStarted = () => {
                 {dietaryRestrictionCards}
               </div>
             </div>
+            <form className="profileForm">
+              <p className="profileQuestion" id="additionalDietaryRestrictions">
+                <span className="question">
+                  Any other dietary restrictions or concerns we should know about?
+                </span>
+              </p>
+              <TextField
+                margin="normal"
+                sx={{
+                  marginBottom: 0
+                }}
+                fullWidth
+                aria-labelledby="additionalDietaryRestrictions"
+                name="additionalDietaryRestrictions"
+                value={extraStuff.additionalDietaryRestrictions}
+                placeholder="If you have any other dietary restrictions not listed above, add them here."
+                multiline={true}
+                rows={2}
+                onChange={handleAdditionalDietaryRestrictions}
+              />
+            </form>
           </section>
         </div>
 
@@ -623,22 +656,24 @@ const GettingStarted = () => {
           <form className="profileForm">
             <AgreementFormItem
               theme="termsAndConditions"
-              required={true}
               selected={agreements.termsAndConditions}
               handler={handleAgreement}
+              url={agreementUrl.termsAndConditions}
+              required
             />
             <AgreementFormItem
               theme="photoRelease"
-              required={true}
               selected={agreements.photoRelease}
               handler={handleAgreement}
+              url={agreementUrl.photoRelease}
             />
             <AgreementFormItem
               theme="codeOfConduct"
               spacing="tight"
-              required={true}
               selected={agreements.codeOfConduct}
               handler={handleAgreement}
+              url={agreementUrl.codeOfConduct}
+              required
             />
           </form>
         </div>

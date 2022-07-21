@@ -131,15 +131,6 @@
   }
 }
 
-.basicInformationProfileCard {
-  /* Compensate for dietary restriction card margins */
-  padding-bottom: calc($gutterSmall - 9px);
-
-  @media screen and (min-width: 768px) {
-    padding-bottom: calc($gutterMedium - 8px);
-  }
-}
-
 .profileQuestion {
   display: flex;
   align-items: baseline;
