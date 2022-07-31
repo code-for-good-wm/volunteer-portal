@@ -5,16 +5,19 @@ import { RootState } from './store';
 interface ProfileState {
   currentSection: PrimaryProfileSectionId | null;
   data: Profile | null;
+  showRegistrationComplete: boolean;
 }
 
 interface ProfileUpdate {
   currentSection?: PrimaryProfileSectionId | null;
   data?: Profile | null;
+  showRegistrationComplete?: boolean;
 }
 
 const initialState: ProfileState = {
   currentSection: null,
   data: null,
+  showRegistrationComplete: false,
 };
 
 /**
@@ -34,6 +37,9 @@ export const profileSlice = createSlice({
       if (action.payload.data !== undefined) {
         draftState.data = action.payload.data;
       }
+      if (action.payload.showRegistrationComplete !== undefined) {
+        draftState.showRegistrationComplete = action.payload.showRegistrationComplete;
+      }
     },
   },
 });
@@ -42,5 +48,6 @@ export const { updateProfile } = profileSlice.actions;
 
 export const currentSection = (state: RootState) => state.profile.currentSection;
 export const profile = (state: RootState) => state.profile.data;
+export const showRegistrationComplete = (state: RootState) => state.profile.showRegistrationComplete;
 
 export default profileSlice.reducer;

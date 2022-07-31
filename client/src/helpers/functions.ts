@@ -45,6 +45,21 @@ export const parsePhone = (phone: string) => {
   };
 };
 
+export function getApiBaseUrl(): string {
+  return `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL || ''}/api`;
+}
+
+/**
+ * Create default request headers object with the provided auth token
+ * @param token The auth token to send to the server, treated as a Bearer token
+ */
+export function getDefaultRequestHeaders(token: string): Record<string, string> {
+  return {
+    'Content-Type': 'application/json',
+    'x-firebase-auth': `Bearer ${token}`
+  };
+}
+
 /**
  * Reset state to defaults
  */
@@ -61,6 +76,7 @@ export const resetAppState = () => {
     updateProfile({
       currentSection: null,
       data: null,
+      showRegistrationComplete: false,
     })
   );
 
@@ -248,6 +264,7 @@ export const getGettingStartedProfileData = () => {
     previousVolunteer,
     shirtSize,
     dietaryRestrictions,
+    additionalDietaryRestrictions,
     accessibilityRequirements,
     agreements
   } = profile;
@@ -267,6 +284,7 @@ export const getGettingStartedProfileData = () => {
         previousVolunteer: !!previousVolunteer, // Could be undefined
         shirtSize: shirtSize ?? '',
         dietaryRestrictions,
+        additionalDietaryRestrictions: additionalDietaryRestrictions ?? '',
       },
       accessibilityRequirements: accessibilityRequirements ?? '',
       agreements: {

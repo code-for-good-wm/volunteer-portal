@@ -46,7 +46,7 @@ const HeaderBar = () => {
       color="primary"
       aria-controls={showAccountMenu ? 'account-menu' : undefined}
       aria-haspopup="true"
-      aria-expended={showAccountMenu ? 'true' : undefined}
+      aria-expanded={showAccountMenu ? 'true' : undefined}
       onClick={toggleAccountMenu}
     >
       <span className="standardButtonText">
@@ -84,9 +84,10 @@ const HeaderBar = () => {
     <header className="headerBar">
       <div className="logoButtonContainer">
         <button type="button" onClick={handleLogoButton}>
-          <img src={TransparentLogo} alt="Logo" />
+          <img src={TransparentLogo} alt="Code for Good Volunteer Portal" />
         </button>
       </div>
+      <div className="siteNameContainer" aria-hidden>VOLUNTEER PORTAL</div>
       <div className="accountButtonContainer">
         {isAuthenticated && (
           <>

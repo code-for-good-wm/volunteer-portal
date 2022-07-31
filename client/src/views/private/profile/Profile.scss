@@ -131,15 +131,6 @@
   }
 }
 
-.basicInformationProfileCard {
-  /* Compensate for dietary restriction card margins */
-  padding-bottom: calc($gutterSmall - 9px);
-
-  @media screen and (min-width: 768px) {
-    padding-bottom: calc($gutterMedium - 8px);
-  }
-}
-
 .profileQuestion {
   display: flex;
   align-items: baseline;
@@ -571,11 +562,17 @@
   }
 }
 
-.profileCompletionButtonContainer {
-  max-width: 430px;
+.profileCompletionControls {
+  max-width: 675px;
   margin: 0 auto;
 
   @media screen and (min-width: 768px) {
-    padding-top: 8px;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+
+    .buttonContainer {
+      width: 110px;
+    }
   }
 }

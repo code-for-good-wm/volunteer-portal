@@ -16,6 +16,7 @@ export const testProfileData: Profile = {
   portfolioUrl: '',
   shirtSize: '',
   dietaryRestrictions: [],
+  additionalDietaryRestrictions: '',
   accessibilityRequirements: '',
   skills: [],
   additionalSkills: '',
@@ -410,3 +411,9 @@ export const technicalSkillCodes = [...technicalSkills.experienceLevel, ...techn
 export const designSkillCodes = [...designSkills.experienceLevel, ...designSkills.tools].map(s => s.code);
 
 export const otherSkillCodes = otherExperience.map(s => s.code);
+
+export const agreementUrl = {
+  termsAndConditions: 'https://codeforgoodwm.org/participant-agreement/',
+  photoRelease: '',
+  codeOfConduct: 'https://codeforgoodwm.org/code-of-conduct/',
+};

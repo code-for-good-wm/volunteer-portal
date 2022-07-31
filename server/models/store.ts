@@ -11,7 +11,7 @@ import { UserSkill, UserSkillModel } from './user-skill';
 const configureMongoose = async function (log: Logger): Promise<void> {
   // Configure JSON output to client
   // Removes version
-  mongoose.set("toJSON", {
+  mongoose.set('toJSON', {
     virtuals: true,
     versionKey: false
   });
@@ -20,11 +20,11 @@ const configureMongoose = async function (log: Logger): Promise<void> {
 
   try {
     const db = mongoose.connection;
-    db.on("connecting", () => log("Mongoose connecting..."));
-    db.on("connected", () => log("Mongoose connected successfully!"));
-    db.on("disconnecting", () => log("Mongoose disconnecting..."));
-    db.on("disconnected", () => log("Mongoose disconnected successfully!"));
-    db.on("error", (err) => log("Mongoose database error:", err));
+    db.on('connecting', () => log('Mongoose connecting...'));
+    db.on('connected', () => log('Mongoose connected successfully!'));
+    db.on('disconnecting', () => log('Mongoose disconnecting...'));
+    db.on('disconnected', () => log('Mongoose disconnected successfully!'));
+    db.on('error', (err) => log('Mongoose database error:', err));
 
     // Load configuration information
     const config = await getConfig();
@@ -34,13 +34,13 @@ const configureMongoose = async function (log: Logger): Promise<void> {
     }
 
     await mongoose.connect(
-        config.database.connectionString,
-        { dbName: config.database.databaseName }
+      config.database.connectionString,
+      { dbName: config.database.databaseName }
     );
   }
   catch (err) {
-      log(`Mongoose database error: ${err}`);
-      throw err;
+    log(`Mongoose database error: ${err}`);
+    throw err;
   }
 };
 
@@ -56,7 +56,7 @@ export async function connect(log: Logger): Promise<void> {
 // Store config
 
 export const optionsStore = {
-  list: async(category: String | undefined) => {
+  list: async(category: string | undefined) => {
     // filter by category if we have it
     if (category) {
       return await SkillOptionModel.find({ category } as SkillOption).exec();
@@ -76,7 +76,6 @@ export const userStore = {
     return await UserModel.updateOne({_id, ident}, user);
   },
   delete: async(_id: mongoose.Types.ObjectId, ident: string) => {
-    // TODO: clean up other items?
     return await UserModel.deleteOne({_id, ident});
   }
 };

@@ -1,10 +1,10 @@
-import { Schema, model, Types } from "mongoose";
-import { MongooseOpts } from "./default-opts";
-import { DietaryRestriction } from "./enums/dietary-restriction.enum";
-import { Role } from "./enums/role.enum";
-import { ShirtSize } from "./enums/shirt-size.enum";
-import { User } from "./user";
-import { UserSkill } from "./user-skill";
+import { Schema, model, Types } from 'mongoose';
+import { MongooseOpts } from './default-opts';
+import { DietaryRestriction } from './enums/dietary-restriction.enum';
+import { Role } from './enums/role.enum';
+import { ShirtSize } from './enums/shirt-size.enum';
+import { User } from './user';
+import { UserSkill } from './user-skill';
 
 export interface Agreements {
   termsAndConditions?: string; // ISO date
@@ -23,6 +23,7 @@ export interface Profile {
   previousVolunteer?: boolean;
   shirtSize?: ShirtSize;
   dietaryRestrictions: DietaryRestriction[];
+  additionalDietaryRestrictions?: string;
   accessibilityRequirements?: string;
   agreements?: Agreements;
   skills: Types.ObjectId[] | UserSkill[];
@@ -39,6 +40,7 @@ const profileSchema = new Schema<Profile>({
   previousVolunteer: Boolean,
   shirtSize: { type: String, enum: ShirtSize },
   dietaryRestrictions: [{ type: String, enum: DietaryRestriction }], // array of DietaryRestriction
+  additionalDietaryRestrictions: String,
   accessibilityRequirements: String,
   agreements: new Schema<Agreements>({
     termsAndConditions: String,

@@ -1,4 +1,4 @@
-import { Context, HttpRequest, Logger } from "@azure/functions";
+import { Context, HttpRequest } from '@azure/functions';
 
 export function getUserIdent(req: HttpRequest): string {
   // Retrieve client info from request header
@@ -24,11 +24,11 @@ export function tryGetUserIdent(req: HttpRequest, context: Context): { userIdent
     userId = getUserIdent(req);
     // If no current user, return unauthorized
     if(!userId) {
-      context.log.error('No user ID present')
+      context.log.error('No user ID present');
       status = 401;
     }
   } catch (ex) {
-    context.log.error(ex)
+    context.log.error(ex);
     // Error, return unauthorized
     status = 401;
   }
@@ -36,21 +36,22 @@ export function tryGetUserIdent(req: HttpRequest, context: Context): { userIdent
   return { userIdent: userId, status };
 }
 
-export function createSuccessResult(code: number, data: any): Result {
+export function createSuccessResult(code: number, data: unknown, context: Context): Result {
   return {
-    header: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'X-Invocation-ID': context.invocationId },
     body: data,
     status: code 
   };
 }
 
-export function createErrorResult(code: number, message: string | null): Result {
+export function createErrorResult(code: number, message: string | null, context: Context): Result {
   return { 
-    header: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'X-Invocation-ID': context.invocationId },
     body: { 
       'error': {
         'code': code,
-        'message': message
+        'message': message,
+        'requestId': context.invocationId
       }
     }, 
     status: code 
@@ -58,7 +59,8 @@ export function createErrorResult(code: number, message: string | null): Result 
 }
 
 export interface Result {
-  header?: {[key: string]: string},
+  headers?: {[key: string]: string},
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body: any,
   status: number
 }

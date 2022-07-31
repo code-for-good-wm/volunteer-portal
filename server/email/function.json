@@ -6,9 +6,9 @@
       "direction": "in",
       "name": "req",
       "methods": [
-        "get"
+        "post"
       ],
-      "route": "auth/test"
+      "route": "user/{userId}/email/{templateId}/"
     },
     {
       "type": "http",
@@ -16,5 +16,5 @@
       "name": "res"
     }
   ],
-  "scriptFile": "../dist/auth/index.js"
+  "scriptFile": "../dist/email/index.js"
 }
