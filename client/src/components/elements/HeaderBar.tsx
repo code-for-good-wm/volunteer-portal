@@ -84,9 +84,10 @@ const HeaderBar = () => {
     <header className="headerBar">
       <div className="logoButtonContainer">
         <button type="button" onClick={handleLogoButton}>
-          <img src={TransparentLogo} alt="Logo" />
+          <img src={TransparentLogo} alt="Code for Good Volunteer Portal" />
         </button>
       </div>
+      <div className="siteNameContainer" aria-hidden>VOLUNTEER PORTAL</div>
       <div className="accountButtonContainer">
         {isAuthenticated && (
           <>

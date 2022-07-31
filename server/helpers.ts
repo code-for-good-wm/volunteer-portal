@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Context, HttpRequest, Logger } from '@azure/functions';
 import { getAuth, DecodedIdToken } from 'firebase-admin/auth';
 import { fbApp } from './firebase/init';
@@ -157,7 +158,7 @@ export const sendTemplateEmail: SendTemplateEmail = async (recipientEmail: strin
       throw new Error('Mail submission not accepted by SendGrid.');
     }
 
-    return createSuccessResult(202, {}, context); // TODO: Should we return data here, or is this enough?
+    return createSuccessResult(202, { data: 'Email sent' }, context);
   } catch (error) {
     context.log.error('SendGrid error: ', error);
     return createErrorResult(500, 'Internal error', context);

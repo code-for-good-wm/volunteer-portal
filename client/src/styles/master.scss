@@ -211,6 +211,10 @@ body {
     }
   }
 
+  .siteNameContainer {
+    display: none;
+  }
+
   .accountButtonContainer {
     width: 130px;
     display: flex;
@@ -225,6 +229,11 @@ body {
     .logoButtonContainer {
       padding-left: $gutterMedium;
       height: 60px;
+    }
+
+    .siteNameContainer {
+      display: block;
+      font-size: 2rem;
     }
 
     .accountButtonContainer {

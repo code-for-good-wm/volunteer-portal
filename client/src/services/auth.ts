@@ -166,8 +166,8 @@ export const createNewUser = async (params: SignInParams) => {
     });
 
     if (!userResponse.ok) {
-      // TODO: Possible 400 and 401 responses here; should we create custom messaging?
-      throw new Error('Failed to create a new user document.');
+      // TODO: Parameterize the email
+      throw new Error('Failed to create a new user. Please contact us at volunteer@codeforgoodwm.org');
     }
 
     const userData = await userResponse.json() as User;
