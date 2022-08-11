@@ -21,6 +21,7 @@ export interface Profile {
   websiteUrl?: string;
   portfolioUrl?: string;
   previousVolunteer?: boolean;
+  teamLeadCandidate?:boolean;
   shirtSize?: ShirtSize;
   dietaryRestrictions: DietaryRestriction[];
   additionalDietaryRestrictions?: string;
@@ -38,6 +39,7 @@ const profileSchema = new Schema<Profile>({
   websiteUrl: String,
   portfolioUrl: String,
   previousVolunteer: Boolean,
+  teamLeadCandidate: Boolean,
   shirtSize: { type: String, enum: ShirtSize },
   dietaryRestrictions: [{ type: String, enum: DietaryRestriction }], // array of DietaryRestriction
   additionalDietaryRestrictions: String,

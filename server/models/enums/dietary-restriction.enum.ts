@@ -9,5 +9,6 @@ export enum DietaryRestriction {
   FISH = 'fish',
   EGGS = 'eggs',
   SOY = 'soy',
-  CORN = 'corn'
+  CORN = 'corn',
+  OTHER = 'other'
 }

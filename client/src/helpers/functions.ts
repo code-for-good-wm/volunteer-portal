@@ -262,6 +262,7 @@ export const getGettingStartedProfileData = () => {
     websiteUrl,
     portfolioUrl,
     previousVolunteer,
+    teamLeadCandidate,
     shirtSize,
     dietaryRestrictions,
     additionalDietaryRestrictions,
@@ -282,6 +283,7 @@ export const getGettingStartedProfileData = () => {
       },
       extraStuff: {
         previousVolunteer: !!previousVolunteer, // Could be undefined
+        teamLeadCandidate: !!teamLeadCandidate,  // Could be undefined
         shirtSize: shirtSize ?? '',
         dietaryRestrictions,
         additionalDietaryRestrictions: additionalDietaryRestrictions ?? '',
