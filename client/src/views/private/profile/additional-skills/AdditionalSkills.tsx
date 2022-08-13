@@ -204,7 +204,6 @@ const AdditionalSkills = () => {
             </form>
           </section>
         </div>
-
         {/* Button Controls */}
 
         <div className="controls">

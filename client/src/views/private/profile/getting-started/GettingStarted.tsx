@@ -35,6 +35,7 @@ type ContactInfoForm = {
 
 type ExtraStuff = {
   previousVolunteer: boolean,
+  teamLeadCandidate: boolean,
   shirtSize: ShirtSize,
   dietaryRestrictions: DietaryRestriction[],
   additionalDietaryRestrictions: string,
@@ -66,6 +67,7 @@ const GettingStarted = () => {
 
   const [extraStuff, setExtraStuff] = useState<ExtraStuff>({
     previousVolunteer: false,
+    teamLeadCandidate: false,
     shirtSize: '',
     dietaryRestrictions: [],
     additionalDietaryRestrictions: '',
@@ -218,6 +220,15 @@ const GettingStarted = () => {
     }));
   };
 
+  const handleTeamLeadCandidate = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    const teamLeadCandidate = (value === 'Yes');
+    setExtraStuff((prevState) => ({
+      ...prevState,
+      teamLeadCandidate,
+    }));
+  };
+
   const handleShirtSizeCard = (shirtSize?: ShirtSize) => {
     if (!shirtSize) {
       return;
@@ -234,24 +245,14 @@ const GettingStarted = () => {
       return;
     }
 
-    if (!extraStuff.dietaryRestrictions.includes(dietaryRestriction)) {
-      const newRestrictions = [
-        ...extraStuff.dietaryRestrictions,
-        dietaryRestriction,
-      ];
-      setExtraStuff((prevState) => ({
-        ...prevState,
-        dietaryRestrictions: newRestrictions,
-      }));
-    } else {
-      const newRestrictions = extraStuff.dietaryRestrictions.filter((restriction) => {
-        return restriction !== dietaryRestriction;
-      });
-      setExtraStuff((prevState) => ({
-        ...prevState,
-        dietaryRestrictions: newRestrictions,
-      }));
-    }
+    const newRestrictions = !extraStuff.dietaryRestrictions.includes(dietaryRestriction) ?
+      [ ...extraStuff.dietaryRestrictions, dietaryRestriction ] :
+      extraStuff.dietaryRestrictions.filter((restriction) => restriction !== dietaryRestriction);
+
+    setExtraStuff((prevState) => ({
+      ...prevState,
+      dietaryRestrictions: newRestrictions,
+    }));
   };
 
   const handleAdditionalDietaryRestrictions = (event: ChangeEvent<HTMLInputElement>) => {
@@ -291,7 +292,7 @@ const GettingStarted = () => {
     const linkedInUrl = contactInfoForm.linkedInUrl.trim();
     const websiteUrl = contactInfoForm.websiteUrl.trim();
     const portfolioUrl = contactInfoForm.portfolioUrl.trim();
-    const { previousVolunteer, shirtSize, dietaryRestrictions, additionalDietaryRestrictions } = extraStuff;
+    const { previousVolunteer, teamLeadCandidate, shirtSize, dietaryRestrictions, additionalDietaryRestrictions } = extraStuff;
     const { termsAndConditions, photoRelease, codeOfConduct } = agreements;
 
     const timestamp = new Date().toISOString();
@@ -321,6 +322,7 @@ const GettingStarted = () => {
       websiteUrl,
       portfolioUrl,
       previousVolunteer,
+      teamLeadCandidate,
       shirtSize,
       dietaryRestrictions,
       additionalDietaryRestrictions: additionalDietaryRestrictions.trim(),
@@ -559,6 +561,36 @@ const GettingStarted = () => {
               </FormControl>
             </div>
             <div className="profileQuestionWrapper">
+              <p className="profileQuestion" id="teamLeadCandidate">
+                <span className="question">
+                  Would you like to be a team lead?<span className="red">*</span>
+                </span>
+                <span className="note">
+                A team lead keeps the project on track, manages volunteers &amp; tasks, and communicates with the non-profit representative(s).
+                </span>
+              </p>
+              <FormControl>
+                <RadioGroup
+                  aria-labelledby="teamLeadCandidate"
+                  name="teamLeadCandidate"
+                  row
+                  value={extraStuff.teamLeadCandidate ? 'Yes' : 'No'}
+                  onChange={handleTeamLeadCandidate}
+                >
+                  <FormControlLabel 
+                    value="No" 
+                    control={<Radio />} 
+                    label={<span className="radioLabel">No</span>} 
+                  />
+                  <FormControlLabel 
+                    value="Yes" 
+                    control={<Radio />} 
+                    label={<span className="radioLabel">Yes</span>} 
+                  />
+                </RadioGroup>
+              </FormControl>
+            </div>
+            <div className="profileQuestionWrapper">
               <p className="profileQuestion">
                 <span className="question">
                   What&apos;s your shirt size?<span className="red">*</span>
@@ -583,28 +615,25 @@ const GettingStarted = () => {
               <div className="dietaryRestrictionSelections">
                 {dietaryRestrictionCards}
               </div>
+              { extraStuff.dietaryRestrictions.includes('other') &&
+              <form className="profileForm">
+                <TextField
+                  margin="normal"
+                  sx={{
+                    marginTop: 0,
+                    marginBottom: 0
+                  }}
+                  fullWidth
+                  aria-label="Any other dietary restrictions or concerns we should know about?"
+                  name="additionalDietaryRestrictions"
+                  value={extraStuff.additionalDietaryRestrictions}
+                  placeholder="If you have any other dietary restrictions not listed above, add them here."
+                  multiline={true}
+                  rows={2}
+                  onChange={handleAdditionalDietaryRestrictions}
+                />
+              </form> }
             </div>
-            <form className="profileForm">
-              <p className="profileQuestion" id="additionalDietaryRestrictions">
-                <span className="question">
-                  Any other dietary restrictions or concerns we should know about?
-                </span>
-              </p>
-              <TextField
-                margin="normal"
-                sx={{
-                  marginBottom: 0
-                }}
-                fullWidth
-                aria-labelledby="additionalDietaryRestrictions"
-                name="additionalDietaryRestrictions"
-                value={extraStuff.additionalDietaryRestrictions}
-                placeholder="If you have any other dietary restrictions not listed above, add them here."
-                multiline={true}
-                rows={2}
-                onChange={handleAdditionalDietaryRestrictions}
-              />
-            </form>
           </section>
         </div>
 
