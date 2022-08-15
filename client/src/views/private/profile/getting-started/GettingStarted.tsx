@@ -566,7 +566,7 @@ const GettingStarted = () => {
                   Would you like to be a team lead?<span className="red">*</span>
                 </span>
                 <span className="note">
-                A team lead keeps the project on track, manages volunteers &amp; tasks, and communicates with the non-profit representative(s).
+                A team lead keeps the project on track, manages volunteers and tasks, and communicates with the non-profit representative(s).
                 </span>
               </p>
               <FormControl>
