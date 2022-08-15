@@ -30,7 +30,11 @@ const HeaderBar = () => {
   const handleAccountSettings = () => {
     toggleAccountMenu();
     navigate('/account');
-    // Do stuff
+  };
+
+  const handleUsers = () => {
+    toggleAccountMenu();
+    navigate('/users');
   };
 
   const handleSignOut = () => {
@@ -69,6 +73,12 @@ const HeaderBar = () => {
         <Settings />
         <span className="menuOptionLabel">
           Settings
+        </span>
+      </MenuItem>
+      <MenuItem onClick={handleUsers}>
+        <Settings />
+        <span className="menuOptionLabel">
+          Users
         </span>
       </MenuItem>
       <MenuItem onClick={handleSignOut}>

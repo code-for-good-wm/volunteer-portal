@@ -5,6 +5,8 @@ import { fbApp } from './firebase/init';
 import { createErrorResult, createSuccessResult, Result } from './core';
 import { connect, userStore } from './models/store';
 import fetch from 'node-fetch';
+import { User } from './models/user';
+import { Types } from 'mongoose';
 
 type CheckRequestAuth = (authorization: string | undefined, logger: Logger) => Promise<DecodedIdToken | null>
 type CheckBindingDataUserId = (context: Context, userIdent: string) => Promise<Result>
@@ -163,4 +165,10 @@ export const sendTemplateEmail: SendTemplateEmail = async (recipientEmail: strin
     context.log.error('SendGrid error: ', error);
     return createErrorResult(500, 'Internal error', context);
   }
+};
+
+export const compareUser = (a: User | Types.ObjectId, b: User | Types.ObjectId) => {
+  const aId = (<User>a)?._id ?? <Types.ObjectId>a;
+  const bId = (<User>b)?._id ?? <Types.ObjectId>b;
+  return aId === bId;
 };

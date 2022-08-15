@@ -11,6 +11,7 @@ import GettingStarted from '../views/private/profile/getting-started/GettingStar
 import Profile from '../views/private/profile/Profile';
 import Roles from '../views/private/profile/roles/Roles';
 import TechnicalSkills from '../views/private/profile/technical-skills/TechnicalSkills';
+import Users from '../views/private/users/Users';
 
 const Private = () => {
   return (
@@ -26,6 +27,7 @@ const Private = () => {
         <Route path="complete" element={<ProfileComplete />} />
         <Route path="*" element={<Navigate to="/profile" />} />
       </Route>
+      <Route path="/users" element={<Users />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

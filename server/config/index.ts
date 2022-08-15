@@ -1,7 +1,7 @@
 const getConfig = async () => {
   // load database configuration
   let databaseConn = process.env.DATABASE_URI;
-  const databaseName = process.env.DATABASE_NAME || 'cfg-volunteers';
+  const databaseName = process.env.DATABASE_NAME ?? 'cfg-volunteers';
   
   // encode a passowrd if it's provided separately
   const databasePassword = process.env.DATABASE_PASS;
