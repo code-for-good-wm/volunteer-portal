@@ -6,7 +6,7 @@ export type Role = 'designer' | 'developer' | 'support' | 'lead';
 
 export type ShirtSize = 'small' | 'medium' | 'large' | 'xl' | 'xxl' | '3xl' | '';
 
-export type DietaryRestriction = 'vegan' | 'vegetarian' | 'dairy' | 'gluten' | 'kosher' | 'nuts' | 'fish' | 'eggs' | 'soy' | 'corn';
+export type DietaryRestriction = 'vegan' | 'vegetarian' | 'dairy' | 'gluten' | 'kosher' | 'nuts' | 'fish' | 'eggs' | 'soy' | 'corn' | 'other';
 
 export type Agreement = 'termsAndConditions' | 'photoRelease' | 'codeOfConduct';
 
@@ -61,7 +61,8 @@ export interface Profile {
   linkedInUrl?: string;
   websiteUrl?: string;
   portfolioUrl?: string;
-  previousVolunteer?: boolean; // Likely we will remove this later
+  previousVolunteer?: boolean;
+  teamLeadCandidate?: boolean;
   shirtSize?: ShirtSize;
   dietaryRestrictions: DietaryRestriction[];
   additionalDietaryRestrictions: string;
@@ -78,6 +79,7 @@ export interface ProfileUpdate {
   websiteUrl?: string;
   portfolioUrl?: string;
   previousVolunteer?: boolean;
+  teamLeadCandidate?: boolean;
   shirtSize?: ShirtSize;
   dietaryRestrictions?: DietaryRestriction[];
   additionalDietaryRestrictions?: string;

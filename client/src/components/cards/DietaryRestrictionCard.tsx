@@ -8,6 +8,7 @@ import Kosher from '../../assets/icons/kosher.png';
 import NoNuts from '../../assets/icons/no-nuts.png';
 import NoFish from '../../assets/icons/no-fish.png';
 import NoEggs from '../../assets/icons/no-eggs.png';
+import Other from '../../assets/icons/other.png';
 
 import { DietaryRestriction } from '../../types/profile';
 
@@ -61,6 +62,10 @@ const DietaryRestrictionCard = (props: DietaryRestrictionCardProps) => {
   case 'eggs':
     image = NoEggs;
     imageAlt = 'Outline of an egg with a diagonal line crossed through it';
+    break;
+  case 'other':
+    image = Other;
+    imageAlt = 'A question mark';
     break;
   default:
     image = undefined;

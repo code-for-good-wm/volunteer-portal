@@ -97,6 +97,10 @@ export const dietaryRestrictions: DietaryRestrictionData[] = [
     id: 'eggs',
     description: 'Egg Allergy',
   },
+  {
+    id: 'other',
+    description: 'Other',
+  }
 ];
 
 export const skillLevels: SkillLevelData[] = [
