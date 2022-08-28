@@ -2,7 +2,7 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { stringify } from 'csv-stringify/sync';
 import { Types } from 'mongoose';
-import { createErrorResult, createSuccessResult, Result } from '../core';
+import { createErrorResult, Result } from '../core';
 import { checkAuthAndConnect } from '../helpers';
 import { profileStore, skillStore, userStore } from '../models/store';
 import { READ_ALL_USERS } from '../models/enums/user-role.enum';
@@ -144,7 +144,7 @@ async function exportUsersAndProfiles(context: Context, userIdent: string): Prom
     return {
       headers: {
         'Content-Type': 'test/csv',
-        'Content-Disposition': 'attachment; filename=users.csv',
+        'Content-Disposition': `attachment; filename=users-${new Date().toISOString().slice(0, 10)}.csv`,
         'Access-Control-Expose-Headers': 'Content-Disposition',
         'X-Invocation-ID': context.invocationId
       },

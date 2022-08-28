@@ -106,6 +106,9 @@ export const skillStore = {
   list: async(userId: mongoose.Types.ObjectId) => {
     return await UserSkillModel.find({user: userId});
   },
+  listAll: async() => {
+    return await UserSkillModel.find();
+  },
   create: async(userId: mongoose.Types.ObjectId, skill: UserSkill) => {
     skill.user = userId;
     return await UserSkillModel.create(skill);

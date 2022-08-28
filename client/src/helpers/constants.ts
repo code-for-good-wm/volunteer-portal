@@ -10,7 +10,7 @@ export const testUserData: User = {
 };
 
 export const testProfileData: Profile = {
-  userId: '76iatw8omMRPY5VmwIf9HqrlSTe2',
+  user: '76iatw8omMRPY5VmwIf9HqrlSTe2',
   completionDate: '',
   roles: [],
   linkedInUrl: '',

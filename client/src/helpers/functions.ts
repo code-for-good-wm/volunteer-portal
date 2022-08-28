@@ -325,3 +325,13 @@ export const getAdditionalSkills = () => {
   const profile = appState.profile.data;
   return profile?.additionalSkills;
 };
+
+/**
+ * Returns the string as title case e.g. A Title String
+ */
+export const toTitleCase = (str: string) => {
+  if (!str || str.length === 0) { return ''; }
+  return str.toLowerCase().split(' ').map(function(word) {
+    return (word.charAt(0).toUpperCase() + word.slice(1));
+  }).join(' ');
+};

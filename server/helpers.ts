@@ -167,8 +167,22 @@ export const sendTemplateEmail: SendTemplateEmail = async (recipientEmail: strin
   }
 };
 
+export function getUserId (user: Types.ObjectId | User): string {
+  return ((<User>user)?._id ?? (<Types.ObjectId>user)).toString();
+};
+
 export const compareUser = (a: User | Types.ObjectId, b: User | Types.ObjectId) => {
   const aId = (<User>a)?._id ?? <Types.ObjectId>a;
   const bId = (<User>b)?._id ?? <Types.ObjectId>b;
   return aId === bId;
 };
+
+export function groupBy<T> (data: T[], keyProvider: (item: T) => string) : Record<string, T[]> {
+  return data.reduce((grouped, item) => {
+    const key = keyProvider(item);
+    if (!key) { return grouped; }
+    grouped[key] = grouped[key] ?? [];
+    grouped[key].push(item);
+    return grouped;
+  }, {} as Record<string, T[]>);
+}

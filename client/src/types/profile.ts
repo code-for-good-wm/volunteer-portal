@@ -56,7 +56,7 @@ export interface ProfileSkill {
 }
 
 export interface Profile {
-  userId: string;
+  user: string;
   completionDate?: string; // ISO date
   roles: Role[];
   linkedInUrl?: string;

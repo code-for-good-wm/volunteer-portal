@@ -1,7 +1,7 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { createErrorResult, createSuccessResult, Result } from '../core';
-import { checkAuthAndConnect } from '../helpers';
-import { profileStore, userStore } from '../models/store';
+import { checkAuthAndConnect, getUserId, groupBy } from '../helpers';
+import { profileStore, skillStore, userStore } from '../models/store';
 import { READ_ALL_USERS } from '../models/enums/user-role.enum';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
@@ -39,6 +39,14 @@ async function getProfiles(context: Context, userIdent: string): Promise<Result>
   }
 
   const profiles = await profileStore.listAll();
+  const skills = await skillStore.listAll();
+
+  const skillsDict = groupBy(skills, (s) => { return getUserId(s.user); });
+
+  profiles.forEach((p) => {
+    const userId = getUserId(p.user);
+    p.skills = skillsDict[userId] ?? [];
+  });
 
   return createSuccessResult(200, profiles, context);
 }
