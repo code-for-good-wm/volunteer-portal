@@ -167,20 +167,29 @@ export const sendTemplateEmail: SendTemplateEmail = async (recipientEmail: strin
   }
 };
 
+/**
+ * Returns a user id string from a User | ObjectId record
+ */
 export function getUserId (user: Types.ObjectId | User): string {
   return ((<User>user)?._id ?? (<Types.ObjectId>user)).toString();
-};
+}
 
+/**
+ * Compares two User | ObjectId records
+ */
 export const compareUser = (a: User | Types.ObjectId, b: User | Types.ObjectId) => {
   const aId = (<User>a)?._id ?? <Types.ObjectId>a;
   const bId = (<User>b)?._id ?? <Types.ObjectId>b;
   return aId === bId;
 };
 
+/**
+ * Group a collection using the provided function to return the grouping key. Ignores objects with null/undefined keys.
+ */
 export function groupBy<T> (data: T[], keyProvider: (item: T) => string) : Record<string, T[]> {
   return data.reduce((grouped, item) => {
     const key = keyProvider(item);
-    if (!key) { return grouped; }
+    if (key === null || key === undefined) { return grouped; }
     grouped[key] = grouped[key] ?? [];
     grouped[key].push(item);
     return grouped;

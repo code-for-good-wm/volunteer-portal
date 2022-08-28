@@ -102,6 +102,11 @@ body {
   margin: 0 auto;
 }
 
+.fullViewContainer {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
 .gutters {
   padding-left: $gutterSmall;
   padding-right: $gutterSmall;

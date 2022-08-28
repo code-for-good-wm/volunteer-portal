@@ -3,11 +3,12 @@ import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { stringify } from 'csv-stringify/sync';
 import { Types } from 'mongoose';
 import { createErrorResult, Result } from '../core';
-import { checkAuthAndConnect } from '../helpers';
+import { checkAuthAndConnect, getUserId, groupBy } from '../helpers';
 import { profileStore, skillStore, userStore } from '../models/store';
 import { READ_ALL_USERS } from '../models/enums/user-role.enum';
 import { User } from '../models/user';
 import { Profile } from '../models/profile';
+import { UserSkill } from '../models/user-skill';
 
 // TODO: replace this with DB call once skills are modifyiable
 const skillOptions = [
@@ -99,9 +100,10 @@ async function exportUsersAndProfiles(context: Context, userIdent: string): Prom
   // get all data for export
   const users = await userStore.listAll();
   const profiles = await profileStore.listAll();
+  const userSkills = groupBy<UserSkill>(await skillStore.listAll(), (s) => getUserId(s.user));
   for (const profile of profiles) {
-    const userId = (<User>profile.user)?._id ?? <Types.ObjectId>profile.user;
-    const skills = await skillStore.list(userId);
+    const userId = getUserId(profile.user);
+    const skills = userSkills[userId] ?? [];
     profileDict[userId.toString()] = profile;
     skillsDict[userId.toString()] = {};
 

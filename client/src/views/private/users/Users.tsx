@@ -163,7 +163,7 @@ const Users = () => {
 
   return (
     <PageLayout>
-      <div className="viewContainer">
+      <div className="fullViewContainer">
         <div className="gutters">
           <h1>
             Users
