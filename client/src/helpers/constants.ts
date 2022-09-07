@@ -6,9 +6,11 @@ export const testUserData: User = {
   name: '',
   email: 'test1@slothwerks.com',
   phone: '',
+  userRole: 'volunteer'
 };
 
 export const testProfileData: Profile = {
+  user: '76iatw8omMRPY5VmwIf9HqrlSTe2',
   completionDate: '',
   roles: [],
   linkedInUrl: '',

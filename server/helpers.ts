@@ -5,6 +5,8 @@ import { fbApp } from './firebase/init';
 import { createErrorResult, createSuccessResult, Result } from './core';
 import { connect, userStore } from './models/store';
 import fetch from 'node-fetch';
+import { User } from './models/user';
+import { Types } from 'mongoose';
 
 type CheckRequestAuth = (authorization: string | undefined, logger: Logger) => Promise<DecodedIdToken | null>
 type CheckBindingDataUserId = (context: Context, userIdent: string) => Promise<Result>
@@ -164,3 +166,32 @@ export const sendTemplateEmail: SendTemplateEmail = async (recipientEmail: strin
     return createErrorResult(500, 'Internal error', context);
   }
 };
+
+/**
+ * Returns a user id string from a User | ObjectId record
+ */
+export function getUserId (user: Types.ObjectId | User): string {
+  return ((<User>user)?._id ?? (<Types.ObjectId>user)).toString();
+}
+
+/**
+ * Compares two User | ObjectId records
+ */
+export const compareUser = (a: User | Types.ObjectId, b: User | Types.ObjectId) => {
+  const aId = (<User>a)?._id ?? <Types.ObjectId>a;
+  const bId = (<User>b)?._id ?? <Types.ObjectId>b;
+  return aId === bId;
+};
+
+/**
+ * Group a collection using the provided function to return the grouping key. Ignores objects with null/undefined keys.
+ */
+export function groupBy<T> (data: T[], keyProvider: (item: T) => string) : Record<string, T[]> {
+  return data.reduce((grouped, item) => {
+    const key = keyProvider(item);
+    if (key === null || key === undefined) { return grouped; }
+    grouped[key] = grouped[key] ?? [];
+    grouped[key].push(item);
+    return grouped;
+  }, {} as Record<string, T[]>);
+}

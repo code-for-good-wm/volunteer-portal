@@ -6,6 +6,11 @@ export interface ServiceParams {
   failure?: (message: string) => void,
 }
 
+export interface TypedServiceParams<T> {
+  success?: (data: T) => void,
+  failure?: (message: string) => void,
+}
+
 export interface SignInParams extends ServiceParams {
   email: string,
   password: string,

@@ -18,6 +18,8 @@ const PercentComplete = (props: PercentCompleteProps) => {
 
   const handleButton = () => {
     // Here we should refresh the profile data prior to navigation
+    setProcessing(true);
+
     const success = () => {
       setProcessing(false);
       navigate('/profile');

@@ -3,5 +3,5 @@ export enum Role {
   DEVELOPER = 'developer',
   SUPPORT = 'support',
   LEAD = 'lead'
-};
+}
 
