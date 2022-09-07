@@ -1,5 +1,6 @@
 import { Schema, model, Types } from 'mongoose';
 import { MongooseOpts } from './default-opts';
+import { UserRole } from './enums/user-role.enum';
 
 export interface User {
   _id?: Types.ObjectId,
@@ -9,6 +10,7 @@ export interface User {
   email: string,
   phone: string,
   emailValidated?: boolean
+  userRole: UserRole
 }
 
 export const UserModel = model<User>('User', new Schema({
@@ -17,5 +19,6 @@ export const UserModel = model<User>('User', new Schema({
   name: String,
   email: { type: String, required: true },
   phone: String,
-  emailValidated: Boolean
+  emailValidated: Boolean,
+  userRole: { type: UserRole, required: true }
 }, MongooseOpts));

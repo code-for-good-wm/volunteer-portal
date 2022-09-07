@@ -5,6 +5,7 @@ import { checkBindingDataUserId, checkAuthAndConnect } from '../helpers';
 import { profileStore, skillStore, userStore } from '../models/store';
 import { User } from '../models/user';
 import { Profile } from '../models/profile';
+import { UserRole } from '../models/enums/user-role.enum';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   // get caller uid from token and connect to DB
@@ -71,6 +72,7 @@ async function createUser(context: Context, userIdent: string): Promise<Result> 
     name: '',
     phone: '',
     email,
+    userRole: UserRole.VOLUNTEER
   };
 
   const userData = await userStore.create(newUser);
@@ -100,6 +102,11 @@ async function updateUser(context: Context, userIdent: string): Promise<Result> 
 
   // Move forward with update
   const update = context.req?.body;
+
+  // Ensure users cannot modify their own permissions by resetting it to the current DB value, or VOLUNTEER
+  // Permission changes are handled in a separate endpoint
+  update.userRole = checkResult.body.userRole ?? UserRole.VOLUNTEER;
+
   const result = await userStore.update(userId, userIdent, update);
 
   if (result.nModified === 1) {

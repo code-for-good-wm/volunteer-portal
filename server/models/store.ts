@@ -69,6 +69,9 @@ export const userStore = {
   list: async(ident: string) => {
     return await UserModel.findOne({ident});
   },
+  listAll: async() => {
+    return await UserModel.find();
+  },
   create: async(user: User) => {
     return await UserModel.create(user);
   },
@@ -83,6 +86,9 @@ export const userStore = {
 export const profileStore = {
   list: async(userId: mongoose.Types.ObjectId) => {
     return await ProfileModel.findOne({user: userId});
+  },
+  listAll: async() => {
+    return await ProfileModel.find();
   },
   create: async(profile: Profile) => {
     return await ProfileModel.create(profile);
@@ -99,6 +105,9 @@ export const profileStore = {
 export const skillStore = {
   list: async(userId: mongoose.Types.ObjectId) => {
     return await UserSkillModel.find({user: userId});
+  },
+  listAll: async() => {
+    return await UserSkillModel.find();
   },
   create: async(userId: mongoose.Types.ObjectId, skill: UserSkill) => {
     skill.user = userId;
