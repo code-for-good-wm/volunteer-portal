@@ -1,3 +1,11 @@
-.signInCard {
+.signInCard, .splashCard {
   max-width: 380px;
+}
+
+.splashCard {
+  text-align: center;
+
+  p {
+    padding-bottom: 0.2rem;
+  }
 }
