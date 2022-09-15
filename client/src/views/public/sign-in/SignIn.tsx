@@ -188,6 +188,10 @@ const SignIn = () => {
           <h1>
             Welcome!
           </h1>
+          <div className="contentCard splashCard">
+            <p>We need <span className="highlight">all kinds</span> of volunteers to do amazing work for non-profits in need, and to make our events a success!</p>
+            <p>Please <span className="highlight">{ newUser ? 'create an account' : 'sign in' }</span> and let us know what you can do.</p>
+          </div>
           <div className="contentCard signInCard">
             <form className="form" onSubmit={handleSubmit}>
               <TextField
