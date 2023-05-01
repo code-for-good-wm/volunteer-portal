@@ -6,8 +6,10 @@ export interface SkillOption {
   category: string;
 }
 
-export const SkillOptionModel = model<SkillOption>('SkillOption', new Schema({
+const skillOptionSchema = new Schema({
   code: { type: String, required: true },
   description: { type: String, required: true },
   category: { type: String, required: true },
-}));
+});
+
+export const SkillOptionModel = model<SkillOption>('SkillOption', skillOptionSchema);

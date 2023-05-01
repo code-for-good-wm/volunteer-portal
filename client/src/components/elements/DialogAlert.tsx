@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Dialog } from '@mui/material';
 import StandardButton from '../buttons/StandardButton';
 

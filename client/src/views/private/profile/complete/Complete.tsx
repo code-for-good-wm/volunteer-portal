@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { showRegistrationComplete, updateProfile } from '../../../../store/profileSlice';
@@ -27,11 +27,11 @@ const ProfileComplete = () => {
   const cardHeadingText = initialCompletion ? 'Your registration is complete!' : 'Your profile has been updated!';
   const cardContent = initialCompletion ? (
     <p className="center">
-      Keep your eyes peeled for a confirmation email; we&apos;ll be reviewing volunteer applications shortly.  In the meantime, <a className="link" href="https://codeforgoodwm.org/">visit our website</a> and keep an eye out for upcoming emails!
+      Keep your eyes peeled for a confirmation email!<br />Check out our Dashboard for any upcoming events you might be interested in!
     </p>
   ) : (
     <p className="center">
-      We appreciate the opportunity to work with you!  We&apos;ll be reviewing volunteer applications shortly.  In the meantime, <a className="link" href="https://codeforgoodwm.org/">visit our website</a> and keep an eye out for upcoming emails!
+      We appreciate the opportunity to work with you!<br />Check out our Dashboard for any upcoming events you might be interested in!
     </p>
   );
 
@@ -45,6 +45,9 @@ const ProfileComplete = () => {
       </h2>
       <div className="completionDivider" />
       {cardContent}
+      <p className="right">
+        <ArrowDownwardIcon />
+      </p>
     </div>
   );
 

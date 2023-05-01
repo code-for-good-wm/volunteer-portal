@@ -1,8 +1,8 @@
 
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, Result } from '../core';
-import { userStore } from '../models/store';
-import { checkAuthAndConnect, sendTemplateEmail } from '../helpers';
+import { createErrorResult, Result } from '../lib/core';
+import { userStore } from '../lib/models/store';
+import { checkAuthAndConnect, sendTemplateEmail } from '../lib/helpers';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   // get caller uid from token and connect to DB

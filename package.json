@@ -9,6 +9,6 @@
     "server:build": "cd server && npm install --no-audit && npm run build && func init --language typescript --worker-runtime node"
   },
   "devDependencies": {
-    "@azure/static-web-apps-cli": "^1.0.1"
+    "@azure/static-web-apps-cli": "^1.1.4"
   }
 }

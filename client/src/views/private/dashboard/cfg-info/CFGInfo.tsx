@@ -1,5 +1,3 @@
-import React from 'react';
-
 import StandardButton from '../../../../components/buttons/StandardButton';
 
 const CFGInfo = () => {
@@ -10,7 +8,7 @@ const CFGInfo = () => {
       <p>Learn more about our mission - and how you play a vital role! - on our website.</p>
       <div className="dashboardCardButtonContainer">
         <StandardButton
-          label="Code for Good Website"
+          label="codeforgoodwm.org"
           link="https://codeforgoodwm.org/"
         />
       </div>

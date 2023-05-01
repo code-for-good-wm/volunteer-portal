@@ -3,18 +3,18 @@ import { MongooseOpts } from './default-opts';
 import { DietaryRestriction } from './enums/dietary-restriction.enum';
 import { Role } from './enums/role.enum';
 import { ShirtSize } from './enums/shirt-size.enum';
-import { User } from './user';
-import { UserSkill } from './user-skill';
+import { IUser } from './user';
+import { IUserSkill } from './user-skill';
 
-export interface Agreements {
+export interface IAgreements {
   termsAndConditions?: string; // ISO date
   photoRelease?: string; // ISO date
   codeOfConduct?: string; // ISO date
 }
 
-export interface Profile {
+export interface IProfile {
   _id?: Types.ObjectId;
-  user: Types.ObjectId | User;
+  user: IUser['_id'];
   completionDate?: string; // ISO date; timestamp of initial profile completion
   roles: Role[];
   linkedInUrl?: string;
@@ -26,13 +26,13 @@ export interface Profile {
   dietaryRestrictions: DietaryRestriction[];
   additionalDietaryRestrictions?: string;
   accessibilityRequirements?: string;
-  agreements?: Agreements;
-  skills: Types.ObjectId[] | UserSkill[];
+  agreements?: IAgreements;
+  skills: Types.Array<IUserSkill['_id']>;
   additionalSkills?: string;
 }
 
-const profileSchema = new Schema<Profile>({
-  user: { type: Types.ObjectId, required: true, ref: 'User' },
+const profileSchema = new Schema<IProfile>({
+  user: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
   completionDate: String,
   roles: [{ type: String, enum: Role }], // array of Role
   linkedInUrl: String,
@@ -44,13 +44,13 @@ const profileSchema = new Schema<Profile>({
   dietaryRestrictions: [{ type: String, enum: DietaryRestriction }], // array of DietaryRestriction
   additionalDietaryRestrictions: String,
   accessibilityRequirements: String,
-  agreements: new Schema<Agreements>({
+  agreements: new Schema<IAgreements>({
     termsAndConditions: String,
     photoRelease: String,
     codeOfConduct: String,
   }),
-  skills: [{ type: Types.ObjectId, ref: 'UserSkill' }],
+  skills: [{ type: Schema.Types.ObjectId, ref: 'UserSkill' }],
   additionalSkills: String
 }, MongooseOpts);
 
-export const ProfileModel = model<Profile>('Profile', profileSchema);
+export const ProfileModel = model<IProfile>('Profile', profileSchema);

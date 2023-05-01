@@ -1,10 +1,10 @@
-
+import * as mongoose from 'mongoose';
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, Result } from '../core';
-import { profileStore, skillStore } from '../models/store';
-import { Profile } from '../models/profile';
-import { checkBindingDataUserId, checkAuthAndConnect } from '../helpers';
-import { UserSkill } from '../models/user-skill';
+import { createErrorResult, createSuccessResult, Result } from '../lib/core';
+import { profileStore, skillStore } from '../lib/models/store';
+import { IProfile } from '../lib/models/profile';
+import { checkBindingDataUserId, checkAuthAndConnect } from '../lib/helpers';
+import { IUserSkill } from '../lib/models/user-skill';
 import { Types } from 'mongoose';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
@@ -46,10 +46,7 @@ async function getProfile(context: Context, userIdent: string): Promise<Result> 
   const userId = checkResult.body._id;
 
   // Pull this user's corresponding profile data
-  const profile = await profileStore.list(userId);
-  if (profile) {
-    profile.skills = await skillStore.list(userId);
-  }
+  const profile = await profileStore.list(userId, true);
 
   if (!profile) {
     return createErrorResult(404, 'Profile data not found', context);
@@ -68,11 +65,11 @@ async function createProfile(context: Context, userIdent: string): Promise<Resul
   const userId = checkResult.body._id;
 
   // Build an initial profile
-  const newProfile: Profile = {
+  const newProfile: IProfile = {
     user: userId,
     roles: [],
     dietaryRestrictions: [],
-    skills: [], // We're not adding any skills at this time
+    skills: new mongoose.Types.Array<mongoose.Types.ObjectId>(), // We're not adding any skills at this time
   };
 
   const profileData = await profileStore.create(newProfile);
@@ -90,20 +87,20 @@ async function updateProfile(context: Context, userIdent: string): Promise<Resul
   const userId = checkResult.body._id;
 
   // Pull this user's corresponding profile data
-  const profile = await profileStore.list(userId);
+  const profile = await profileStore.list(userId, false);
   if (!profile) {
     return createErrorResult(404, 'Profile data not found', context);
   }
 
   const profileId = profile._id;
   const profileUpdate = context.req?.body;
-  const skillsUpdate = profileUpdate?.skills as UserSkill[];
+  const skillsUpdate = profileUpdate?.skills as IUserSkill[];
   delete profileUpdate?.skills;
 
   // Attempt profile update
   const profileUpdateResult = await profileStore.update(profileId, userId, profileUpdate);
 
-  if (profileUpdateResult.nModified !== 1) {
+  if (profileUpdateResult.modifiedCount !== 1) {
     // Profile not found, status 404
     return createErrorResult(404, 'Profile data not found', context);
   }
@@ -114,8 +111,8 @@ async function updateProfile(context: Context, userIdent: string): Promise<Resul
     // updates to existing skills documents for this user.
     // We'll assume the existence of an _id in the skill object
     // means we're updating an existing user skill document.
-    const newSkills: UserSkill[] = [];
-    const existingSkills: UserSkill[] = [];
+    const newSkills: IUserSkill[] = [];
+    const existingSkills: IUserSkill[] = [];
 
     skillsUpdate.forEach(({_id, code, level}) => {
       if (code && level !== undefined) {
@@ -149,11 +146,7 @@ async function updateProfile(context: Context, userIdent: string): Promise<Resul
   }
 
   // Acquire updated data
-  const updatedProfile = await profileStore.list(userId);
-  if (updatedProfile) {
-    updatedProfile.skills = await skillStore.list(userId);
-  }
-
+  const updatedProfile = await profileStore.list(userId, true);
   return createSuccessResult(200, updatedProfile, context);
 }
 
@@ -167,7 +160,7 @@ async function deleteProfile(context: Context, userIdent: string): Promise<Resul
   const userId = checkResult.body._id;
 
   // Pull this user's corresponding profile data
-  const profile = await profileStore.list(userId);
+  const profile = await profileStore.list(userId, false);
   if (!profile) {
     // should this be an error?
     return createErrorResult(404, 'Profile data not found', context);

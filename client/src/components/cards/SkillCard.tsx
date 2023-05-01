@@ -1,8 +1,6 @@
-import React from 'react';
-
-import { ProfileSkill, SkillLevel, UserSkill } from '../../types/profile';
-
+import { ChangeEvent } from 'react';
 import { Radio, RadioGroup } from '@mui/material';
+import { ProfileSkill, SkillLevel, UserSkill } from '../../types/profile';
 
 type SkillCardProps = {
   skill?: ProfileSkill;
@@ -18,7 +16,7 @@ const SkillCard = (props: SkillCardProps) => {
 
   const handleCard = handler ? handler : () => console.log('Skill level selected.');
 
-  const handleSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSelection = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedValue = event.target.value;
     const selectedLevel = parseInt(selectedValue);
 

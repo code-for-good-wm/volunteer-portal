@@ -1,5 +1,3 @@
-import React from 'react';
-
 import PageLayout from '../../../layouts/PageLayout';
 import DeleteAccount from './delete-account/DeleteAccount';
 

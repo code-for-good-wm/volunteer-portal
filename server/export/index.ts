@@ -2,13 +2,13 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { stringify } from 'csv-stringify/sync';
 import { Types } from 'mongoose';
-import { createErrorResult, Result } from '../core';
-import { checkAuthAndConnect, getUserId, groupBy } from '../helpers';
-import { profileStore, skillStore, userStore } from '../models/store';
-import { READ_ALL_USERS } from '../models/enums/user-role.enum';
-import { User } from '../models/user';
-import { Profile } from '../models/profile';
-import { UserSkill } from '../models/user-skill';
+import { createErrorResult, Result } from '../lib/core';
+import { checkAuthAndConnect, getUserId, groupBy } from '../lib/helpers';
+import { profileStore, skillStore, userStore } from '../lib/models/store';
+import { READ_ALL_USERS } from '../lib/models/enums/user-role.enum';
+import { IUser } from '../lib/models/user';
+import { IProfile } from '../lib/models/profile';
+import { IUserSkill } from '../lib/models/user-skill';
 
 // TODO: replace this with DB call once skills are modifyiable
 const skillOptions = [
@@ -83,7 +83,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 };
 
 async function exportUsersAndProfiles(context: Context, userIdent: string): Promise<Result> {
-  // Attempt to acquire user data
+  // Attempt to acquire current user data
   const user = await userStore.list(userIdent);
   if (!user) {
     return createErrorResult(404, 'User not found', context);
@@ -94,25 +94,25 @@ async function exportUsersAndProfiles(context: Context, userIdent: string): Prom
     return createErrorResult(403, 'Forbidden', context);
   }
 
-  const profileDict: Record<string, Profile> = {};
+  const profileDict: Record<string, IProfile> = {};
   const skillsDict: Record<string, Record<string, number>> = {};
 
   // get all data for export
   const users = await userStore.listAll();
-  const profiles = await profileStore.listAll();
-  const userSkills = groupBy<UserSkill>(await skillStore.listAll(), (s) => getUserId(s.user));
+  const profiles = await profileStore.listAll(true);
+  // const userSkills = groupBy<IUserSkill>(await skillStore.listAll(), (s) => getUserId(s.user));
   for (const profile of profiles) {
     const userId = getUserId(profile.user);
-    const skills = userSkills[userId] ?? [];
+    // const skills = userSkills[userId] ?? [];
     profileDict[userId.toString()] = profile;
-    skillsDict[userId.toString()] = {};
+    // skillsDict[userId.toString()] = {};
 
-    for (const skill of skills) {
-      skillsDict[userId.toString()][skill.code] = skill.level;
-    }
+    // for (const skill of skills) {
+    //   skillsDict[userId.toString()][skill.code] = skill.level;
+    // }
   }
 
-  const csvData = [];
+  const csvData : any[] = [];
 
   for (const user of users) {
     const userId = user._id.toString();

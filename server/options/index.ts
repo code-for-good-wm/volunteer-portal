@@ -1,6 +1,6 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createSuccessResult } from '../core';
-import { connect, optionsStore } from '../models/store';
+import { createSuccessResult } from '../lib/core';
+import { connect, optionsStore } from '../lib/models/store';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
 

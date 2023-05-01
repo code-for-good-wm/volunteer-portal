@@ -36,10 +36,12 @@ export const roles: RoleData[] = [
   {
     id: 'support',
     description: 'Supporting Role: Social Media, Copywriting, etc.',
+    shortDescription: 'Support',
   },
   {
     id: 'lead',
     description: 'Project Manager and/or Team Lead',
+    shortDescription: 'Team Lead',
   },
 ];
 

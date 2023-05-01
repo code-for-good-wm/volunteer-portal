@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { ThemeProvider } from '@mui/material';
 import { muiTheme } from './material/theme';
 
