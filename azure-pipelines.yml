@@ -25,16 +25,16 @@ steps:
 
 - task: NodeTool@0
   inputs:
-    versionSpec: '16.x'
+    versionSpec: '18.x'
   displayName: 'Install Node.js'
 
-# npm audit is broken: https://github.com/facebook/create-react-app/issues/11174
-# specifying a custom build path, and moving the config file there
+# moving files post-build
 - script: |
     cd client
     npm install --no-audit
     npm audit --omit=dev
-    BUILD_PATH='../app_dist' npm run build
+    npm run build
+    mv build ../app_dist
     cp ../staticwebapp.config.json ../app_dist/staticwebapp.config.json
   displayName: 'npm install and build'
   env: # set environment variables that are used during build time here. These are non-secret
