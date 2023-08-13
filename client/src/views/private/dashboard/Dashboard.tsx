@@ -8,7 +8,7 @@ import { calculateProfilePercentComplete } from '../../../services/profile';
 import PageLayout from '../../../layouts/PageLayout';
 
 import PercentComplete from './percent-complete/PercentComplete';
-import UpcomingEvents from './upcoming-events/UpcomingEvents';
+import UpcomingEvents from '../../../components/elements/UpcomingEvents';
 import CFGInfo from './cfg-info/CFGInfo';
 
 const Dashboard = () => {

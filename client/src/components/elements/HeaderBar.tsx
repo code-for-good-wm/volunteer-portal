@@ -8,6 +8,7 @@ import { signedIn, user } from '../../store/authSlice';
 import TransparentLogo from '../../assets/images/logo-transparent.png';
 import ExitToApp from '@mui/icons-material/ExitToApp';
 import Settings from '@mui/icons-material/Settings';
+import CalendarMonthOutlined from '@mui/icons-material/CalendarMonthOutlined';
 import SupervisedUserCircleOutlined from '@mui/icons-material/SupervisedUserCircleOutlined';
 import { Button, Menu, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -95,7 +96,7 @@ const HeaderBar = () => {
 
       { showProgramsOption &&
       <MenuItem onClick={handlePrograms}>
-        <SupervisedUserCircleOutlined />
+        <CalendarMonthOutlined />
         <span className="menuOptionLabel">
           Programs
         </span>

@@ -1,12 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { showRegistrationComplete, updateProfile } from '../../../../store/profileSlice';
-
 import DiscoBall from '../../../../assets/images/disco-ball.png';
-
 import StandardButton from '../../../../components/buttons/StandardButton';
+import UpcomingEvents from '../../../../components/elements/UpcomingEvents';
 
 const ProfileComplete = () => {
   const initialCompletion = useAppSelector(showRegistrationComplete);
@@ -45,9 +43,6 @@ const ProfileComplete = () => {
       </h2>
       <div className="completionDivider" />
       {cardContent}
-      <p className="right">
-        <ArrowDownwardIcon />
-      </p>
     </div>
   );
 
@@ -58,6 +53,9 @@ const ProfileComplete = () => {
           <img src={DiscoBall} alt="Sparkling disco ball" />
         </div>
         {contentCard}
+
+        <UpcomingEvents />
+
         <div className="profileCompletionControls">
           <div className="buttonContainer">
             <StandardButton

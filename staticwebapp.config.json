@@ -1,5 +1,12 @@
 {
   "platform": {
     "apiRuntime": "node:18"
+  },
+  "globalHeaders": {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Method": "GET, PUT, POST, DELETE, OPTIONS",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Content-Security-Policy": "default-src 'self' 'unsafe-eval' 'unsafe-inline'; img-src 'self' data: ; object-src 'none'; connect-src 'self' *.googleapis.com;"
   }
 }

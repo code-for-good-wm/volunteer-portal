@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
-import { EventAttendanceUpdate } from '../../../../types/event';
-import { updateEventAttendance } from '../../../../services/event';
-import { useAppSelector } from '../../../../store/hooks';
-import { selectUpcomingEventsAndAttendance } from '../../../../store/selectors/eventAndAttendanceSelectors';
+import { EventAttendanceUpdate } from '../../types/event';
+import { updateEventAttendance } from '../../services/event';
+import { useAppSelector } from '../../store/hooks';
+import { selectUpcomingEventsAndAttendance } from '../../store/selectors/eventAndAttendanceSelectors';
 
-import EventCard from '../../../../components/cards/EventCard';
+import EventCard from '../cards/EventCard';
 
 const UpcomingEvents = () => {
   const upcomingEventsWithAttendanceData = useAppSelector(selectUpcomingEventsAndAttendance);
