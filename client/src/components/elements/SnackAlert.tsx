@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Alert, AlertColor, Snackbar } from '@mui/material';
 
 type SnackAlertProps = {

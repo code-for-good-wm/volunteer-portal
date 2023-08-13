@@ -15,8 +15,8 @@
     "csv-stringify": "^6.2.0",
     "dotenv": "^16.0.1",
     "firebase-admin": "^11.0.0",
-    "mongoose": "^5.10.11",
-    "node-fetch": "^2.6.7"
+    "mongoose": "^7.1.0",
+    "node-fetch": "^2.6.12"
   },
   "devDependencies": {
     "@azure/functions": "^3.0.0",

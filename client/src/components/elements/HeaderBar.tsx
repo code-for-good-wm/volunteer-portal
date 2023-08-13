@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { getAuth, signOut } from 'firebase/auth';
 
@@ -6,13 +6,17 @@ import { useAppSelector } from '../../store/hooks';
 import { signedIn, user } from '../../store/authSlice';
 
 import TransparentLogo from '../../assets/images/logo-transparent.png';
-import { ExitToApp, Settings, SupervisedUserCircleOutlined } from '@mui/icons-material';
+import ExitToApp from '@mui/icons-material/ExitToApp';
+import Settings from '@mui/icons-material/Settings';
+import CalendarMonthOutlined from '@mui/icons-material/CalendarMonthOutlined';
+import SupervisedUserCircleOutlined from '@mui/icons-material/SupervisedUserCircleOutlined';
 import { Button, Menu, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const HeaderBar = () => {
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showUsersOption, setShowUsersOption] = useState(false);
+  const [showProgramsOption, setShowProgramsOption] = useState(false);
 
   const accountMenuAnchorElRef = useRef<HTMLButtonElement | null>(null);
 
@@ -21,7 +25,9 @@ const HeaderBar = () => {
   const currentUser = useAppSelector(user);
 
   useEffect(() => {
-    setShowUsersOption(['boardmember', 'admin'].includes(currentUser?.userRole ?? 'volunteer'));
+    const isAdminOrBoardmember = ['boardmember', 'admin'].includes(currentUser?.userRole ?? 'volunteer');
+    setShowUsersOption(isAdminOrBoardmember);
+    setShowProgramsOption(isAdminOrBoardmember);
   }, [currentUser]);
 
   const navigate = useNavigate();
@@ -37,6 +43,11 @@ const HeaderBar = () => {
   const handleAccountSettings = () => {
     toggleAccountMenu();
     navigate('/account');
+  };
+
+  const handlePrograms = () => {
+    toggleAccountMenu();
+    navigate('/programs');
   };
 
   const handleUsers = () => {
@@ -82,6 +93,15 @@ const HeaderBar = () => {
           Settings
         </span>
       </MenuItem>
+
+      { showProgramsOption &&
+      <MenuItem onClick={handlePrograms}>
+        <CalendarMonthOutlined />
+        <span className="menuOptionLabel">
+          Programs
+        </span>
+      </MenuItem> }
+
       { showUsersOption &&
       <MenuItem onClick={handleUsers}>
         <SupervisedUserCircleOutlined />
@@ -89,6 +109,7 @@ const HeaderBar = () => {
           Users
         </span>
       </MenuItem> }
+
       <MenuItem onClick={handleSignOut}>
         <ExitToApp />
         <span className="menuOptionLabel">

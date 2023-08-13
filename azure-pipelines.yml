@@ -25,31 +25,31 @@ steps:
 
 - task: NodeTool@0
   inputs:
-    versionSpec: '16.x'
+    versionSpec: '18.x'
   displayName: 'Install Node.js'
 
-# npm audit is broken: https://github.com/facebook/create-react-app/issues/11174
-# specifying a custom build path, and moving the config file there
+# Build and move files post-build
 - script: |
     cd client
     npm install --no-audit
     npm audit --omit=dev
-    BUILD_PATH='../app_dist' npm run build
-    cp ../staticwebapp.config.json ../app_dist/staticwebapp.config.json
+    npm run build
+    mv build ../app_dist
+    cp ../staticwebapp.config.azure.json ../app_dist/staticwebapp.config.json
   displayName: 'npm install and build'
   env: # set environment variables that are used during build time here. These are non-secret
-    REACT_APP_MSAL_CLIENT_ID: '$(msal-client-id)'
-    REACT_APP_MSAL_AUTHORITY: '$(msal-authority)'
-    REACT_APP_SIGN_IN_REDIRECT: '$(app-redirect-url)'
-    REACT_APP_SIGN_OUT_REDIRECT: '$(app-redirect-url)'
-    REACT_APP_FB_API_KEY: '$(fb-api-key)'
-    REACT_APP_FB_AUTH_DOMAIN: '$(fb-auth-domain)'
-    REACT_APP_FB_PROJECT_ID: '$(fb-project-id)'
-    REACT_APP_FB_STORAGE_BUCKET: '$(fb-storage-bucket)'
-    REACT_APP_FB_MESSAGING_SENDER_ID: '$(fb-msg-sender-id)'
-    REACT_APP_FB_APP_ID: '$(fb-app-id)'
-    REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL: '$(app-root-url)'
-    REACT_APP_REGISTRATION_CONFIRMATION_EMAIL_TEMPLATE_ID: '$(sg-registration-template)'
+    VITE_MSAL_CLIENT_ID: '$(msal-client-id)'
+    VITE_MSAL_AUTHORITY: '$(msal-authority)'
+    VITE_SIGN_IN_REDIRECT: '$(app-redirect-url)'
+    VITE_SIGN_OUT_REDIRECT: '$(app-redirect-url)'
+    VITE_FB_API_KEY: '$(fb-api-key)'
+    VITE_FB_AUTH_DOMAIN: '$(fb-auth-domain)'
+    VITE_FB_PROJECT_ID: '$(fb-project-id)'
+    VITE_FB_STORAGE_BUCKET: '$(fb-storage-bucket)'
+    VITE_FB_MESSAGING_SENDER_ID: '$(fb-msg-sender-id)'
+    VITE_FB_APP_ID: '$(fb-app-id)'
+    VITE_AZURE_CLOUD_FUNCTION_BASE_URL: '$(app-root-url)'
+    VITE_REGISTRATION_CONFIRMATION_EMAIL_TEMPLATE_ID: '$(sg-registration-template)'
 
 # Include the firebase credentials from static files
 - task: DownloadSecureFile@1

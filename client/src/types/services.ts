@@ -1,3 +1,4 @@
+import { EventAttendanceUpdate } from'./event';
 import { ProfileUpdate, Role, UserSkill } from './profile';
 import { UserUpdate } from './user';
 
@@ -47,6 +48,11 @@ export interface UpdateUserSkillsParams extends ServiceParams {
 }
 
 export interface UpdateAdditionalSkillsParams extends ServiceParams {
-  skills: UserSkill[]
-  additionalSkills: string;
+  skills: UserSkill[],
+  additionalSkills: string
+}
+
+export interface UpdateEventAttendanceParams extends ServiceParams {
+  eventId: string,
+  attendanceUpdate: EventAttendanceUpdate
 }

@@ -1,5 +1,3 @@
-import React from 'react';
-
 type TextFieldLabelProps = {
   label: string,
   required?: boolean,

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Alert, AlertColor, FormControl } from '@mui/material';
 
 type FormAlertProps = {

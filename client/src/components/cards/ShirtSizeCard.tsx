@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Shirt from '../../assets/icons/shirt.png';
 import ShirtSmall from '../../assets/icons/shirt-s.png';
 import ShirtMedium from '../../assets/icons/shirt-m.png';

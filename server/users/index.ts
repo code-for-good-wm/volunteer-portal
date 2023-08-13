@@ -1,8 +1,8 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, Result } from '../core';
-import { checkAuthAndConnect } from '../helpers';
-import { userStore } from '../models/store';
-import { READ_ALL_USERS } from '../models/enums/user-role.enum';
+import { createErrorResult, createSuccessResult, Result } from '../lib/core';
+import { checkAuthAndConnect } from '../lib/helpers';
+import { userStore } from '../lib/models/store';
+import { READ_ALL_USERS } from '../lib/models/enums/user-role.enum';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   // get caller uid from token and connect to DB

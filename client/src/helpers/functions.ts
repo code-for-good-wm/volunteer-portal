@@ -1,4 +1,6 @@
 import { NavigateFunction } from 'react-router-dom';
+import { getAuth } from 'firebase/auth';
+
 import { updateAlert } from '../store/alertSlice';
 import { updateAuth } from '../store/authSlice';
 import { updateProfile } from '../store/profileSlice';
@@ -45,8 +47,16 @@ export const parsePhone = (phone: string) => {
   };
 };
 
+/** Get the base URL for the backend API */
 export function getApiBaseUrl(): string {
-  return `${process.env.REACT_APP_AZURE_CLOUD_FUNCTION_BASE_URL || ''}/api`;
+  return `${import.meta.env.VITE_AZURE_CLOUD_FUNCTION_BASE_URL || ''}/api`;
+}
+
+/** Get a valid auth token */
+export async function getAuthToken(): Promise<string> {
+  const auth = getAuth();
+  const fbUser = auth.currentUser;
+  return await fbUser?.getIdToken() || '';
 }
 
 /**
