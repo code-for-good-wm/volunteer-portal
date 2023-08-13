@@ -28,14 +28,14 @@ steps:
     versionSpec: '18.x'
   displayName: 'Install Node.js'
 
-# moving files post-build
+# Build and move files post-build
 - script: |
     cd client
     npm install --no-audit
     npm audit --omit=dev
     npm run build
     mv build ../app_dist
-    cp ../staticwebapp.config.json ../app_dist/staticwebapp.config.json
+    cp ../staticwebapp.config.azure.json ../app_dist/staticwebapp.config.json
   displayName: 'npm install and build'
   env: # set environment variables that are used during build time here. These are non-secret
     VITE_MSAL_CLIENT_ID: '$(msal-client-id)'

@@ -7,6 +7,6 @@
     "Access-Control-Allow-Method": "GET, PUT, POST, DELETE, OPTIONS",
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
-    "Content-Security-Policy": "default-src 'self' 'unsafe-eval' 'unsafe-inline'; img-src 'self' data: ; object-src 'none'; connect-src 'self' localhost:7071 https://identitytoolkit.googleapis.com;"
+    "Content-Security-Policy": "default-src 'self' 'unsafe-eval' 'unsafe-inline'; img-src 'self' data: ; object-src 'none'; connect-src 'self' https://identitytoolkit.googleapis.com;"
   }
 }
