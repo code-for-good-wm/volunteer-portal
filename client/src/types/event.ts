@@ -13,11 +13,13 @@ export interface Event {
   program: Program,
   name: string,
   description: string,
+  additionalInfo: string,
   startDate: string, // ISO date with time zone
   endDate: string, // ISO date with time zone
   location: string, // full address of event
   allowSignUps: boolean,
   allowPartialAttendance: boolean,
+  allocationRequired: boolean,
   eventType: EventType,
   status: Status
 }
@@ -25,11 +27,13 @@ export interface Event {
 export interface EventUpdate {
   name?: string,
   description?: string,
+  additionalInfo?: string,
   startDate?: string, // ISO date with time zone
   endDate?: string, // ISO date with time zone
   location?: string, // full address of event
   allowSignUps?: boolean,
   allowPartialAttendance?: boolean,
+  allocationRequired?: boolean,
   eventType?: EventType,
   status?: Status
 }
