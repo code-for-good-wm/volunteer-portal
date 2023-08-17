@@ -34,6 +34,7 @@ export const loadUpcomingEventsAndAttendance = async () => {
     const attendanceResponse = await fetch(`${getApiBaseUrl()}/user/${userId}/event-attendance`, requestInit);
     if (attendanceResponse.ok) {
       const attendanceData = await attendanceResponse.json() as EventAttendance[];
+      
       store.dispatch(
         attendancesReceived({
           attendances: attendanceData
@@ -43,14 +44,12 @@ export const loadUpcomingEventsAndAttendance = async () => {
       console.log('Unable to load attendance');
     }
   } catch (error) {
-    const message = 'An error occurred while loading events and attendance.';
-
     // Show alert
     store.dispatch(
       updateAlert({
         visible: true,
         theme: 'error',
-        content: message,
+        content: 'An error occurred while loading events and attendance.',
       })
     );
   }
@@ -91,6 +90,15 @@ export const updateEventAttendance = async (params: UpdateEventAttendanceParams)
     // Update local data
     store.dispatch(
       attendanceAdded(newAttendanceData)
+    );
+
+    // Show saved message
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'success',
+        content: 'Attendance selections saved.',
+      })
     );
 
     if (success) {

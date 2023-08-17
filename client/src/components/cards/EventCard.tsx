@@ -1,5 +1,7 @@
 import { useState, ChangeEvent, useMemo, MouseEvent as mEvent } from 'react';
 import { styled } from '@mui/material/styles';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import Stack from '@mui/material/Stack';
@@ -23,7 +25,8 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => {
   const borderHover = '1px solid ' + theme.palette.primary.main;
   return {
     '& .MuiToggleButtonGroup-grouped': {
-      margin: theme.spacing(1),
+      margin: theme.spacing(2),
+      marginTop: '1em',
       fontWeight: 'bold',
       transition: 'all 300ms',
       '&:not(:first-of-type)': {
@@ -121,19 +124,26 @@ const EventCard = (props: EventCardProps) => {
   const [attendanceDetailValue, setAttendanceDetailValue] = useState<string>(attendance?.attendanceDetail ?? '');
 
   const [showAttendanceDetail, setShowAttendanceDetail] = useState(attendance?.attendance === 'partial-attending');
+  const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
 
   const eventDateAndTime = getEventDateTime(event);
   const eventDuration = getEventDuration(event);
   const eventType = event?.eventType === 'in-person' ? 'In person' : 'Online';
+  const eventAttendanceType = event?.allocationRequired ? 'interested in volunteering for' : 'able to attend';
   
   const handleCard = handler ? handler : () => console.log('Attendance saved.');
+
+  const setAttendanceState = (eventAttendance: EventAttendance | undefined) => {
+    setAttendanceValue(eventAttendance?.attendance ?? null);
+    setAttendanceDetailValue(eventAttendance?.attendanceDetail ?? '');
+    setShowAttendanceDetail(eventAttendance?.attendance === 'partial-attending');
+    setShowAdditionalInfo(eventAttendance?.attendance !== 'not-attending' && !!(event?.additionalInfo));
+  };
 
   /* Memo */
   useMemo(() => {
     if (attendance) {
-      setAttendanceValue(attendance.attendance ?? null);
-      setAttendanceDetailValue(attendance.attendanceDetail ?? null);
-      setShowAttendanceDetail(attendance.attendance === 'partial-attending');
+      setAttendanceState(attendance);
     }
   }, [attendance]);
 
@@ -143,6 +153,7 @@ const EventCard = (props: EventCardProps) => {
 
     setAttendanceValue(value);
     setShowAttendanceDetail(value === 'partial-attending');
+    setShowAdditionalInfo(value !== 'not-attending' && !!(event?.additionalInfo));
 
     // allow saving
     setHasChanges(true);
@@ -169,8 +180,7 @@ const EventCard = (props: EventCardProps) => {
   };
 
   const handleCancel = () => {
-    setAttendanceValue(attendance?.attendance ?? null);
-    setAttendanceDetailValue(attendance?.attendanceDetail ?? '');
+    setAttendanceState(attendance);
     setHasChanges(false);
   };
 
@@ -179,8 +189,8 @@ const EventCard = (props: EventCardProps) => {
 
       { event?.allowSignUps && // signups are currently allowed
       <Box>
-        <p style={{ fontWeight: 'bold' }}>Are you able to attend { event?.name }?</p>
-        <p style={{ fontSize: 'larger' }}>{ eventDateAndTime }</p>
+        <p style={{ fontWeight: 'bold' }}>Are you { eventAttendanceType } { event?.name }?</p>
+        <p style={{ fontSize: 'larger', marginTop: '0.7rem' }}>{ eventDateAndTime }</p>
         { event?.location && <p className="eventLocation">{ eventType } @ { event?.location }</p> }
 
         <form className="eventAttendanceForm">
@@ -197,7 +207,7 @@ const EventCard = (props: EventCardProps) => {
           </StyledToggleButtonGroup>
 
           { event?.allowPartialAttendance &&
-          <Collapse in={showAttendanceDetail} sx={{ width: '88%', margin: '0 auto' }}>
+          <Collapse in={showAttendanceDetail} sx={{ width: '90%', margin: '0 auto' }}>
             <TextField
               variant="outlined"
               fullWidth
@@ -206,13 +216,14 @@ const EventCard = (props: EventCardProps) => {
               type="text"
               label="When can you attend?"
               InputLabelProps={{ shrink: true }}
+              sx={{marginTop: '0.5rem'}}
               aria-label="details about partially attending"
               value={attendanceDetailValue}
               onChange={handleAttendanceDetail} />
           </Collapse> }
 
           <div className="dashboardCardButtonContainer">
-            <Stack spacing={2} direction="row">
+            <Stack spacing={2} direction="row" sx={{marginTop: '1rem'}}>
               <StandardButton aria-label="cancel"
                 label="Cancel"
                 theme="secondary"
@@ -225,14 +236,27 @@ const EventCard = (props: EventCardProps) => {
             </Stack>
           </div>
         </form> 
+
+        <Collapse in={showAdditionalInfo && !hasChanges} sx={{ paddingTop: '2em' }}>
+          <Alert severity="info" sx={{ textAlign: 'left' }}>{ event?.additionalInfo }</Alert>
+        </Collapse>
       </Box> }
 
       { !event?.allowSignUps && // signups are closed
       <Box>
         <p style={{ fontWeight: 'bold' }}>{ event?.name }</p>
-        <p style={{ fontSize: 'larger' }}>{ eventDateAndTime }</p>
+        <p style={{ fontSize: 'larger', marginTop: '0.7rem' }}>{ eventDateAndTime }</p>
         { event?.location && <p className="eventLocation">{ eventType } @ { event?.location }</p> }
-        <p style={{ marginTop: '1em', fontSize: 'smaller' }}>Thank you for your interest!<br />Unfortunately sign-ups are closed.</p>
+        { showAdditionalInfo && // already signed up
+          <Alert severity="info" sx={{ marginTop: '1rem', textAlign: 'left' }}>
+            <AlertTitle>Sign-ups are closed!</AlertTitle>
+            { event?.additionalInfo }
+          </Alert> }
+        { !showAdditionalInfo &&  // snoozed, lost
+          <Alert severity="info" sx={{ marginTop: '1rem', textAlign: 'left' }}>
+            <AlertTitle>Thank you for your interest!</AlertTitle>
+            Unfortunately sign-ups are closed.
+          </Alert> }
       </Box> }
     </div>
   );
