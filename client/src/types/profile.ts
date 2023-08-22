@@ -93,6 +93,7 @@ export interface ProfileUpdate {
 export interface RoleData {
   id: Role;
   description: string;
+  shortDescription?: string;
 }
 
 export interface ShirtSizeData {

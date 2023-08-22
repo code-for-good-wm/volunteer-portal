@@ -1,11 +1,11 @@
 import * as mongoose from 'mongoose';
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, Result } from '../core';
-import { checkBindingDataUserId, checkAuthAndConnect } from '../helpers';
-import { profileStore, skillStore, userStore } from '../models/store';
-import { User } from '../models/user';
-import { Profile } from '../models/profile';
-import { UserRole } from '../models/enums/user-role.enum';
+import { createErrorResult, createSuccessResult, Result } from '../lib/core';
+import { checkBindingDataUserId, checkAuthAndConnect } from '../lib/helpers';
+import { profileStore, skillStore, userStore } from '../lib/models/store';
+import { IUser } from '../lib/models/user';
+import { IProfile } from '../lib/models/profile';
+import { UserRole } from '../lib/models/enums/user-role.enum';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   // get caller uid from token and connect to DB
@@ -66,7 +66,7 @@ async function createUser(context: Context, userIdent: string): Promise<Result> 
     return createErrorResult(400, 'Missing required parameters', context);
   }
 
-  const newUser: User = {
+  const newUser: IUser = {
     ident: userIdent,
     authProvider: 'firebase',
     name: '',
@@ -76,14 +76,13 @@ async function createUser(context: Context, userIdent: string): Promise<Result> 
   };
 
   const userData = await userStore.create(newUser);
-  const userId = userData._id as mongoose.Types.ObjectId;
 
   // Build an initial profile
-  const newProfile: Profile = {
-    user: userId,
+  const newProfile: IProfile = {
+    user: userData._id,
     roles: [],
     dietaryRestrictions: [],
-    skills: [],
+    skills: new mongoose.Types.Array<mongoose.Types.ObjectId>(),
   };
 
   await profileStore.create(newProfile);
@@ -109,7 +108,7 @@ async function updateUser(context: Context, userIdent: string): Promise<Result> 
 
   const result = await userStore.update(userId, userIdent, update);
 
-  if (result.nModified === 1) {
+  if (result.modifiedCount === 1) {
     // User was updated
     return createSuccessResult(200, await userStore.list(userIdent), context);
   } else {
@@ -130,7 +129,7 @@ async function deleteUser(context: Context, userIdent: string): Promise<Result> 
   await userStore.delete(userId, userIdent);
 
   // Delete this user's corresponding profile data
-  const profile = await profileStore.list(userId);
+  const profile = await profileStore.list(userId, false);
   if (profile) {
     const profileId = profile._id;
     await profileStore.delete(profileId, userId);

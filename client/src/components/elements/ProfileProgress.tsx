@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { currentSection } from '../../store/profileSlice';
 import { useAppSelector } from '../../store/hooks';
 

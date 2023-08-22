@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ChangeEvent } from 'react';
+import { useEffect, useState, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
@@ -9,7 +9,10 @@ import { Agreement, Agreements, DietaryRestriction, ProfileUpdate, ShirtSize } f
 
 import ProfileLayout from '../../../../layouts/ProfileLayout';
 import { FormControl, FormControlLabel, InputAdornment, Radio, RadioGroup, TextField } from '@mui/material';
-import { BadgeOutlined, LocalPhoneOutlined, LinkedIn, Link } from '@mui/icons-material';
+import BadgeOutlined from '@mui/icons-material/BadgeOutlined';
+import LocalPhoneOutlined from '@mui/icons-material/LocalPhoneOutlined';
+import LinkedIn from '@mui/icons-material/LinkedIn';
+import Link from '@mui/icons-material/Link';
 
 import StandardButton from '../../../../components/buttons/StandardButton';
 import TextFieldLabel from '../../../../components/elements/TextFieldLabel';

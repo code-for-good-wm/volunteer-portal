@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Designer from '../../assets/images/coffee-mug.png';
 import Developer from '../../assets/images/coffee-chemex.png';
 import Support from '../../assets/images/coffee-cup.png';

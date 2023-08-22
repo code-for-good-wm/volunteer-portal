@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Vegan from '../../assets/icons/vegan.png';
 import Vegetarian from '../../assets/icons/vegetarian.png';
 import NoLactose from '../../assets/icons/no-lactose.png';

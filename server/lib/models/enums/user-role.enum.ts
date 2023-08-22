@@ -8,3 +8,6 @@ export enum UserRole {
 export const READ_USER = [ UserRole.VOLUNTEER, UserRole.NONPROFIT, UserRole.BOARDMEMBER, UserRole.ADMIN ];
 export const READ_ALL_USERS = [ UserRole.BOARDMEMBER, UserRole.ADMIN ];
 export const EDIT_ALL_USERS = [ UserRole.BOARDMEMBER, UserRole.ADMIN ];
+
+export const READ_ALL_EVENTS = [ UserRole.BOARDMEMBER, UserRole.ADMIN ];
+export const EDIT_ALL_EVENTS = [ UserRole.BOARDMEMBER, UserRole.ADMIN ];

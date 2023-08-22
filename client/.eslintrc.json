@@ -18,7 +18,8 @@
     },
     "plugins": [
         "react",
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "react-refresh"
     ],
     "ignorePatterns": ["/build/**"],
     "rules": {
@@ -33,6 +34,8 @@
         "semi": [
             "error",
             "always"
-        ]
+        ],
+        "react-refresh/only-export-components": "warn",
+        "react/react-in-jsx-scope": "off"
     }
 }

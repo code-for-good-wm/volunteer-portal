@@ -1,5 +1,3 @@
-import React from 'react';
-
 type TextButtonProps = {
   type?: 'submit' | 'button',
   disabled?: boolean,

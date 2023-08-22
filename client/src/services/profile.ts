@@ -331,7 +331,7 @@ export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParam
     // Send completion email
     if (sendConfirmationEmail) {
       // NOTE: We're allowing this to fail quietly if an error occurs
-      const emailUrl = `${getApiBaseUrl()}/user/${userId}/email/${process.env.REACT_APP_REGISTRATION_CONFIRMATION_EMAIL_TEMPLATE_ID}`;
+      const emailUrl = `${getApiBaseUrl()}/user/${userId}/email/${import.meta.env.VITE_REGISTRATION_CONFIRMATION_EMAIL_TEMPLATE_ID}`;
 
       await fetch(emailUrl, {
         method: 'POST',

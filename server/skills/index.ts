@@ -1,9 +1,9 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { Types } from 'mongoose';
-import { createErrorResult, createSuccessResult, Result } from '../core';
-import { checkBindingDataUserId, checkAuthAndConnect } from '../helpers';
-import { skillStore } from '../models/store';
-import { UserSkill } from '../models/user-skill';
+import { createErrorResult, createSuccessResult, Result } from '../lib/core';
+import { checkBindingDataUserId, checkAuthAndConnect } from '../lib/helpers';
+import { skillStore } from '../lib/models/store';
+import { IUserSkill } from '../lib/models/user-skill';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   // get caller uid from token and connect to DB
@@ -74,7 +74,7 @@ async function createUserSkills(context: Context, userIdent: string): Promise<Re
           user: userId,
           code,
           level
-        } as UserSkill;
+        } as IUserSkill;
       });
 
     if (newSkills.length === 0) {
@@ -111,7 +111,7 @@ async function updateUserSkills(context: Context, userIdent: string): Promise<Re
   const userId = checkResult.body._id;
   const skills = context.req?.body; // Could be a single skill object or an array of user skills
 
-  const newSkills: UserSkill[] = [];
+  const newSkills: IUserSkill[] = [];
 
   // This method assumes we're updating existing skills;
   // if _id is not included, discard the data
@@ -124,7 +124,7 @@ async function updateUserSkills(context: Context, userIdent: string): Promise<Re
           user: userId,
           code,
           level
-        } as UserSkill);
+        } as IUserSkill);
       });
   } else {
     // Treat as a single skill
@@ -136,7 +136,7 @@ async function updateUserSkills(context: Context, userIdent: string): Promise<Re
         user: userId,
         code,
         level
-      } as UserSkill);
+      } as IUserSkill);
     }
   }
 
@@ -145,12 +145,13 @@ async function updateUserSkills(context: Context, userIdent: string): Promise<Re
   }
 
   // Attempt updates
-  const updatedSkills: UserSkill[] = [];
+  const updatedSkills: IUserSkill[] = [];
 
   for (let i = 0; i < newSkills.length; i++) {
     const s = newSkills[i];
+    s.user = userId;
     const updateResult = await skillStore.update(s._id as Types.ObjectId, userId, s);
-    if (updateResult.nModified === 1) {
+    if (updateResult && updateResult.modifiedCount === 1) {
       updatedSkills.push(s);
     }
   }

@@ -5,7 +5,7 @@ import { fbApp } from './firebase/init';
 import { createErrorResult, createSuccessResult, Result } from './core';
 import { connect, userStore } from './models/store';
 import fetch from 'node-fetch';
-import { User } from './models/user';
+import { IUser } from './models/user';
 import { Types } from 'mongoose';
 
 type CheckRequestAuth = (authorization: string | undefined, logger: Logger) => Promise<DecodedIdToken | null>
@@ -170,16 +170,20 @@ export const sendTemplateEmail: SendTemplateEmail = async (recipientEmail: strin
 /**
  * Returns a user id string from a User | ObjectId record
  */
-export function getUserId (user: Types.ObjectId | User): string {
-  return ((<User>user)?._id ?? (<Types.ObjectId>user)).toString();
+// export function getUserId (user: Types.ObjectId | IUser): string {
+//   return ((<IUser>user)?._id ?? (<Types.ObjectId>user)).toString();
+// }
+
+export function getUserId (user: Types.ObjectId | undefined): string {
+  return user === undefined ? '' : (<Types.ObjectId>user).toString();
 }
 
 /**
  * Compares two User | ObjectId records
  */
-export const compareUser = (a: User | Types.ObjectId, b: User | Types.ObjectId) => {
-  const aId = (<User>a)?._id ?? <Types.ObjectId>a;
-  const bId = (<User>b)?._id ?? <Types.ObjectId>b;
+export const compareUser = (a: IUser | Types.ObjectId, b: IUser | Types.ObjectId) => {
+  const aId = (<IUser>a)?._id ?? <Types.ObjectId>a;
+  const bId = (<IUser>b)?._id ?? <Types.ObjectId>b;
   return aId === bId;
 };
 
@@ -194,4 +198,17 @@ export function groupBy<T> (data: T[], keyProvider: (item: T) => string) : Recor
     grouped[key].push(item);
     return grouped;
   }, {} as Record<string, T[]>);
+}
+
+/**
+ * Try to parse a string as a Date object.
+ * @param dateString the date string to parse
+ * @returns The date as an ISO string, if valid, or the original string
+ */
+export function tryParseDateToISO (dateString: string) : string {
+  if (!dateString) {
+    return '';
+  }
+  const parsedValue = Date.parse(dateString);
+  return isNaN(parsedValue) ? dateString : new Date(parsedValue).toISOString();
 }

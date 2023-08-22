@@ -3,7 +3,7 @@ import React from 'react';
 import { Agreement } from '../../types/profile';
 
 import { Checkbox, FormControlLabel, IconButton } from '@mui/material';
-import { LaunchOutlined } from '@mui/icons-material';
+import LaunchOutlined from '@mui/icons-material/LaunchOutlined';
 
 type AgreementFormItemProps = {
   theme?: Agreement,

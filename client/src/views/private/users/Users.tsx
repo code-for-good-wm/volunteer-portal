@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
@@ -64,8 +64,8 @@ type Data = {
 const Users = () => {
   const [rows, setRows] = useState<Data[]>([]);
   const [processing, setProcessing] = useState(false);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const usersData = useAppSelector(users);
   const profilesData = useAppSelector(profiles);
