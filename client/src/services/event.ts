@@ -7,9 +7,7 @@ import { attendanceAdded, attendancesReceived } from '../store/eventAttendanceSl
 import { updateAlert } from '../store/alertSlice';
 import { getApiBaseUrl, getAuthToken, getDefaultRequestHeaders } from '../helpers/functions';
 
-export const loadUpcomingEventsAndAttendance = async () => {
-  const appState = store.getState();
-
+export const loadUpcomingEvents = async () => {
   try {
     // Acquire bearer token
     const token = await getAuthToken();
@@ -28,6 +26,27 @@ export const loadUpcomingEventsAndAttendance = async () => {
         events: eventsData,
       })
     );
+  } catch (error) {
+    // Show alert
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: 'An error occurred while loading upcoming events.',
+      })
+    );
+  }
+};
+
+export const loadUpcomingEventsAndAttendance = async () => {
+  loadUpcomingEvents(); // not awaiting, we don't need the results in this call
+  
+  const appState = store.getState();
+
+  try {
+    // Acquire bearer token
+    const token = await getAuthToken();
+    const requestInit = { headers: getDefaultRequestHeaders(token) } as RequestInit;
 
     // Load attendance for this person, but only log issues
     const userId = appState.auth.user?._id;
@@ -49,7 +68,43 @@ export const loadUpcomingEventsAndAttendance = async () => {
       updateAlert({
         visible: true,
         theme: 'error',
-        content: 'An error occurred while loading events and attendance.',
+        content: 'An error occurred while loading upcoming attendance.',
+      })
+    );
+  }
+};
+
+export const loadAttendance = async (eventId: string) => {
+  try {
+    // Acquire bearer token
+    const token = await getAuthToken();
+    const requestInit = { headers: getDefaultRequestHeaders(token) } as RequestInit;
+
+    let attendanceUrl = `${getApiBaseUrl()}/event-attendances`;
+    if (eventId) {
+      attendanceUrl += `/${eventId}`;
+    }
+
+    // Load upcoming events
+    const eventAttendanceResponse = await fetch(attendanceUrl, requestInit);
+    if (!eventAttendanceResponse.ok) {
+      throw new Error('Failed to load event attendance.');
+    }
+
+    const attendanceData = await eventAttendanceResponse.json() as EventAttendance[];
+      
+    store.dispatch(
+      attendancesReceived({
+        attendances: attendanceData
+      })
+    );
+  } catch (error) {
+    // Show alert
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: 'An error occurred while loading attendance data.',
       })
     );
   }

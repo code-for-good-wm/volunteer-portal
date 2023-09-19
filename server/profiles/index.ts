@@ -1,8 +1,9 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { createErrorResult, createSuccessResult, Result } from '../lib/core';
-import { checkAuthAndConnect } from '../lib/helpers';
-import { profileStore, userStore } from '../lib/models/store';
+import { checkAuthAndConnect, getUserId, groupBy } from '../lib/helpers';
+import { profileStore, skillStore, userStore } from '../lib/models/store';
 import { READ_ALL_USERS } from '../lib/models/enums/user-role.enum';
+import { IUserSkill } from '../lib/models/user-skill';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   // get caller uid from token and connect to DB
@@ -15,11 +16,9 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     return;
   }
 
-  const includeSkills = !!req.query['includeSkills'];
-
   switch (req.method) {
   case 'GET':
-    result = await getProfiles(context, uid, includeSkills);
+    result = await getProfiles(context, uid);
     break;
   }
 
@@ -28,7 +27,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 };
 
-async function getProfiles(context: Context, userIdent: string, includeSkills: boolean): Promise<Result> {
+async function getProfiles(context: Context, userIdent: string): Promise<Result> {
   // Attempt to acquire user data
   const user = await userStore.list(userIdent);
   if (!user) {
@@ -40,7 +39,12 @@ async function getProfiles(context: Context, userIdent: string, includeSkills: b
     return createErrorResult(403, 'Forbidden', context);
   }
 
-  const profiles = await profileStore.listAll(includeSkills);
+  const [profiles, skills] = await Promise.all([profileStore.listAll(), skillStore.listAll()]);
+  const userSkills = groupBy<IUserSkill>(skills, (s) => getUserId(s.user));
+  profiles.forEach(p => {
+    const userId = getUserId(p.user);
+    p.skills.push(...(userSkills[userId] ?? []));
+  });
 
   return createSuccessResult(200, profiles, context);
 }

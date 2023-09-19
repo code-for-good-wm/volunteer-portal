@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { stringify } from 'csv-stringify/sync';
-import { Types } from 'mongoose';
 import { createErrorResult, Result } from '../lib/core';
 import { checkAuthAndConnect, getUserId, groupBy } from '../lib/helpers';
-import { profileStore, skillStore, userStore } from '../lib/models/store';
+import { profileStore, userStore, eventStore, eventAttendanceStore, skillStore } from '../lib/models/store';
 import { READ_ALL_USERS } from '../lib/models/enums/user-role.enum';
-import { IUser } from '../lib/models/user';
 import { IProfile } from '../lib/models/profile';
 import { IUserSkill } from '../lib/models/user-skill';
+import { IEventAttendance } from '../lib/models/event-attendance';
 
 // TODO: replace this with DB call once skills are modifyiable
 const skillOptions = [
@@ -96,20 +95,29 @@ async function exportUsersAndProfiles(context: Context, userIdent: string): Prom
 
   const profileDict: Record<string, IProfile> = {};
   const skillsDict: Record<string, Record<string, number>> = {};
+  const attendanceDict: Record<string, IEventAttendance> = {};
 
   // get all data for export
-  const users = await userStore.listAll();
-  const profiles = await profileStore.listAll(true);
-  // const userSkills = groupBy<IUserSkill>(await skillStore.listAll(), (s) => getUserId(s.user));
+  const [users, profiles, skills] = await Promise.all([userStore.listAll(), profileStore.listAll(), skillStore.listAll()]);
+  const userSkills = groupBy<IUserSkill>(skills, (s) => getUserId(s.user));
+
   for (const profile of profiles) {
     const userId = getUserId(profile.user);
-    // const skills = userSkills[userId] ?? [];
-    profileDict[userId.toString()] = profile;
-    // skillsDict[userId.toString()] = {};
+    profileDict[userId.toString()] = profile as IProfile;
+    skillsDict[userId.toString()] = (userSkills[userId] ?? []).reduce(
+      (m, s) => (m[s.code] = s.level, m), {} as Record<string, number>);
+  }
 
-    // for (const skill of skills) {
-    //   skillsDict[userId.toString()][skill.code] = skill.level;
-    // }
+  // getting the current WfG event
+  // TODO: make this dynamic
+  const event = (await eventStore.listAll()).find(e => e.description === 'Weekend for Good 2023');
+  if (!event) {
+    return createErrorResult(404, 'Cannot find latest event', context);
+  }
+  const attendance = await eventAttendanceStore.list(event._id);
+  for (const eventAttendance of attendance) {
+    const userId = getUserId(eventAttendance.user);
+    attendanceDict[userId.toString()] = eventAttendance;
   }
 
   const csvData : any[] = [];
@@ -117,6 +125,7 @@ async function exportUsersAndProfiles(context: Context, userIdent: string): Prom
   for (const user of users) {
     const userId = user._id.toString();
     const profile = profileDict[userId];
+    const attendance = attendanceDict[userId];
     const csvRecord: any = {
       id: userId,
       email: user.email,
@@ -130,7 +139,9 @@ async function exportUsersAndProfiles(context: Context, userIdent: string): Prom
       dietaryRestrictions: profile?.dietaryRestrictions?.join(', '),
       addlDietaryRestrictions: profile?.additionalDietaryRestrictions,
       a11yReq: profile?.accessibilityRequirements,
-      photosAllowed: !!profile?.agreements?.photoRelease
+      photosAllowed: !!profile?.agreements?.photoRelease,
+      attendance: attendance?.attendance,
+      attendanceDetail: attendance?.attendanceDetail,
     };
 
     for (const skill of skillOptions) {
