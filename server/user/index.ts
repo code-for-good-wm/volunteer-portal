@@ -5,6 +5,7 @@ import { checkBindingDataUserId, checkAuthAndConnect } from '../lib/helpers';
 import { profileStore, skillStore, userStore } from '../lib/models/store';
 import { IUser } from '../lib/models/user';
 import { IProfile } from '../lib/models/profile';
+import { IUserSkill } from '../lib/models/user-skill';
 import { UserRole } from '../lib/models/enums/user-role.enum';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
@@ -82,7 +83,7 @@ async function createUser(context: Context, userIdent: string): Promise<Result> 
     user: userData._id,
     roles: [],
     dietaryRestrictions: [],
-    skills: new mongoose.Types.Array<mongoose.Types.ObjectId>(),
+    skills: new mongoose.Types.DocumentArray<IUserSkill>([]),
   };
 
   await profileStore.create(newProfile);
@@ -129,7 +130,7 @@ async function deleteUser(context: Context, userIdent: string): Promise<Result> 
   await userStore.delete(userId, userIdent);
 
   // Delete this user's corresponding profile data
-  const profile = await profileStore.list(userId, false);
+  const profile = await profileStore.list(userId);
   if (profile) {
     const profileId = profile._id;
     await profileStore.delete(profileId, userId);

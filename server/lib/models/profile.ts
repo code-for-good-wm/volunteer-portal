@@ -27,7 +27,7 @@ export interface IProfile {
   additionalDietaryRestrictions?: string;
   accessibilityRequirements?: string;
   agreements?: IAgreements;
-  skills: Types.Array<IUserSkill['_id']>;
+  skills: Types.DocumentArray<IUserSkill>;
   additionalSkills?: string;
 }
 

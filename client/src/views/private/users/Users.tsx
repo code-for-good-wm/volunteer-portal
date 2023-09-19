@@ -12,15 +12,20 @@ import TableRow from '@mui/material/TableRow';
 
 import { useAppSelector } from '../../../store/hooks';
 import { users, profiles } from '../../../store/usersSlice';
+import { selectAllEvents } from '../../../store/eventsSlice';
 import { UserRole } from '../../../types/user';
+import { Event } from '../../../types/event';
 import { DietaryRestriction, Profile, Role, ShirtSize } from '../../../types/profile';
 import { getUsersData, getProfilesData, exportUsersAndProfilesData } from '../../../services/users';
+import { loadAttendance, loadUpcomingEvents } from '../../../services/event';
 import PageLayout from '../../../layouts/PageLayout';
 import StandardButton from '../../../components/buttons/StandardButton';
 import { parsePhone, toTitleCase } from '../../../helpers/functions';
+import { Attendance } from '../../../types/event';
+import { selectAllAttendances } from '../../../store/eventAttendanceSlice';
 
 interface Column {
-  id: 'userRole' | 'name' | 'email' | 'phone' | 'roles' | 'previousVolunteer' | 'teamLeadCandidate' | 'shirtSize' | 'dietaryRestrictions' | 'additionalDietaryRestrictions' | 'accessibilityRequirements' | 'photoRelease' | 'hasSkills';
+  id: 'userRole' | 'name' | 'email' | 'phone' | 'roles' | 'previousVolunteer' | 'teamLeadCandidate' | 'shirtSize' | 'dietaryRestrictions' | 'additionalDietaryRestrictions' | 'accessibilityRequirements' | 'photoRelease' | 'hasSkills' | 'attendance';
   label: string;
   minWidth?: number;
   align?: 'right';
@@ -42,6 +47,7 @@ const columns: Column[] = [
   { id: 'accessibilityRequirements', label: 'Accessibility Requirements', minWidth: 170 },
   { id: 'photoRelease', label: 'Photo Release', minWidth: 100, format: (value: boolean) => value ? 'Yes' : 'No' },
   { id: 'hasSkills', label: 'Entered Skills', minWidth: 100, format: (value: boolean) => value ? 'Yes' : 'No' },
+  { id: 'attendance', label: 'Attending WfG 2023', minWidth: 200, format: (value: Attendance) => toTitleCase(value ? value.replace('-', ' ') : '') },
 ];
 
 type Data = {
@@ -59,6 +65,7 @@ type Data = {
   accessibilityRequirements: string;
   photoRelease: boolean;
   hasSkills: boolean;
+  attendance: Attendance
 };
 
 const Users = () => {
@@ -66,15 +73,42 @@ const Users = () => {
   const [processing, setProcessing] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [event, setEvent] = useState<Event>();
 
   const usersData = useAppSelector(users);
   const profilesData = useAppSelector(profiles);
+  const eventsData = useAppSelector(selectAllEvents);
+  const attendanceData = useAppSelector(selectAllAttendances);
 
   // load data on first visit
+  // there's probably a better way to do all of this
   useEffect(() => {
     getUsersData();
     getProfilesData();
+    loadUpcomingEvents();
   }, []);
+
+  useEffect(() => {
+    // locate the WfG 2023 event
+    // TODO: make this selectable
+    eventsData
+      .filter(e => e.description === 'Weekend for Good 2023')
+      .map(e => {
+        loadAttendance(e._id);
+        setEvent(e);
+      });
+  }, [eventsData]);
+
+  useEffect(() => {
+    const newRows = rows.map(r => {
+      const attd = attendanceData.find(a => a.event === event?._id && a.user === r.id);
+      return {
+        ...r,
+        attendance: attd?.attendance
+      } as Data;
+    });
+    setRows(newRows);
+  }, [event, attendanceData]);
 
   // create rows from userProfile
   useEffect(() => {
@@ -112,6 +146,8 @@ const Users = () => {
 
     setRows(rowData);
   }, [usersData, profilesData]);
+
+
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);

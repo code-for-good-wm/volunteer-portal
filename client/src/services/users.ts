@@ -55,9 +55,8 @@ export const getProfilesData = async () => {
     })
   );
 
-  const profilesUrl = `${getApiBaseUrl()}/profiles`;
   const requestInit = { headers: getDefaultRequestHeaders(await getBearerToken()) } as RequestInit;
-  const profilesResponse = await fetch(profilesUrl, requestInit);
+  const profilesResponse = await fetch(`${getApiBaseUrl()}/profiles`, requestInit);
 
   if (!profilesResponse.ok) {
     throw new Error('Failed to acquire users data.');
