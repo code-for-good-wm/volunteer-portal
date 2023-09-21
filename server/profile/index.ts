@@ -45,8 +45,11 @@ async function getProfile(context: Context, userIdent: string): Promise<Result> 
 
   const userId = checkResult.body._id;
 
-  // Pull this user's corresponding profile data
-  const profile = await profileStore.list(userId, true);
+  // Pull this user's corresponding profile & skills data
+  const [profile, skills] = await Promise.all([profileStore.list(userId), skillStore.list(userId)]);
+  if (profile) {
+    profile.skills.push(...skills);
+  } 
 
   if (!profile) {
     return createErrorResult(404, 'Profile data not found', context);
@@ -69,7 +72,7 @@ async function createProfile(context: Context, userIdent: string): Promise<Resul
     user: userId,
     roles: [],
     dietaryRestrictions: [],
-    skills: new mongoose.Types.Array<mongoose.Types.ObjectId>(), // We're not adding any skills at this time
+    skills: new mongoose.Types.DocumentArray<IUserSkill>([]), // We're not adding any skills at this time
   };
 
   const profileData = await profileStore.create(newProfile);
@@ -87,7 +90,7 @@ async function updateProfile(context: Context, userIdent: string): Promise<Resul
   const userId = checkResult.body._id;
 
   // Pull this user's corresponding profile data
-  const profile = await profileStore.list(userId, false);
+  const profile = await profileStore.list(userId);
   if (!profile) {
     return createErrorResult(404, 'Profile data not found', context);
   }
@@ -109,20 +112,25 @@ async function updateProfile(context: Context, userIdent: string): Promise<Resul
   if (skillsUpdate) {
     // Here we need to handle both possible new skills and/or
     // updates to existing skills documents for this user.
-    // We'll assume the existence of an _id in the skill object
-    // means we're updating an existing user skill document.
+    // We'll get the current known skills to see if we need to update any.
+    const skills = await skillStore.list(userId);
+
+    // Create a dictionary for easy lookup
+    const existing = new Map(skills.map(s => [s.code, s]));
+    // Targets for new / updated skills
     const newSkills: IUserSkill[] = [];
     const existingSkills: IUserSkill[] = [];
 
-    skillsUpdate.forEach(({_id, code, level}) => {
+    skillsUpdate.forEach(({code, level}) => {
       if (code && level !== undefined) {
-        if (_id) {
+        if (existing.has(code)) {
+          const s = existing.get(code);
           existingSkills.push({
-            _id,
+            _id: s?._id,
             user: userId,
-            code,
+            code: s?.code,
             level
-          });
+          } as IUserSkill);
         } else {
           newSkills.push({
             user: userId,
@@ -138,15 +146,16 @@ async function updateProfile(context: Context, userIdent: string): Promise<Resul
       await skillStore.createMany(userId, newSkills);
     }
     if (existingSkills.length > 0) {
-      for (let i = 0; i < existingSkills.length; i++) {
-        const s = existingSkills[i];
-        await skillStore.update(s._id as Types.ObjectId, userId, s);
-      }
+      const updates = existingSkills.map(s => skillStore.update(s._id as Types.ObjectId, userId, s));
+      await Promise.all(updates);
     }
   }
 
   // Acquire updated data
-  const updatedProfile = await profileStore.list(userId, true);
+  const [updatedProfile, updatedSkills] = await Promise.all([profileStore.list(userId), skillStore.list(userId)]);
+  if (updatedProfile) {
+    updatedProfile.skills.push(...updatedSkills);
+  } 
   return createSuccessResult(200, updatedProfile, context);
 }
 
@@ -160,7 +169,7 @@ async function deleteProfile(context: Context, userIdent: string): Promise<Resul
   const userId = checkResult.body._id;
 
   // Pull this user's corresponding profile data
-  const profile = await profileStore.list(userId, false);
+  const profile = await profileStore.list(userId);
   if (!profile) {
     // should this be an error?
     return createErrorResult(404, 'Profile data not found', context);

@@ -91,11 +91,11 @@ export const userStore = {
 };
 
 export const profileStore = {
-  list: async(userId: mongoose.Types.ObjectId, populateSkills: boolean) => {
-    return await (populateSkills ? ProfileModel.findOne({user: userId}).populate('skills') : ProfileModel.findOne({user: userId}));
+  list: async(userId: mongoose.Types.ObjectId) => {
+    return await ProfileModel.findOne({user: userId});
   },
-  listAll: async(populateSkills: boolean) => {
-    return await (populateSkills ? ProfileModel.find().populate('skills') : ProfileModel.find());
+  listAll: async() => {
+    return await ProfileModel.find();
   },
   create: async(profile: IProfile) => {
     return await ProfileModel.create(profile);
@@ -196,6 +196,9 @@ export const eventAttendanceStore = {
   // should be singular
   listByUserAndEvent: async(userId: mongoose.Types.ObjectId, eventId: mongoose.Types.ObjectId) => {
     return await EventAttendanceModel.findOne({user: userId, event: eventId});
+  },
+  listAll: async() => {
+    return await EventAttendanceModel.find();
   },
   create: async(userId: mongoose.Types.ObjectId, eventId: mongoose.Types.ObjectId, attendance: IEventAttendance) => {
     attendance.user = userId;
