@@ -99,21 +99,10 @@ const Users = () => {
       });
   }, [eventsData]);
 
-  useEffect(() => {
-    const newRows = rows.map(r => {
-      const attd = attendanceData.find(a => a.event === event?._id && a.user === r.id);
-      return {
-        ...r,
-        attendance: attd?.attendance
-      } as Data;
-    });
-    setRows(newRows);
-  }, [event, attendanceData]);
-
   // create rows from userProfile
   useEffect(() => {
     if (!usersData) { return; }
-    const rowData: Data[] = [];
+    let rowData: Data[] = [];
     const profilesDict: {[key: string]: Profile} = {};
 
     if (profilesData) {
@@ -144,9 +133,18 @@ const Users = () => {
       rowData.push(row);
     }
 
-    setRows(rowData);
-  }, [usersData, profilesData]);
+    if (event) {
+      rowData = rowData.map(r => {
+        const attd = attendanceData.find(a => a.event === event?._id && a.user === r.id);
+        return {
+          ...r,
+          attendance: attd?.attendance
+        } as Data;
+      });
+    }
 
+    setRows(rowData);
+  }, [usersData, profilesData, attendanceData, event]);
 
 
   const handleChangePage = (_: unknown, newPage: number) => {

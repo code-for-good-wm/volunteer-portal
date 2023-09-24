@@ -4,7 +4,7 @@
   },
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/static/*", "/api/*"]
+    "exclude": ["/static/*", "/*.{jpeg,jpg,png,gif}", "/api/*"]
   },
   "globalHeaders": {
     "Access-Control-Allow-Origin": "*",
