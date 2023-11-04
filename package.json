@@ -4,7 +4,7 @@
   },
   "scripts": {
     "dev": "swa start ./client/build --api-location ./server --port 3000",
-    "dev:install": "npm run client:build && npm run server:build",
+    "dev:install": "npm install && npm run client:build && npm run server:build",
     "client:build": "cd client && npm install --no-audit && npm run build && cp ../staticwebapp.config.json ./build",
     "server:build": "cd server && npm install --no-audit && npm run build && func init --language typescript --worker-runtime node"
   },

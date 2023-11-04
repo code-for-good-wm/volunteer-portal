@@ -3,7 +3,7 @@
 
 This is an Azure Functions project using Node and TypeScript.  You may interact with this code in a number of ways:  through a Visual Studio Code extension, or using the Azure CLI.  [Check out the docs](https://docs.microsoft.com/en-us/azure/azure-functions/functions-develop-local) to configure your local environment.
 
-We're using Node 16 for this project.  [Learn how to use a Node Version Manager.](https://npm.github.io/installation-setup-docs/installing/using-a-node-version-manager.html)
+We're using Node 18 for this project.  [Learn how to use a Node Version Manager.](https://npm.github.io/installation-setup-docs/installing/using-a-node-version-manager.html)
 
 We're using ESLint.  If you're using Visual Studio Code, be sure to install and enable the [ESLint extension for VS Code](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint).
 
