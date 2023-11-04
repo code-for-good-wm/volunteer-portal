@@ -4,6 +4,9 @@ import ShirtMedium from '../../assets/icons/shirt-m.png';
 import ShirtLarge from '../../assets/icons/shirt-l.png';
 import ShirtXL from '../../assets/icons/shirt-xl.png';
 import Shirt2XL from '../../assets/icons/shirt-2xl.png';
+import Shirt3XL from '../../assets/icons/shirt-3xl.png';
+import Shirt4XL from '../../assets/icons/shirt-4xl.png';
+import Shirt5XL from '../../assets/icons/shirt-5xl.png';
 
 import { ShirtSize } from '../../types/profile';
 
@@ -45,6 +48,18 @@ const ShirtSizeCard = (props: ShirtSizeCardProps) => {
   case 'xxl':
     image = Shirt2XL;
     imageAlt = 'T-shirt with the characters 2XL on the front';
+    break;
+  case '3xl':
+    image = Shirt3XL;
+    imageAlt = 'T-shirt with the characters 3XL on the front';
+    break;
+  case '4xl':
+    image = Shirt4XL;
+    imageAlt = 'T-shirt with the characters 4XL on the front';
+    break;
+  case '5xl':
+    image = Shirt5XL;
+    imageAlt = 'T-shirt with the characters 5XL on the front';
     break;
   default:
     image = Shirt;

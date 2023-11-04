@@ -60,11 +60,23 @@ export const shirtSizes: ShirtSizeData[] = [
   },
   {
     id: 'xl',
-    description: 'X-Large',
+    description: 'XL',
   },
   {
     id: 'xxl',
-    description: 'XX-Large',
+    description: '2XL',
+  },
+  {
+    id: '3xl',
+    description: '3XL',
+  },
+  {
+    id: '4xl',
+    description: '4XL',
+  },
+  {
+    id: '5xl',
+    description: '5XL',
   },
 ];
 

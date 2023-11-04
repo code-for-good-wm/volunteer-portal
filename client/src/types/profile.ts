@@ -4,7 +4,7 @@ export type SecondaryProfileSectionId = 'basic-information' | 'accessibility' | 
 
 export type Role = 'designer' | 'developer' | 'support' | 'lead';
 
-export type ShirtSize = 'small' | 'medium' | 'large' | 'xl' | 'xxl' | '3xl' | '';
+export type ShirtSize = 'small' | 'medium' | 'large' | 'xl' | 'xxl' | '3xl' | '4xl' | '5xl' | '';
 
 export type DietaryRestriction = 'vegan' | 'vegetarian' | 'dairy' | 'gluten' | 'kosher' | 'nuts' | 'fish' | 'eggs' | 'soy' | 'corn' | 'other';
 
