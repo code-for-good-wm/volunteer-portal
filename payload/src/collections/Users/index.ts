@@ -1,12 +1,34 @@
-import type { CollectionConfig } from 'payload/types'
-
+import type { CollectionConfig, Option } from 'payload/types'
 
 import { anyone } from '../../access/anyone'
 import { checkRole } from '../../access/checkRole'
 import { admins } from '../../access/admins'
 import { adminsAndUser } from '../../access/adminsAndUser'
 
-const shirtSizeOptions = [
+const skillLevelOptions: Option[] = [
+  {
+    label: 'none',
+    value: '1',
+  },
+  {
+    label: 'newbie',
+    value: '2',
+  },
+  {
+    label: 'familiar',
+    value: '3',
+  },
+  {
+    label: 'very familiar',
+    value: '4',
+  },
+  {
+    label: 'daily use',
+    value: '5',
+  },
+]
+
+const shirtSizeOptions: Option[] = [
   {
     label: 'small',
     value: 'small',
@@ -41,7 +63,7 @@ const shirtSizeOptions = [
   },
 ];
 
-const dietaryRestrictionOptions = [
+const dietaryRestrictionOptions: Option[] = [
   {
     label: 'vegan',
     value: 'vegan',
@@ -137,7 +159,7 @@ export const UserFields: CollectionConfig['fields'] = [
     fields: [
       {
         name: 'completionDate',
-        type: 'text', // ISO timestamp
+        type: 'date',
       },
       {
         name: 'linkedInUrl',
@@ -185,17 +207,37 @@ export const UserFields: CollectionConfig['fields'] = [
           // by a version, which is currently not a thing
           {
             name: 'termsAndConditions',
-            type: 'text', // ISO timestamp
+            type: 'date',
           },
           {
             name: 'photoRelease',
-            type: 'text', // ISO timestamp
+            type: 'date',
           },
           {
             name: 'codeOfConduct',
-            type: 'text', // ISO timestamp
+            type: 'date',
           },
         ],
+      },
+      {
+        name: 'skills',
+        type: 'array',
+        fields: [
+          {
+            name: 'skill',
+            type: 'relationship',
+            relationTo: 'skills',
+            required: true,
+          },
+          {
+            name: 'level',
+            type: 'radio',
+            options: skillLevelOptions,
+          },
+        ],
+        // TODO: The skill here should be displayed with the
+        // name of the skill pulled from the document in
+        // the skills collection
       },
       {
         name: 'additionalSkills',
@@ -210,7 +252,7 @@ const Users: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'email'],
-    group: 'Site Information',
+    group: 'Site Information', // ???
   },
   access: {
     read: adminsAndUser,
