@@ -1,13 +1,17 @@
 import { CollectionConfig } from "payload/types";
 import { anyone } from "../../access/anyone";
 import { loggedIn } from "../../access/loggedIn";
+import { admins } from "../../access/admins";
 
 export const Occurrences: CollectionConfig = {
     slug: 'occurrences',
     access: {
         read: anyone,
-        update: loggedIn,
-        create: loggedIn
+        update: admins,
+        create: admins,
+    },
+    admin: {
+        useAsTitle: 'name',
     },
     fields: [
         {
@@ -17,24 +21,19 @@ export const Occurrences: CollectionConfig = {
         },
         {
             name: 'startDate',
-            type: 'text'
+            type: 'date',
         },
         {
             name: 'endDate',
-            type: 'text'
+            type: 'date',
         },
         {
             name: 'description',
-            type: 'text'
+            type: 'richText',
         },
         {
             name: 'location',
             type: 'text'
         },
-        {
-            name: 'event',
-            type: 'relationship',
-            relationTo: 'events'
-        }
     ]
 }
