@@ -48,6 +48,7 @@ export interface Occurrence {
   startDate?: string | null;
   endDate?: string | null;
   description?: string | null;
+  location?: string | null;
   event?: (string | null) | Event;
   updatedAt: string;
   createdAt: string;

@@ -28,6 +28,10 @@ export const Occurrences: CollectionConfig = {
             type: 'text'
         },
         {
+            name: 'location',
+            type: 'text'
+        },
+        {
             name: 'event',
             type: 'relationship',
             relationTo: 'events'
