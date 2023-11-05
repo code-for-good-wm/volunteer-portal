@@ -50,18 +50,18 @@ jobs:
     needs: build
 
     steps:
-    - name: Download artifact from build job
-      uses: actions/download-artifact@v3
-      with:
-        name: node-app
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: node-app
 
-    - name: Unzip artifact for deployment
-      run: unzip release.zip
+      - name: Unzip artifact for deployment
+        run: unzip release.zip
 
-    - name: 'Deploy to Azure WebApp'
-      id: deploy-to-webapp 
-      uses: azure/webapps-deploy@85270a1854658d167ab239bce43949edb336fa7c
-      with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+      - name: 'Deploy to Azure Web App'
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
