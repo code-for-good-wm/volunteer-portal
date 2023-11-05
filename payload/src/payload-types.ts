@@ -8,7 +8,6 @@
 
 export interface Config {
   collections: {
-    roles: Role;
     users: User;
     events: Event;
     occurrences: Occurrence;
@@ -16,12 +15,6 @@ export interface Config {
     'payload-migrations': PayloadMigration;
   };
   globals: {};
-}
-export interface Role {
-  id: string;
-  name?: string | null;
-  updatedAt: string;
-  createdAt: string;
 }
 export interface User {
   id: string;
