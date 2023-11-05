@@ -9,6 +9,9 @@ export const Events: CollectionConfig = {
         update: loggedIn,
         create: loggedIn,
     },
+    admin: {
+        useAsTitle: 'name'
+    },
     fields: [
         {
             name: 'name',
