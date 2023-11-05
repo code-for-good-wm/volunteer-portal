@@ -21,7 +21,6 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
 
-    # Call generate:types to create payload
     - name: npm install, build, and test
       run: |
         npm install
@@ -29,10 +28,19 @@ jobs:
         npm run build --if-present
         npm run test --if-present
 
-    - name: generate and copy types
+    - name: Generate and copy Payload types
       run: |
         npm run generate:types
         npm run generate:graphQLSchema
+
+    - name: Zip artifact for deployment
+      run: zip release.zip ./* -r
+
+    - name: Upload artifact for deployment job
+      uses: actions/upload-artifact@v3
+      with:
+        name: node-app
+        path: release.zip
 
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v3
@@ -49,6 +57,9 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: node-app
+
+    - name: Unzip artifact for deployment
+      run: unzip release.zip
 
     - name: 'Deploy to Azure WebApp'
       id: deploy-to-webapp 
