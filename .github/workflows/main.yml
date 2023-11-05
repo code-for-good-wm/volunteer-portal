@@ -12,6 +12,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./payload
     steps:
     - uses: actions/checkout@v4
 
@@ -23,7 +26,6 @@ jobs:
 
     - name: npm install, build, and test
       run: |
-        cd payload
         npm install
         npm run generate:types
         npm run build --if-present
@@ -41,13 +43,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: node-app
-        path: release.zip
-
-    - name: Upload artifact for deployment job
-      uses: actions/upload-artifact@v3
-      with:
-        name: node-app
-        path: .
+        path: ./payload/release.zip
 
   deploy:
     runs-on: ubuntu-latest
