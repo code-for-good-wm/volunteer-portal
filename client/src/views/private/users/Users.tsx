@@ -1,7 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { styled } from '@mui/material/styles';
+import Grid from '@mui/material/Grid';
+import InputAdornment from '@mui/material/InputAdornment';
 import Paper from '@mui/material/Paper';
+import SearchIcon from '@mui/icons-material/Search';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -9,6 +12,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import TextField from '@mui/material/TextField';
 
 import { useAppSelector } from '../../../store/hooks';
 import { users, profiles } from '../../../store/usersSlice';
@@ -25,7 +29,9 @@ import { Attendance } from '../../../types/event';
 import { selectAllAttendances } from '../../../store/eventAttendanceSlice';
 
 interface Column {
-  id: 'userRole' | 'name' | 'email' | 'phone' | 'roles' | 'previousVolunteer' | 'teamLeadCandidate' | 'shirtSize' | 'dietaryRestrictions' | 'additionalDietaryRestrictions' | 'accessibilityRequirements' | 'photoRelease' | 'hasSkills' | 'attendance';
+  id: 'userRole' | 'name' | 'email' | 'phone' | 'roles' | 'previousVolunteer' | 'teamLeadCandidate' 
+    | 'shirtSize' | 'dietaryRestrictions' | 'additionalDietaryRestrictions' | 'accessibilityRequirements'
+    | 'photoRelease' | 'hasSkills' | 'attendance';
   label: string;
   minWidth?: number;
   align?: 'right';
@@ -74,6 +80,7 @@ const Users = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [event, setEvent] = useState<Event>();
+  const [filter, setFilter] = useState('');
 
   const usersData = useAppSelector(users);
   const profilesData = useAppSelector(profiles);
@@ -146,6 +153,15 @@ const Users = () => {
     setRows(rowData);
   }, [usersData, profilesData, attendanceData, event]);
 
+  const filteredRows = useMemo(() => {
+    if (!filter || rows.length == 0) {
+      return rows;
+    }
+
+    const searchVal = filter.toLocaleLowerCase();
+
+    return rows.filter(r => r.email.includes(searchVal) || r.name.includes(searchVal));
+  }, [filter, rows]);
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
@@ -203,13 +219,30 @@ const Users = () => {
             Users
           </h1>
 
-          <div className="mb-1">
-            <StandardButton
-              label="Download all users"
-              handler={handleButton}
-              disabled={processing}
-            />
-          </div>
+          <Grid container spacing={2} sx={{marginBottom: '1rem'}} alignItems="center">
+            <Grid item xs={2} md={4}></Grid>
+            <Grid item xs={8} md={6}>
+              <StandardButton
+                label="Download all users"
+                handler={handleButton}
+                disabled={processing} />
+            </Grid>
+            <Grid item xs={2} md={4}></Grid>
+            <Grid item xs={2} md={4}></Grid>
+            <Grid item xs={8} md={6}>
+              <TextField
+                label="Search by name or email"
+                id="searchFilter"
+                fullWidth
+                InputProps={{
+                  startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
+                }}
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={2} md={4}></Grid>
+          </Grid>
 
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
             <TableContainer sx={{ maxHeight: 600 }}>
@@ -228,7 +261,7 @@ const Users = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows
+                  {filteredRows
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
                       return (
@@ -250,7 +283,7 @@ const Users = () => {
               </Table>
             </TableContainer>
             <TablePagination
-              rowsPerPageOptions={[10, 25, 100]}
+              rowsPerPageOptions={[25, 50, 100]}
               component="div"
               count={rows.length}
               rowsPerPage={rowsPerPage}
