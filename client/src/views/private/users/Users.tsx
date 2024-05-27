@@ -92,7 +92,7 @@ const Users = () => {
     // locate the WfG 2023 event
     // TODO: make this selectable
     eventsData
-      .filter(e => e.description === 'Weekend for Good 2023')
+      .filter(e => e.description === 'Weekend for Good 2024')
       .map(e => {
         loadAttendance(e._id);
         setEvent(e);
