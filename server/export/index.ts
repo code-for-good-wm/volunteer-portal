@@ -110,7 +110,7 @@ async function exportUsersAndProfiles(context: Context, userIdent: string): Prom
 
   // getting the current WfG event
   // TODO: make this dynamic
-  const event = (await eventStore.listAll()).find(e => e.description === 'Weekend for Good 2023');
+  const event = (await eventStore.listAll()).find(e => e.description === 'Weekend for Good 2024');
   if (!event) {
     return createErrorResult(404, 'Cannot find latest event', context);
   }
