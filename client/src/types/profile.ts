@@ -4,13 +4,15 @@ export type SecondaryProfileSectionId = 'basic-information' | 'accessibility' | 
 
 export type Role = 'designer' | 'developer' | 'support' | 'lead';
 
-export type ShirtSize = 'small' | 'medium' | 'large' | 'xl' | 'xxl' | '3xl' | '';
+export type ShirtSize = 'small' | 'medium' | 'large' | 'xl' | '2xl' | '3xl' | '';
 
 export type DietaryRestriction = 'vegan' | 'vegetarian' | 'dairy' | 'gluten' | 'kosher' | 'nuts' | 'fish' | 'eggs' | 'soy' | 'corn' | 'other';
 
 export type Agreement = 'termsAndConditions' | 'photoRelease' | 'codeOfConduct';
 
-export type SkillCode = 'frontEndDev' | 'backEndDev' | 'databases' | 'mobileDev' | 'devOps' | 'wordPress' | 'squarespace' | 'wix' | 'weebly' | 'htmlCss' | 'javaScript' | 'react' | 'vue' | 'angular' | 'nodeExpress' | 'phpLaravel' | 'projMgmt' | 'brand' | 'copy' | 'crm' | 'marketing' | 'seo' | 'social' | 'technicalWriting' | 'testing' | 'photography' | 'videography' | 'print' | 'ux' | 'ui' | 'designThinking' | 'illustration' | 'motionGraphics' | 'adobeSuite' | 'sketch' | 'figma' | 'zeplin' | 'inVision' | 'marvel' | 'adobeXd';
+export type SkillCode = 'frontEndDev' | 'backEndDev' | 'databases' | 'mobileDev' | 'devOps' | 'wordPress' | 'squarespace' | 'wix' | 'weebly' | 'htmlCss' | 'javaScript' | 'react' | 'vue' | 'angular' | 'nodeExpress' | 'phpLaravel' |
+ 'projMgmt' | 'brand' | 'copy' | 'crm' | 'marketing' | 'seo' | 'social' | 'technicalWriting' | 'testing' | 'photography' | 'videography' | 'accessibleDesign' | 'accessibleDevelopment' | 'assistiveTechnology' |
+ 'print' | 'ux' | 'ui' | 'designThinking' | 'illustration' | 'motionGraphics' | 'adobeSuite' | 'sketch' | 'figma' | 'zeplin' | 'inVision' | 'marvel' | 'adobeXd';
 
 export type SkillLevel = 0 | 1 | 2 | 3 | 4;
 

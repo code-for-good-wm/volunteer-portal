@@ -4,6 +4,7 @@ import ShirtMedium from '../../assets/icons/shirt-m.png';
 import ShirtLarge from '../../assets/icons/shirt-l.png';
 import ShirtXL from '../../assets/icons/shirt-xl.png';
 import Shirt2XL from '../../assets/icons/shirt-2xl.png';
+import Shirt3XL from '../../assets/icons/shirt-3xl.png';
 
 import { ShirtSize } from '../../types/profile';
 
@@ -42,9 +43,13 @@ const ShirtSizeCard = (props: ShirtSizeCardProps) => {
     image = ShirtXL;
     imageAlt = 'T-shirt with the letters XL on the front';
     break;
-  case 'xxl':
+  case '2xl':
     image = Shirt2XL;
     imageAlt = 'T-shirt with the characters 2XL on the front';
+    break;
+  case '3xl':
+    image = Shirt3XL;
+    imageAlt = 'T-shirt with the characters 3XL on the front';
     break;
   default:
     image = Shirt;
@@ -56,10 +61,10 @@ const ShirtSizeCard = (props: ShirtSizeCardProps) => {
   return (
     <div className={cardStyle} onClick={() => handleCard(theme)}>
       <div className="radioContainer">
-        { checked && <Radio checked={checked} /> }
+        <Radio checked={checked} inputProps={{ 'aria-label': labelText }} />
       </div>
       <div className="imageContainer">
-        { image && <img src={image} alt={imageAlt} /> }
+        { image && <img src={image} alt='' /> /* removing alt-text explicitly */ }
       </div>
       <span className="label">
         {labelText}

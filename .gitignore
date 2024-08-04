@@ -4,6 +4,7 @@ csx
 .vs
 edge
 Publish
+data
 
 *.user
 *.suo
