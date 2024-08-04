@@ -25,35 +25,27 @@ const ShirtSizeCard = (props: ShirtSizeCardProps) => {
 
   // Choose image
   let image: string | undefined;
-  let imageAlt: string;
   switch (theme) {
   case 'small':
     image = ShirtSmall;
-    imageAlt = 'T-shirt with the letter S on the front';
     break;
   case 'medium':
     image = ShirtMedium;
-    imageAlt = 'T-shirt with the letter M on the front';
     break;
   case 'large':
     image = ShirtLarge;
-    imageAlt = 'T-shirt with the letter L on the front';
     break;
   case 'xl':
     image = ShirtXL;
-    imageAlt = 'T-shirt with the letters XL on the front';
     break;
   case '2xl':
     image = Shirt2XL;
-    imageAlt = 'T-shirt with the characters 2XL on the front';
     break;
   case '3xl':
     image = Shirt3XL;
-    imageAlt = 'T-shirt with the characters 3XL on the front';
     break;
   default:
     image = Shirt;
-    imageAlt = 'T-shirt plain with no lettering';
   }
 
   const cardStyle = selected ? 'shirtSizeCard selected' : 'shirtSizeCard';
