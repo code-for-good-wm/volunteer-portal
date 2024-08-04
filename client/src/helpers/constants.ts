@@ -63,8 +63,12 @@ export const shirtSizes: ShirtSizeData[] = [
     description: 'X-Large',
   },
   {
-    id: 'xxl',
+    id: '2xl',
     description: 'XX-Large',
+  },
+  {
+    id: '3xl',
+    description: '3X-Large',
   },
 ];
 
@@ -403,6 +407,18 @@ export const otherExperience: Skill[] = [
   {
     code: 'testing',
     description: 'User Testing / Compliance Testing'
+  },
+  {
+    code: 'accessibleDesign',
+    description: 'Accessible Design'
+  },
+  {
+    code: 'accessibleDevelopment',
+    description: 'Accessible Development'
+  },
+  {
+    code: 'assistiveTechnology',
+    description: 'Assistive Technology'
   },
   {
     code: 'photography',

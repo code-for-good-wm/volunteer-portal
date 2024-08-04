@@ -21,38 +21,43 @@ const ProfileProgress = () => {
     if (!displayedSections.includes(primarySection.id)) {
       return;
     }
-    // Determine dynamic styling
-    let additionalStyling;
-    if (index === currentProfileIndex) {
-      additionalStyling = 'current';
-    } else if (index < currentProfileIndex) {
-      additionalStyling = 'completed';
-    }
 
+    const isCurrent = index === currentProfileIndex;
+    const isComplete = index < currentProfileIndex;
+
+    // Determine dynamic styling
+    const additionalStyling = isCurrent ? 'current' : (isComplete ? 'completed' : '');
     const headingStyle = `heading${additionalStyling ? ` ${additionalStyling}` : ''}`;
     const subHeadingStyle = `subHeading${additionalStyling ? ` ${additionalStyling}` : ''}`;
 
     // Build sub-sections if relevant
     const subHeadings = primarySection.sections?.map((subSection) => {
       return (
-        <span key={subSection.id} className={subHeadingStyle}>
+        <h3 key={subSection.id} className={subHeadingStyle}>
           {subSection.description}
-        </span>
+        </h3>
       );
     });
 
     return (
       <div key={primarySection.id} className="profileSection">
-        <div className={headingStyle}>
+        <h2 className={headingStyle}>
+          {isCurrent && (
+            <span className="visually-hidden">Current: </span>
+          )}
+          {isComplete && (
+            <span className="visually-hidden">Completed: </span>
+          )}
           <span className="text">
             {primarySection.description}
           </span>
-          {index < currentProfileIndex && (
+          {isComplete && (
             <span className="icon">
               <img src={Completed} alt="Checkmark in circle" />
             </span>
           )}
-        </div>
+        </h2>
+
         {subHeadings && subHeadings.length > 0 && (
           <div className="subSections">
             {subHeadings}

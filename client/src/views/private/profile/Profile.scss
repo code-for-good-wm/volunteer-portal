@@ -153,7 +153,7 @@
 
   .note {
     @include AvenirBookOblique;
-    font-size: .75rem;
+    font-size: .9rem;
     line-height: 1rem;
     letter-spacing: 0.4px;
     color: rgba(0, 0, 0, 0.6);
@@ -227,6 +227,10 @@
         letter-spacing: 0.4px;
       }
     }
+  }
+
+  @media screen and (min-width: 768px) {
+    max-width: 25rem;
   }
 }
 
@@ -315,7 +319,6 @@
       margin-right: 9px;
 
       .checkboxContainer {
-        display: none;
         position: absolute;
         top: 0;
         right: 0;
