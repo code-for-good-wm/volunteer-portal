@@ -32,10 +32,6 @@ const HeaderBar = () => {
 
   const navigate = useNavigate();
 
-  const handleLogoButton = () => {
-    navigate('/');
-  };
-
   const toggleAccountMenu = () => {
     setShowAccountMenu(prevState => !prevState);
   };
@@ -83,11 +79,9 @@ const HeaderBar = () => {
       anchorEl={accountMenuAnchorElRef.current}
       open={showAccountMenu}
       onClose={toggleAccountMenu}
-      MenuListProps={{
-        'aria-labelledby': 'accountButton'
-      }}
+      aria-label='Account Menu'
     >
-      <MenuItem onClick={handleAccountSettings}>
+      <MenuItem onClick={handleAccountSettings} aria-label='Settings'>
         <Settings />
         <span className="menuOptionLabel">
           Settings
@@ -95,7 +89,7 @@ const HeaderBar = () => {
       </MenuItem>
 
       { showProgramsOption &&
-      <MenuItem onClick={handlePrograms}>
+      <MenuItem onClick={handlePrograms} aria-label='Programs'>
         <CalendarMonthOutlined />
         <span className="menuOptionLabel">
           Programs
@@ -103,14 +97,14 @@ const HeaderBar = () => {
       </MenuItem> }
 
       { showUsersOption &&
-      <MenuItem onClick={handleUsers}>
+      <MenuItem onClick={handleUsers} aria-label='Users'>
         <SupervisedUserCircleOutlined />
         <span className="menuOptionLabel">
           Users
         </span>
       </MenuItem> }
 
-      <MenuItem onClick={handleSignOut}>
+      <MenuItem onClick={handleSignOut} aria-label='Sign Out'>
         <ExitToApp />
         <span className="menuOptionLabel">
           Sign Out
@@ -122,9 +116,9 @@ const HeaderBar = () => {
   return (
     <header className="headerBar">
       <div className="logoButtonContainer">
-        <button type="button" onClick={handleLogoButton}>
-          <img src={TransparentLogo} alt="Code for Good Volunteer Portal" />
-        </button>
+        <a type="button" href="/">
+          <img src={TransparentLogo} alt="Code for Good - Go to Volunteer Portal home page" />
+        </a>
       </div>
       <div className="siteNameContainer" aria-hidden>VOLUNTEER PORTAL</div>
       <div className="accountButtonContainer">

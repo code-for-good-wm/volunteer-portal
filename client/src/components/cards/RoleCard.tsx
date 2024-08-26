@@ -50,14 +50,14 @@ const RoleCard = (props: RoleCardProps) => {
   return (
     <div className={cardStyle} onClick={() => handleCard(theme)}>
       <div className="checkboxContainer">
-        { checked && <Checkbox checked={checked} /> }
+        <Checkbox checked={checked} inputProps={{ 'aria-label': labelText }}  />
       </div>
       <div className="imageContainer">
         { image && <img src={image} alt={imageAlt} className={theme} /> }
       </div>
-      <span className="label">
+      <div className="label">
         {labelText}
-      </span>
+      </div>
     </div>
   );
 };

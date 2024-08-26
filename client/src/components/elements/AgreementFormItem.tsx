@@ -98,7 +98,7 @@ const AgreementFormItem = (props: AgreementFormItemProps) => {
   const itemStyle = noMargin ? 'agreementFormItem noMargin' : 'agreementFormItem';
 
   const iconButton = url ? (
-    <IconButton href={url} target="_blank">
+    <IconButton href={url} target="_blank" title={title}>
       <LaunchOutlined color="primary" />
     </IconButton>
   ) : null;
