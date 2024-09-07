@@ -160,7 +160,7 @@ const Users = () => {
 
     const searchVal = filter.toLocaleLowerCase();
 
-    return rows.filter(r => r.email.includes(searchVal) || r.name.includes(searchVal));
+    return rows.filter(r => r.email?.includes(searchVal) || r.name?.includes(searchVal));
   }, [filter, rows]);
 
   const handleChangePage = (_: unknown, newPage: number) => {
