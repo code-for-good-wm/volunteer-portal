@@ -53,7 +53,7 @@ const columns: Column[] = [
   { id: 'accessibilityRequirements', label: 'Accessibility Requirements', minWidth: 170 },
   { id: 'photoRelease', label: 'Photo Release', minWidth: 100, format: (value: boolean) => value ? 'Yes' : 'No' },
   { id: 'hasSkills', label: 'Entered Skills', minWidth: 100, format: (value: boolean) => value ? 'Yes' : 'No' },
-  { id: 'attendance', label: 'Attending WfG 2024', minWidth: 200, format: (value: Attendance) => toTitleCase(value ? value.replace('-', ' ') : '') },
+  { id: 'attendance', label: 'Attending WfG 2025', minWidth: 200, format: (value: Attendance) => toTitleCase(value ? value.replace('-', ' ') : '') },
 ];
 
 type Data = {
@@ -96,10 +96,10 @@ const Users = () => {
   }, []);
 
   useEffect(() => {
-    // locate the WfG 2024 event
+    // locate the WfG 2025 event
     // TODO: make this selectable
     eventsData
-      .filter(e => e.description === 'Weekend for Good 2024')
+      .filter(e => e.description === 'Weekend for Good 2025')
       .map(e => {
         loadAttendance(e._id);
         setEvent(e);

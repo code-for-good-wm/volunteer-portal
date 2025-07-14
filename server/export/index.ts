@@ -31,6 +31,9 @@ const skillOptions = [
   'ux',
   'ui',
   'designThinking',
+  'accessibleDesign',
+  'accessibleDevelopment',
+  'assistiveTechnology',
   'illustration',
   'brand',
   'motionGraphics',
@@ -41,11 +44,6 @@ const skillOptions = [
   'inVision',
   'marvel',
   'adobeXd',
-  'frontEndDev',
-  'backEndDev',
-  'databases',
-  'mobileDev',
-  'devOps',
   'projMgmt',
   'brand',
   'copy',
@@ -71,9 +69,9 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 
   switch (req.method) {
-  case 'POST':
-    result = await exportUsersAndProfiles(context, uid);
-    break;
+    case 'POST':
+      result = await exportUsersAndProfiles(context, uid);
+      break;
   }
 
   if (result) {
@@ -110,7 +108,7 @@ async function exportUsersAndProfiles(context: Context, userIdent: string): Prom
 
   // getting the current WfG event
   // TODO: make this dynamic
-  const event = (await eventStore.listAll()).find(e => e.description === 'Weekend for Good 2024');
+  const event = (await eventStore.listAll()).find(e => e.description === 'Weekend for Good 2025');
   if (!event) {
     return createErrorResult(404, 'Cannot find latest event', context);
   }
@@ -120,7 +118,7 @@ async function exportUsersAndProfiles(context: Context, userIdent: string): Prom
     attendanceDict[userId.toString()] = eventAttendance;
   }
 
-  const csvData : any[] = [];
+  const csvData: any[] = [];
 
   for (const user of users) {
     const userId = user._id.toString();
@@ -162,7 +160,7 @@ async function exportUsersAndProfiles(context: Context, userIdent: string): Prom
         'X-Invocation-ID': context.invocationId
       },
       body: stringify(csvData, { header: true }),
-      status: 200 
+      status: 200
     };
   } catch (err: any) {
     return createErrorResult(500, err.message, context);
