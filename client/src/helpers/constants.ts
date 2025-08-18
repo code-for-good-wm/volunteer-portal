@@ -16,7 +16,7 @@ export const testProfileData: Profile = {
   linkedInUrl: '',
   websiteUrl: '',
   portfolioUrl: '',
-  shirtSize: '',
+  shirtSize: 'none',
   dietaryRestrictions: [],
   additionalDietaryRestrictions: '',
   accessibilityRequirements: '',
@@ -252,16 +252,16 @@ export const technicalSkills: TechnicalSkillsData = {
       description: 'Wix'
     },
     {
-      code: 'weebly',
-      description: 'Weebly'
-    },
-    {
       code: 'htmlCss',
       description: 'HTML / CSS'
     },
     {
       code: 'javaScript',
       description: 'JavaScript'
+    },
+    {
+      code: 'typeScript',
+      description: 'TypeScript'
     },
     {
       code: 'react',
@@ -278,6 +278,26 @@ export const technicalSkills: TechnicalSkillsData = {
     {
       code: 'nodeExpress',
       description: 'Node / Express'
+    },
+    {
+      code: 'csharp',
+      description: 'C#',
+    },
+    {
+      code: 'java',
+      description: 'Java',
+    },
+    {
+      code: 'python',
+      description: 'Python',
+    },
+    {
+      code: 'rust',
+      description: 'Rust',
+    },
+    {
+      code: 'go',
+      description: 'Go',
     },
     {
       code: 'phpLaravel',

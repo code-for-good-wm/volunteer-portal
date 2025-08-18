@@ -4,19 +4,15 @@ export type SecondaryProfileSectionId = 'basic-information' | 'accessibility' | 
 
 export type Role = 'designer' | 'developer' | 'support' | 'lead';
 
-export type ShirtSize = 'small' | 'medium' | 'large' | 'xl' | '2xl' | '3xl' | '';
+export type ShirtSize = 'small' | 'medium' | 'large' | 'xl' | '2xl' | '3xl' | 'none';
 
 export type DietaryRestriction = 'vegan' | 'vegetarian' | 'dairy' | 'gluten' | 'kosher' | 'nuts' | 'fish' | 'eggs' | 'soy' | 'corn' | 'other';
 
 export type Agreement = 'termsAndConditions' | 'photoRelease' | 'codeOfConduct';
 
-export type SkillCode = 'frontEndDev' | 'backEndDev' | 'databases' | 'mobileDev' | 'devOps' | 'wordPress' | 'squarespace' | 'wix' | 'weebly' | 'htmlCss' | 'javaScript' | 'react' | 'vue' | 'angular' | 'nodeExpress' | 'phpLaravel' |
- 'projMgmt' | 'brand' | 'copy' | 'crm' | 'marketing' | 'seo' | 'social' | 'technicalWriting' | 'testing' | 'photography' | 'videography' | 'accessibleDesign' | 'accessibleDevelopment' | 'assistiveTechnology' |
- 'print' | 'ux' | 'ui' | 'designThinking' | 'illustration' | 'motionGraphics' | 'adobeSuite' | 'sketch' | 'figma' | 'zeplin' | 'inVision' | 'marvel' | 'adobeXd';
-
 export type SkillLevel = 0 | 1 | 2 | 3 | 4;
 
-export type UserSkillData = Partial<Record<SkillCode, SkillLevel>>;
+export type UserSkillData = Partial<Record<string, SkillLevel>>;
 
 export interface PrimaryProfileSection {
   id: PrimaryProfileSectionId;
@@ -41,29 +37,31 @@ export interface Agreements {
 }
 
 export interface Skill {
-  code: SkillCode; // e.g. 'frontEndDev'
+  code: string; // e.g. 'frontEndDev'
   description: string; // e.g. 'Front End Development'
 }
 
 export interface UserSkill {
   _id?: string; // ID of user skill document in database
-  code: SkillCode;
+  code: string;
   level: SkillLevel;
 }
 
 export interface ProfileSkill {
-  code: SkillCode;
+  code: string;
   description: string;
   level: SkillLevel;
 }
 
 export interface Profile {
   user: string;
-  completionDate?: string; // ISO date
   roles: Role[];
+  preferredName?: string;
+  pronouns?: string;
   linkedInUrl?: string;
   websiteUrl?: string;
   portfolioUrl?: string;
+  currentEmployer?: string;
   previousVolunteer?: boolean;
   teamLeadCandidate?: boolean;
   shirtSize?: ShirtSize;
@@ -73,14 +71,19 @@ export interface Profile {
   agreements?: Agreements;
   skills: UserSkill[];
   additionalSkills?: string;
+  completionDate?: string; // ISO date
+  updatedDate?: string; // ISO date; timestamp of last profile update
 }
 
 export interface ProfileUpdate {
   completionDate?: string; // ISO date
   roles?: Role[];
+  preferredName?: string;
+  pronouns?: string;
   linkedInUrl?: string;
   websiteUrl?: string;
   portfolioUrl?: string;
+  currentEmployer?: string;
   previousVolunteer?: boolean;
   teamLeadCandidate?: boolean;
   shirtSize?: ShirtSize;

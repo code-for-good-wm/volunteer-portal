@@ -1,6 +1,6 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { Types } from 'mongoose';
-import { createErrorResult, createSuccessResult, Result } from '../lib/core';
+import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
 import { checkBindingDataUserId, checkAuthAndConnect } from '../lib/helpers';
 import { skillStore } from '../lib/models/store';
 import { IUserSkill } from '../lib/models/user-skill';
@@ -36,7 +36,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 };
 
-async function getUserSkills(context: Context, userIdent: string): Promise<Result> {
+async function getUserSkills(context: Context, userIdent: string): Promise<IHttpResult> {
   // For MVP we're allowing users to access only their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {
@@ -56,7 +56,7 @@ async function getUserSkills(context: Context, userIdent: string): Promise<Resul
   return createSuccessResult(200, userSkills, context);
 }
 
-async function createUserSkills(context: Context, userIdent: string): Promise<Result> {
+async function createUserSkills(context: Context, userIdent: string): Promise<IHttpResult> {
   // For MVP we're allowing users to access only their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {
@@ -101,7 +101,7 @@ async function createUserSkills(context: Context, userIdent: string): Promise<Re
   return createSuccessResult(201, await skillStore.create(userId, newSkill), context);
 }
 
-async function updateUserSkills(context: Context, userIdent: string): Promise<Result> {
+async function updateUserSkills(context: Context, userIdent: string): Promise<IHttpResult> {
   // For MVP we're allowing users to access only their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {
@@ -163,7 +163,7 @@ async function updateUserSkills(context: Context, userIdent: string): Promise<Re
   return createSuccessResult(201, updatedSkills, context);
 }
 
-async function deleteUserSkills(context: Context, userIdent: string): Promise<Result> {
+async function deleteUserSkills(context: Context, userIdent: string): Promise<IHttpResult> {
   // For MVP we're allowing users to access only their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {

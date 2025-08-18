@@ -48,7 +48,10 @@ const Dashboard = () => {
           <h1>
             <span className="highlight">profile</span>
           </h1>
-          <PercentComplete percentComplete={percentComplete} />
+          <PercentComplete
+            percentComplete={percentComplete}
+            completionDate={profileData?.completionDate}
+            updatedDate={profileData?.updatedDate} />
           <CFGInfo />
         </div>
       </div>

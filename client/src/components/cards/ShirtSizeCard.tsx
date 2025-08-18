@@ -1,4 +1,4 @@
-import Shirt from '../../assets/icons/shirt.png';
+import NoShirt from '../../assets/icons/no-shirt.png';
 import ShirtSmall from '../../assets/icons/shirt-s.png';
 import ShirtMedium from '../../assets/icons/shirt-m.png';
 import ShirtLarge from '../../assets/icons/shirt-l.png';
@@ -44,8 +44,11 @@ const ShirtSizeCard = (props: ShirtSizeCardProps) => {
   case '3xl':
     image = Shirt3XL;
     break;
+  case 'none':
+    image = NoShirt;
+    break;
   default:
-    image = Shirt;
+    image = NoShirt;
   }
 
   const cardStyle = selected ? 'shirtSizeCard selected' : 'shirtSizeCard';

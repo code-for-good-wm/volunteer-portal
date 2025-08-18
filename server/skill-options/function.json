@@ -6,9 +6,12 @@
       "direction": "in",
       "name": "req",
       "methods": [
-        "get"
+        "get",
+        "post",
+        "put",
+        "delete"
       ],
-      "route": "skills/options"
+      "route": "user/skills/{skillCode?}"
     },
     {
       "type": "http",
@@ -16,5 +19,5 @@
       "name": "res"
     }
   ],
-  "scriptFile": "../dist/options/index.js"
+  "scriptFile": "../dist/skill-options/index.js"
 }

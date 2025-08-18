@@ -176,12 +176,12 @@ const TechnicalSkills = () => {
     <ProfileLayout>
       <div className="profileContentContainer">
         <h1>
-          Tell us about your <span className="highlight">technical</span> skills.
+          Tell us about your <span className="highlight">technical</span> skillset.
         </h1>
         <div className="contentCard profileCard basicInformationProfileCard">
           <div className="cardHeadingWithNote">
             <h2>
-              Technical Skills
+              Technical Skillset
             </h2>
             <span className="note">
               <span className="sup red">

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { stringify } from 'csv-stringify/sync';
-import { createErrorResult, Result } from '../lib/core';
+import { createErrorResult, IHttpResult } from '../lib/core';
 import { checkAuthAndConnect, getUserId, groupBy } from '../lib/helpers';
 import { profileStore, userStore, eventStore, eventAttendanceStore, skillStore } from '../lib/models/store';
 import { READ_ALL_USERS } from '../lib/models/enums/user-role.enum';
@@ -79,7 +79,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 };
 
-async function exportUsersAndProfiles(context: Context, userIdent: string): Promise<Result> {
+async function exportUsersAndProfiles(context: Context, userIdent: string): Promise<IHttpResult> {
   // Attempt to acquire current user data
   const user = await userStore.list(userIdent);
   if (!user) {

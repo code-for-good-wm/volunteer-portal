@@ -10,6 +10,7 @@ import { Agreement, Agreements, DietaryRestriction, ProfileUpdate, ShirtSize } f
 import ProfileLayout from '../../../../layouts/ProfileLayout';
 import { FormControl, FormControlLabel, InputAdornment, Radio, RadioGroup, TextField } from '@mui/material';
 import BadgeOutlined from '@mui/icons-material/BadgeOutlined';
+import ChatBubbleOutlined from '@mui/icons-material/ChatBubbleOutlined';
 import LocalPhoneOutlined from '@mui/icons-material/LocalPhoneOutlined';
 import LinkedIn from '@mui/icons-material/LinkedIn';
 import Link from '@mui/icons-material/Link';
@@ -27,6 +28,8 @@ import { testPhone } from '../../../../helpers/validation';
 
 type BasicInfoForm = {
   name: string,
+  preferredName?: string,
+  pronouns?: string,
   phone: string,
 };
 
@@ -34,12 +37,13 @@ type ContactInfoForm = {
   linkedInUrl: string,
   websiteUrl: string,
   portfolioUrl: string,
+  currentEmployer: string,
 };
 
 type ExtraStuff = {
   previousVolunteer: boolean,
   teamLeadCandidate: boolean,
-  shirtSize: ShirtSize,
+  shirtSize?: ShirtSize,
   dietaryRestrictions: DietaryRestriction[],
   additionalDietaryRestrictions: string,
 }
@@ -59,6 +63,8 @@ type AgreementUpdate = {
 const GettingStarted = () => {
   const [basicInfoForm, setBasicInfoForm] = useState<BasicInfoForm>({
     name: '',
+    preferredName: '',
+    pronouns: '',
     phone: '',
   });
 
@@ -66,12 +72,13 @@ const GettingStarted = () => {
     linkedInUrl: '',
     websiteUrl: '',
     portfolioUrl: '',
+    currentEmployer: '',
   });
 
   const [extraStuff, setExtraStuff] = useState<ExtraStuff>({
     previousVolunteer: false,
     teamLeadCandidate: false,
-    shirtSize: '',
+    shirtSize: 'none',
     dietaryRestrictions: [],
     additionalDietaryRestrictions: '',
   });
@@ -177,6 +184,26 @@ const GettingStarted = () => {
     }));
   };
 
+  const handlePreferredName = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setBasicInfoForm((prevState) => ({
+      ...prevState,
+      preferredName: value,
+      showAlert: false,
+      alertText: '',
+    }));
+  };
+
+  const handlePronouns = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setBasicInfoForm((prevState) => ({
+      ...prevState,
+      pronouns: value,
+      showAlert: false,
+      alertText: '',
+    }));
+  };
+
   const handlePhone = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const phone = parsePhone(value).formatted;
@@ -203,6 +230,8 @@ const GettingStarted = () => {
     setContactInfoForm((prevState) => ({
       ...prevState,
       websiteUrl: value,
+      showAlert: false,
+      alertText: '',
     }));
   };
 
@@ -211,6 +240,18 @@ const GettingStarted = () => {
     setContactInfoForm((prevState) => ({
       ...prevState,
       portfolioUrl: value,
+      showAlert: false,
+      alertText: '',
+    }));
+  };
+
+  const handleCurrentEmployer = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setContactInfoForm((prevState) => ({
+      ...prevState,
+      currentEmployer: value,
+      showAlert: false,
+      alertText: '',
     }));
   };
 
@@ -292,9 +333,12 @@ const GettingStarted = () => {
     // Prep data
     const name = basicInfoForm.name.trim();
     const phone = parsePhone(basicInfoForm.phone).number;
+    const preferredName = basicInfoForm.preferredName?.trim() || '';
+    const pronouns = basicInfoForm.pronouns?.trim() || '';
     const linkedInUrl = contactInfoForm.linkedInUrl.trim();
     const websiteUrl = contactInfoForm.websiteUrl.trim();
     const portfolioUrl = contactInfoForm.portfolioUrl.trim();
+    const currentEmployer = contactInfoForm.currentEmployer.trim();
     const { previousVolunteer, teamLeadCandidate, shirtSize, dietaryRestrictions, additionalDietaryRestrictions } = extraStuff;
     const { termsAndConditions, photoRelease, codeOfConduct } = agreements;
 
@@ -321,9 +365,12 @@ const GettingStarted = () => {
     }
 
     const profileUpdate: ProfileUpdate = {
+      preferredName,
+      pronouns,
       linkedInUrl,
       websiteUrl,
       portfolioUrl,
+      currentEmployer,
       previousVolunteer,
       teamLeadCandidate,
       shirtSize,
@@ -433,6 +480,27 @@ const GettingStarted = () => {
                   }}
                 />
               </div>
+              <div className="textFieldWrapperMedium">
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  margin="dense"
+                  size="medium"
+                  id="preferredName"
+                  name="preferredName"
+                  type="text"
+                  label={<TextFieldLabel label="Preferred Name" />}
+                  value={basicInfoForm.preferredName}
+                  onChange={handlePreferredName}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <ChatBubbleOutlined />
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </div>
               <div className="textFieldWrapperSmall">
                 <TextField
                   variant="outlined"
@@ -452,6 +520,27 @@ const GettingStarted = () => {
                     startAdornment: (
                       <InputAdornment position="start">
                         <LocalPhoneOutlined />
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </div>
+              <div className="textFieldWrapperMedium">
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  margin="dense"
+                  size="medium"
+                  id="pronouns"
+                  name="pronouns"
+                  type="text"
+                  label={<TextFieldLabel label="Pronouns" />}
+                  value={basicInfoForm.pronouns}
+                  onChange={handlePronouns}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <ChatBubbleOutlined />
                       </InputAdornment>
                     )
                   }}
@@ -511,9 +600,6 @@ const GettingStarted = () => {
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  sx={{
-                    marginBottom: 0
-                  }}
                   size="medium"
                   id="portfolioUrl"
                   name="portfolioUrl"
@@ -521,6 +607,30 @@ const GettingStarted = () => {
                   label={<TextFieldLabel label="Portfolio Link" />}
                   value={contactInfoForm.portfolioUrl}
                   onChange={handlePortfolioUrl}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Link />
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </div>
+              <div className="textFieldWrapperMedium">
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  sx={{
+                    marginBottom: 0
+                  }}
+                  size="medium"
+                  id="currentEmployer"
+                  name="currentEmployer"
+                  type="text"
+                  label={<TextFieldLabel label="Current Employer" />}
+                  value={contactInfoForm.currentEmployer}
+                  onChange={handleCurrentEmployer}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">

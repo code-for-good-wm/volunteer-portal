@@ -1,5 +1,5 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, Result } from '../lib/core';
+import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
 import { checkAuthAndConnect } from '../lib/helpers';
 import { userStore } from '../lib/models/store';
 import { READ_ALL_USERS } from '../lib/models/enums/user-role.enum';
@@ -26,7 +26,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 };
 
-async function getUsers(context: Context, userIdent: string): Promise<Result> {
+async function getUsers(context: Context, userIdent: string): Promise<IHttpResult> {
   // Attempt to acquire user data
   const user = await userStore.list(userIdent);
   if (!user) {

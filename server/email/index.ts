@@ -1,6 +1,6 @@
 
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, Result } from '../lib/core';
+import { createErrorResult, IHttpResult } from '../lib/core';
 import { userStore } from '../lib/models/store';
 import { checkAuthAndConnect, sendTemplateEmail } from '../lib/helpers';
 
@@ -26,7 +26,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 };
 
-async function createEmail(context: Context, userIdent: string): Promise<Result> {
+async function createEmail(context: Context, userIdent: string): Promise<IHttpResult> {
   // Attempt to acquire user data from userIdent
   const user = await userStore.list(userIdent);
   if (!user) {
