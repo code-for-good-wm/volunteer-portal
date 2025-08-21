@@ -4,7 +4,7 @@ export type SecondaryProfileSectionId = 'basic-information' | 'accessibility' | 
 
 export type Role = 'designer' | 'developer' | 'support' | 'lead';
 
-export type ShirtSize = 'small' | 'medium' | 'large' | 'xl' | '2xl' | '3xl' | 'none';
+export type ShirtSize = 'small' | 'medium' | 'large' | 'xl' | '2xl' | '3xl' | '4xl' | 'none';
 
 export type DietaryRestriction = 'vegan' | 'vegetarian' | 'dairy' | 'gluten' | 'kosher' | 'nuts' | 'fish' | 'eggs' | 'soy' | 'corn' | 'other';
 
@@ -76,7 +76,6 @@ export interface Profile {
 }
 
 export interface ProfileUpdate {
-  completionDate?: string; // ISO date
   roles?: Role[];
   preferredName?: string;
   pronouns?: string;
@@ -93,6 +92,7 @@ export interface ProfileUpdate {
   agreements?: Agreements;
   skills?: UserSkill[];
   additionalSkills?: string;
+  completionDate?: string; // ISO date
 }
 
 export interface RoleData {

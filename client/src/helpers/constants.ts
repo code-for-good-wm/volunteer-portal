@@ -47,6 +47,10 @@ export const roles: RoleData[] = [
 
 export const shirtSizes: ShirtSizeData[] = [
   {
+    id: 'none',
+    description: 'None',
+  },
+  {
     id: 'small',
     description: 'Small',
   },
@@ -69,6 +73,10 @@ export const shirtSizes: ShirtSizeData[] = [
   {
     id: '3xl',
     description: '3X-Large',
+  },
+  {
+    id: '4xl',
+    description: '4X-Large',
   },
 ];
 
@@ -160,7 +168,7 @@ export const profileStructure: PrimaryProfileSection[] = [
   {
     id: 'technical-skills',
     type: 'primary',
-    description: 'Technical Skills',
+    description: 'Technical Skillset',
     sections: [
       // {
       //   id: 'experience-level',
@@ -177,7 +185,7 @@ export const profileStructure: PrimaryProfileSection[] = [
   {
     id: 'design-skills',
     type: 'primary',
-    description: 'Design Skills',
+    description: 'Design Skillset',
     sections: [
       // {
       //   id: 'experience-level',
@@ -199,7 +207,7 @@ export const profileStructure: PrimaryProfileSection[] = [
   {
     id: 'additional-skills',
     type: 'primary',
-    description: 'Additional Skills',
+    description: 'Additional Skillset',
     sections: [
       // {
       //   id: 'other-experience',
@@ -343,8 +351,8 @@ export const designSkills: DesignSkillsData = {
       description: 'Adobe Creative Suite'
     },
     {
-      code: 'sketch',
-      description: 'Sketch'
+      code: 'canva',
+      description: 'Canva'
     },
     {
       code: 'figma',
@@ -359,13 +367,9 @@ export const designSkills: DesignSkillsData = {
       description: 'InVision'
     },
     {
-      code: 'marvel',
-      description: 'Marvel'
-    },
-    {
-      code: 'adobeXd',
-      description: 'Adobe XD'
-    },
+      code: 'sketch',
+      description: 'Sketch'
+    }
   ],
   development: [
     {
@@ -392,6 +396,14 @@ export const designSkills: DesignSkillsData = {
 };
 
 export const otherExperience: Skill[] = [
+  {
+    code: 'aitools',
+    description: 'AI/LLMs'
+  },
+  {
+    code: 'agenticcode',
+    description: 'Agentic Coding'
+  },
   {
     code: 'projMgmt',
     description: 'Project Management'

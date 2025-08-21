@@ -10,10 +10,11 @@ import { Agreement, Agreements, DietaryRestriction, ProfileUpdate, ShirtSize } f
 import ProfileLayout from '../../../../layouts/ProfileLayout';
 import { FormControl, FormControlLabel, InputAdornment, Radio, RadioGroup, TextField } from '@mui/material';
 import BadgeOutlined from '@mui/icons-material/BadgeOutlined';
-import ChatBubbleOutlined from '@mui/icons-material/ChatBubbleOutlined';
+import ChatBubbleOutline from '@mui/icons-material/ChatBubbleOutline';
 import LocalPhoneOutlined from '@mui/icons-material/LocalPhoneOutlined';
 import LinkedIn from '@mui/icons-material/LinkedIn';
 import Link from '@mui/icons-material/Link';
+import BusinessCenterOutlined from '@mui/icons-material/BusinessCenterOutlined';
 
 import StandardButton from '../../../../components/buttons/StandardButton';
 import TextFieldLabel from '../../../../components/elements/TextFieldLabel';
@@ -495,7 +496,7 @@ const GettingStarted = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <ChatBubbleOutlined />
+                        <BadgeOutlined />
                       </InputAdornment>
                     )
                   }}
@@ -540,7 +541,7 @@ const GettingStarted = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <ChatBubbleOutlined />
+                        <ChatBubbleOutline />
                       </InputAdornment>
                     )
                   }}
@@ -634,7 +635,7 @@ const GettingStarted = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Link />
+                        <BusinessCenterOutlined />
                       </InputAdornment>
                     )
                   }}

@@ -14,6 +14,9 @@ type PercentCompleteProps = {
 const PercentComplete = (props: PercentCompleteProps) => {
   const { percentComplete, completionDate, updatedDate } = props;
 
+  const now = new Date();
+  const oldProfileCutoff = new Date(now.setFullYear(now.getFullYear() - 1)).getTime();
+
   // If the completion date is present and the last updated is empty, set it to the completion date
   // If the last updated date is older than 1 year, prompt the person to update their profile
   let lastUpdateDate;
@@ -24,7 +27,7 @@ const PercentComplete = (props: PercentCompleteProps) => {
   } else {
     lastUpdateDate = Date.now();
   }
-  const updateProfile = lastUpdateDate < Date.now() - (365 * 24 * 60 * 60 * 1000);
+  const updateProfile = lastUpdateDate < oldProfileCutoff;
 
   const [processing, setProcessing] = useState(false);
 
@@ -51,7 +54,7 @@ const PercentComplete = (props: PercentCompleteProps) => {
   return (
     <div className="contentCard dashboardCard">
       {updateProfile && (
-          <p className='updateProfilePrompt'>It&apos;s been a while since you updated your profile. Want to take another look?</p>
+          <p className='updateProfilePrompt'>It&apos;s been a while since you updated your profile.<br />Want to take another look?</p>
       )}
 
       <p>Your profile is</p>

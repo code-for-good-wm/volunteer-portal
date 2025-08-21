@@ -268,9 +268,12 @@ export const getGettingStartedProfileData = () => {
   // Pull profile and return data
   const { name, phone } = user;
   const {
+    preferredName,
+    pronouns,
     linkedInUrl,
     websiteUrl,
     portfolioUrl,
+    currentEmployer,
     previousVolunteer,
     teamLeadCandidate,
     shirtSize,
@@ -285,11 +288,14 @@ export const getGettingStartedProfileData = () => {
       basicInfo: {
         name,
         phone: parsePhone(phone).formatted,
+        preferredName: preferredName ?? '',
+        pronouns: pronouns ?? ''
       },
       contactInfo: {
         linkedInUrl: linkedInUrl ?? '',
         websiteUrl: websiteUrl ?? '',
         portfolioUrl: portfolioUrl ?? '',
+        currentEmployer: currentEmployer ?? '',
       },
       extraStuff: {
         previousVolunteer: !!previousVolunteer, // Could be undefined

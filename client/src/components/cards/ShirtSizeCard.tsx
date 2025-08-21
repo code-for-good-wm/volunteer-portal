@@ -5,6 +5,7 @@ import ShirtLarge from '../../assets/icons/shirt-l.png';
 import ShirtXL from '../../assets/icons/shirt-xl.png';
 import Shirt2XL from '../../assets/icons/shirt-2xl.png';
 import Shirt3XL from '../../assets/icons/shirt-3xl.png';
+import Shirt4XL from '../../assets/icons/shirt-4xl.png';
 
 import { ShirtSize } from '../../types/profile';
 
@@ -43,6 +44,9 @@ const ShirtSizeCard = (props: ShirtSizeCardProps) => {
     break;
   case '3xl':
     image = Shirt3XL;
+    break;
+  case '4xl':
+    image = Shirt4XL;
     break;
   case 'none':
     image = NoShirt;

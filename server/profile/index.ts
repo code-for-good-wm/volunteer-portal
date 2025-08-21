@@ -155,7 +155,8 @@ async function updateProfile(context: Context, userIdent: string): Promise<IHttp
   const [updatedProfile, updatedSkills] = await Promise.all([profileStore.list(userId), skillStore.list(userId)]);
   if (updatedProfile) {
     updatedProfile.skills.push(...updatedSkills);
-  } 
+  }
+
   return createSuccessResult(200, updatedProfile, context);
 }
 

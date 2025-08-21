@@ -167,13 +167,23 @@ export const defaultSkillOptions: SkillOption[] = [
     category: 'design'
   },
   {
+    code: 'sketch',
+    description: 'Sketch',
+    category: 'design'
+  },
+  {
     code: 'aitools',
-    description: 'AI tools',
+    description: 'AI/LLMs',
     category: 'other'
   },
   {
     code: 'agenticcode',
     description: 'Agentic Coding',
+    category: 'other'
+  },
+  {
+    code: 'cybersecurity',
+    description: 'Cybersecurity',
     category: 'other'
   },
   {

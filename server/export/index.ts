@@ -8,54 +8,7 @@ import { READ_ALL_USERS } from '../lib/models/enums/user-role.enum';
 import { IProfile } from '../lib/models/profile';
 import { IUserSkill } from '../lib/models/user-skill';
 import { IEventAttendance } from '../lib/models/event-attendance';
-
-// TODO: replace this with DB call once skills are modifyiable
-const skillOptions = [
-  'frontEndDev',
-  'backEndDev',
-  'databases',
-  'mobileDev',
-  'devOps',
-  'wordPress',
-  'squarespace',
-  'wix',
-  'weebly',
-  'htmlCss',
-  'javaScript',
-  'react',
-  'vue',
-  'angular',
-  'nodeExpress',
-  'phpLaravel',
-  'print',
-  'ux',
-  'ui',
-  'designThinking',
-  'accessibleDesign',
-  'accessibleDevelopment',
-  'assistiveTechnology',
-  'illustration',
-  'brand',
-  'motionGraphics',
-  'adobeSuite',
-  'sketch',
-  'figma',
-  'zeplin',
-  'inVision',
-  'marvel',
-  'adobeXd',
-  'projMgmt',
-  'brand',
-  'copy',
-  'crm',
-  'marketing',
-  'seo',
-  'social',
-  'technicalWriting',
-  'testing',
-  'photography',
-  'videography',
-];
+import { defaultSkillOptions } from '../skill-options/defaults';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   // get caller uid from token and connect to DB
@@ -128,9 +81,15 @@ async function exportUsersAndProfiles(context: Context, userIdent: string): Prom
       id: userId,
       email: user.email,
       name: user.name,
+      preferredName: profile?.preferredName,
       phone: user.phone,
+      pronouns: profile?.pronouns,
       userRole: user.userRole,
       roles: profile?.roles?.join(', '),
+      linkedin: profile?.linkedInUrl,
+      website: profile?.websiteUrl,
+      portfolio: profile?.portfolioUrl,
+      employer: profile?.currentEmployer,
       prevVolunteer: profile?.previousVolunteer,
       teamLead: profile?.teamLeadCandidate,
       shirtSize: profile?.shirtSize,
@@ -142,7 +101,9 @@ async function exportUsersAndProfiles(context: Context, userIdent: string): Prom
       attendanceDetail: attendance?.attendanceDetail,
     };
 
-    for (const skill of skillOptions) {
+    const skills = defaultSkillOptions.map(skill => skill.code);
+
+    for (const skill of skills) {
       csvRecord[skill] = skillsDict[userId] ? skillsDict[userId][skill] : 0;
     }
 

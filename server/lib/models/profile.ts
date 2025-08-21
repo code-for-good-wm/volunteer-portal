@@ -37,11 +37,13 @@ export interface IProfile {
 
 const profileSchema = new Schema<IProfile>({
   user: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
-  completionDate: String,
   roles: [{ type: String, enum: Role }], // array of Role
+  preferredName: String,
+  pronouns: String,
   linkedInUrl: String,
   websiteUrl: String,
   portfolioUrl: String,
+  currentEmployer: String,
   previousVolunteer: Boolean,
   teamLeadCandidate: Boolean,
   shirtSize: { type: String, enum: ShirtSize },
@@ -54,7 +56,8 @@ const profileSchema = new Schema<IProfile>({
     codeOfConduct: String,
   }),
   skills: [{ type: Schema.Types.ObjectId, ref: 'UserSkill' }],
-  additionalSkills: String
+  additionalSkills: String,
+  completionDate: String
 }, MongooseOpts);
 
 export const ProfileModel = model<IProfile>('Profile', profileSchema);
