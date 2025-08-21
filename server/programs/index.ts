@@ -1,5 +1,5 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, Result } from '../lib/core';
+import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
 import { checkAuthAndConnect } from '../lib/helpers';
 import { programStore, userStore } from '../lib/models/store';
 
@@ -27,7 +27,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 };
 
-async function getPrograms(context: Context, userIdent: string, includeEvents: boolean): Promise<Result> {
+async function getPrograms(context: Context, userIdent: string, includeEvents: boolean): Promise<IHttpResult> {
   // Attempt to acquire current user data
   const user = await userStore.list(userIdent);
   if (!user) {

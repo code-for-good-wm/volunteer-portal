@@ -16,7 +16,7 @@ export const testProfileData: Profile = {
   linkedInUrl: '',
   websiteUrl: '',
   portfolioUrl: '',
-  shirtSize: '',
+  shirtSize: 'none',
   dietaryRestrictions: [],
   additionalDietaryRestrictions: '',
   accessibilityRequirements: '',
@@ -47,6 +47,10 @@ export const roles: RoleData[] = [
 
 export const shirtSizes: ShirtSizeData[] = [
   {
+    id: 'none',
+    description: 'None',
+  },
+  {
     id: 'small',
     description: 'Small',
   },
@@ -69,6 +73,10 @@ export const shirtSizes: ShirtSizeData[] = [
   {
     id: '3xl',
     description: '3X-Large',
+  },
+  {
+    id: '4xl',
+    description: '4X-Large',
   },
 ];
 
@@ -160,7 +168,7 @@ export const profileStructure: PrimaryProfileSection[] = [
   {
     id: 'technical-skills',
     type: 'primary',
-    description: 'Technical Skills',
+    description: 'Technical Skillset',
     sections: [
       // {
       //   id: 'experience-level',
@@ -177,7 +185,7 @@ export const profileStructure: PrimaryProfileSection[] = [
   {
     id: 'design-skills',
     type: 'primary',
-    description: 'Design Skills',
+    description: 'Design Skillset',
     sections: [
       // {
       //   id: 'experience-level',
@@ -199,7 +207,7 @@ export const profileStructure: PrimaryProfileSection[] = [
   {
     id: 'additional-skills',
     type: 'primary',
-    description: 'Additional Skills',
+    description: 'Additional Skillset',
     sections: [
       // {
       //   id: 'other-experience',
@@ -252,16 +260,16 @@ export const technicalSkills: TechnicalSkillsData = {
       description: 'Wix'
     },
     {
-      code: 'weebly',
-      description: 'Weebly'
-    },
-    {
       code: 'htmlCss',
       description: 'HTML / CSS'
     },
     {
       code: 'javaScript',
       description: 'JavaScript'
+    },
+    {
+      code: 'typeScript',
+      description: 'TypeScript'
     },
     {
       code: 'react',
@@ -278,6 +286,26 @@ export const technicalSkills: TechnicalSkillsData = {
     {
       code: 'nodeExpress',
       description: 'Node / Express'
+    },
+    {
+      code: 'csharp',
+      description: 'C#',
+    },
+    {
+      code: 'java',
+      description: 'Java',
+    },
+    {
+      code: 'python',
+      description: 'Python',
+    },
+    {
+      code: 'rust',
+      description: 'Rust',
+    },
+    {
+      code: 'go',
+      description: 'Go',
     },
     {
       code: 'phpLaravel',
@@ -323,8 +351,8 @@ export const designSkills: DesignSkillsData = {
       description: 'Adobe Creative Suite'
     },
     {
-      code: 'sketch',
-      description: 'Sketch'
+      code: 'canva',
+      description: 'Canva'
     },
     {
       code: 'figma',
@@ -339,13 +367,9 @@ export const designSkills: DesignSkillsData = {
       description: 'InVision'
     },
     {
-      code: 'marvel',
-      description: 'Marvel'
-    },
-    {
-      code: 'adobeXd',
-      description: 'Adobe XD'
-    },
+      code: 'sketch',
+      description: 'Sketch'
+    }
   ],
   development: [
     {
@@ -372,6 +396,18 @@ export const designSkills: DesignSkillsData = {
 };
 
 export const otherExperience: Skill[] = [
+  {
+    code: 'aitools',
+    description: 'AI/LLMs'
+  },
+  {
+    code: 'agenticcode',
+    description: 'Agentic Coding'
+  },
+  {
+    code: 'cybersecurity',
+    description: 'Cybersecurity'
+  },
   {
     code: 'projMgmt',
     description: 'Project Management'

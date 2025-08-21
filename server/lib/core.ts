@@ -36,7 +36,7 @@ export function tryGetUserIdent(req: HttpRequest, context: Context): { userIdent
   return { userIdent: userId, status };
 }
 
-export function createSuccessResult(code: number, data: unknown, context: Context): Result {
+export function createSuccessResult(code: number, data: unknown, context: Context): IHttpResult {
   return {
     headers: { 'Content-Type': 'application/json', 'X-Invocation-ID': context.invocationId },
     body: data,
@@ -44,7 +44,7 @@ export function createSuccessResult(code: number, data: unknown, context: Contex
   };
 }
 
-export function createErrorResult(code: number, message: string | null, context: Context): Result {
+export function createErrorResult(code: number, message: string | null, context: Context): IHttpResult {
   return { 
     headers: { 'Content-Type': 'application/json', 'X-Invocation-ID': context.invocationId },
     body: { 
@@ -58,9 +58,17 @@ export function createErrorResult(code: number, message: string | null, context:
   };
 }
 
-export interface Result {
+export interface IHttpResult {
   headers?: {[key: string]: string},
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body: any,
   status: number
+}
+
+export interface Result {
+  success: boolean,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  error?: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any,
 }

@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, Result } from '../lib/core';
+import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
 import { checkBindingDataUserId, checkAuthAndConnect } from '../lib/helpers';
 import { profileStore, skillStore, userStore } from '../lib/models/store';
 import { IUser } from '../lib/models/user';
@@ -39,7 +39,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 };
 
-async function getUser(context: Context, userIdent: string): Promise<Result> {
+async function getUser(context: Context, userIdent: string): Promise<IHttpResult> {
   // Attempt to acquire user data
   const user = await userStore.list(userIdent);
   if (!user) {
@@ -54,7 +54,7 @@ async function getUser(context: Context, userIdent: string): Promise<Result> {
   return createSuccessResult(200, user, context);
 }
 
-async function createUser(context: Context, userIdent: string): Promise<Result> {
+async function createUser(context: Context, userIdent: string): Promise<IHttpResult> {
   // Check to see if this user already exists; if so, return error
   const user = await userStore.list(userIdent);
   if (user) {
@@ -91,7 +91,7 @@ async function createUser(context: Context, userIdent: string): Promise<Result> 
   return createSuccessResult(201, userData, context);
 }
 
-async function updateUser(context: Context, userIdent: string): Promise<Result> {
+async function updateUser(context: Context, userIdent: string): Promise<IHttpResult> {
   // For MVP we're allowing users to access only their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {
@@ -118,7 +118,7 @@ async function updateUser(context: Context, userIdent: string): Promise<Result> 
   }
 }
 
-async function deleteUser(context: Context, userIdent: string): Promise<Result> {
+async function deleteUser(context: Context, userIdent: string): Promise<IHttpResult> {
   // For MVP we're allowing users to delete only their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {

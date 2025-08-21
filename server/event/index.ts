@@ -1,5 +1,5 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, Result } from '../lib/core';
+import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
 import { eventStore, userStore } from '../lib/models/store';
 import { checkAuthAndConnect, tryParseDateToISO } from '../lib/helpers';
 import { EDIT_ALL_EVENTS } from '../lib/models/enums/user-role.enum';
@@ -33,7 +33,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   context.res = result;
 };
 
-async function getEvent(context: Context): Promise<Result> {
+async function getEvent(context: Context): Promise<IHttpResult> {
   const eventId = context.bindingData.eventId;
   if (!eventId) {
     return createErrorResult(404, 'Event ID not found', context);
@@ -48,7 +48,7 @@ async function getEvent(context: Context): Promise<Result> {
   return createSuccessResult(200, event, context);
 }
 
-async function createEvent(context: Context, userIdent: string): Promise<Result> {
+async function createEvent(context: Context, userIdent: string): Promise<IHttpResult> {
   // Attempt to acquire current user data
   const user = await userStore.list(userIdent);
   if (!user) {
@@ -75,7 +75,7 @@ async function createEvent(context: Context, userIdent: string): Promise<Result>
   return createSuccessResult(201, eventData, context);
 }
 
-async function updateEvent(context: Context, userIdent: string): Promise<Result> {
+async function updateEvent(context: Context, userIdent: string): Promise<IHttpResult> {
   // Attempt to acquire current user data
   const user = await userStore.list(userIdent);
   if (!user) {
@@ -112,7 +112,7 @@ async function updateEvent(context: Context, userIdent: string): Promise<Result>
   return createSuccessResult(200, eventData, context);
 }
 
-async function deleteEvent(context: Context, userIdent: string): Promise<Result> {
+async function deleteEvent(context: Context, userIdent: string): Promise<IHttpResult> {
   // Attempt to acquire current user data
   const user = await userStore.list(userIdent);
   if (!user) {

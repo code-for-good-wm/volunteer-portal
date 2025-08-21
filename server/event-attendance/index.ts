@@ -1,5 +1,5 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, Result } from '../lib/core';
+import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
 import { eventAttendanceStore } from '../lib/models/store';
 import { checkAuthAndConnect, checkBindingDataUserId } from '../lib/helpers';
 
@@ -32,7 +32,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   context.res = result;
 };
 
-async function getEventAttendance(context: Context, userIdent: string): Promise<Result> {
+async function getEventAttendance(context: Context, userIdent: string): Promise<IHttpResult> {
   // check that a user is accessing their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {
@@ -63,7 +63,7 @@ async function getEventAttendance(context: Context, userIdent: string): Promise<
   return createSuccessResult(200, attendances, context);
 }
 
-async function createEventAttendance(context: Context, userIdent: string): Promise<Result> {
+async function createEventAttendance(context: Context, userIdent: string): Promise<IHttpResult> {
   // check that a user is accessing their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {
@@ -81,7 +81,7 @@ async function createEventAttendance(context: Context, userIdent: string): Promi
   return createSuccessResult(201, attendance, context);
 }
 
-async function updateEventAttendance(context: Context, userIdent: string): Promise<Result> {
+async function updateEventAttendance(context: Context, userIdent: string): Promise<IHttpResult> {
   // check that a user is accessing their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {
@@ -116,7 +116,7 @@ async function updateEventAttendance(context: Context, userIdent: string): Promi
   return createSuccessResult(200, attendanceData, context);
 }
 
-async function deleteEventAttendance(context: Context, userIdent: string): Promise<Result> {
+async function deleteEventAttendance(context: Context, userIdent: string): Promise<IHttpResult> {
   // check that a user is accessing their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {
