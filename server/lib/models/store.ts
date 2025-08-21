@@ -12,6 +12,7 @@ import { IUserSkill, UserSkillModel } from './user-skill';
 import { IProgram, ProgramModel } from './program';
 import { IEvent, EventModel } from './event';
 import { IEventAttendance, EventAttendanceModel } from './event-attendance';
+import { create } from 'domain';
 
 // Database config
 
@@ -61,14 +62,24 @@ export async function connect(log: Logger): Promise<void> {
 }
 
 // Store config
-
-export const optionsStore = {
-  list: async(category: string | undefined) => {
-    // filter by category if we have it
+export const skillOptionsStore = {
+  list: async(code: string) => {
+    return await SkillOptionModel.findOne({ code }).exec();
+  },
+  listAll: async(category: string | undefined) => {
     if (category) {
       return await SkillOptionModel.find({ category } as SkillOption).exec();
     }
-    return await SkillOptionModel.find().exec();
+    return await SkillOptionModel.find();
+  },
+  create: async(skillOption: SkillOption) => {
+    return await SkillOptionModel.create(skillOption);
+  },
+  update: async(_id: mongoose.Types.ObjectId, skillOption: SkillOption) => {
+    return await SkillOptionModel.updateOne({_id}, skillOption);
+  },
+  delete: async(_id: mongoose.Types.ObjectId) => {
+    return await SkillOptionModel.deleteOne({_id});
   }
 };
 
@@ -98,10 +109,12 @@ export const profileStore = {
     return await ProfileModel.find();
   },
   create: async(profile: IProfile) => {
+    profile.updatedDate = new Date().toISOString(); // Update timestamp
     return await ProfileModel.create(profile);
   },
   update: async(_id: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId, profile: IProfile) => {
     profile.user = userId;
+    profile.updatedDate = new Date().toISOString(); // Update timestamp
     return await ProfileModel.updateOne({_id, user: userId}, profile);
   },
   delete: async(_id: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {

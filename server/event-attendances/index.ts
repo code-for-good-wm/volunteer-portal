@@ -1,5 +1,5 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, Result } from '../lib/core';
+import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
 import { eventAttendanceStore, userStore } from '../lib/models/store';
 import { checkAuthAndConnect } from '../lib/helpers';
 import { READ_ALL_EVENTS } from '../lib/models/enums/user-role.enum';
@@ -24,7 +24,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   context.res = result;
 };
 
-async function getEventAttendances(context: Context, userIdent: string): Promise<Result> {
+async function getEventAttendances(context: Context, userIdent: string): Promise<IHttpResult> {
   // Attempt to acquire user data
   const user = await userStore.list(userIdent);
   if (!user) {

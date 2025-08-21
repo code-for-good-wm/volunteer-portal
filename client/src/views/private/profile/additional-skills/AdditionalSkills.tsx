@@ -147,7 +147,7 @@ const AdditionalSkills = () => {
         <div className="contentCard profileCard basicInformationProfileCard">
           <div className="cardHeadingWithNote">
             <h2>
-              Additional Skills
+              Additional Skillset
             </h2>
             <span className="note">
               <span className="sup red">

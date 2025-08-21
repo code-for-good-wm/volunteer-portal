@@ -51,3 +51,5 @@ __azurite_db*__.json
 
 #ios
 **/.DS_Store
+
+compose.yml

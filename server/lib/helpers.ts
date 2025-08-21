@@ -2,16 +2,17 @@
 import { Context, HttpRequest, Logger } from '@azure/functions';
 import { getAuth, DecodedIdToken } from 'firebase-admin/auth';
 import { fbApp } from './firebase/init';
-import { createErrorResult, createSuccessResult, Result } from './core';
+import { createErrorResult, createSuccessResult, IHttpResult, Result } from './core';
 import { connect, userStore } from './models/store';
 import fetch from 'node-fetch';
 import { IUser } from './models/user';
 import { Types } from 'mongoose';
+import { UserRole } from './models/enums/user-role.enum';
 
 type CheckRequestAuth = (authorization: string | undefined, logger: Logger) => Promise<DecodedIdToken | null>
-type CheckBindingDataUserId = (context: Context, userIdent: string) => Promise<Result>
-type CheckAuthAndConnect = (context: Context, req: HttpRequest) => Promise<{ uid: string, result?: Result }>
-type SendTemplateEmail = (recipientEmail: string, templateId: string, templateData: any, context: Context) => Promise<Result>
+type CheckBindingDataUserId = (context: Context, userIdent: string) => Promise<IHttpResult>
+type CheckAuthAndConnect = (context: Context, req: HttpRequest) => Promise<{ uid: string, result?: IHttpResult }>
+type SendTemplateEmail = (recipientEmail: string, templateId: string, templateData: any, context: Context) => Promise<IHttpResult>
 
 // Set SendGrid variables
 const senderEmail = 'volunteer@codeforgoodwm.org';
@@ -56,7 +57,7 @@ export const checkRequestAuth: CheckRequestAuth = (authorization, logger) => {
  * Returns a Result with the user data or an error
  * @param {Context} context - Azure function context
  * @param {string} userIdent - the user's identifier from the app's auth system
- * @returns {Promise<Result>}
+ * @returns {Promise<IHttpResult>}
  */
 export const checkBindingDataUserId: CheckBindingDataUserId = async (context: Context, userIdent: string) => {
   // Attempt to acquire user data from userIdent
@@ -120,6 +121,23 @@ export const checkAuthAndConnect: CheckAuthAndConnect = async (context: Context,
   return { uid };
 };
 
+export const checkRole = async (context: Context, req: HttpRequest, roles: UserRole[]) => {
+  const { uid, result } = await checkAuthAndConnect(context, req);
+
+  // result will be non-null if there was an error
+  if (result) {
+    return { success: false, error: result };
+  }
+
+  // Check if user has the required role
+  const user = await userStore.list(uid);
+  if (!user || !roles.includes(user.userRole)) {
+    return { success: false, error: createErrorResult(403, 'Forbidden', context) };
+  }
+
+  return { success: true, data: user } as Result;
+}
+
 /**
  * Send template email w/SendGrid
  * Returns a Result based on SendGrid's response
@@ -127,7 +145,7 @@ export const checkAuthAndConnect: CheckAuthAndConnect = async (context: Context,
  * @param {string} templateId - A string identifier for the template to be used
  * @param {any} templateData - An object of property/value pairs used by the template
  * @param {Context} context - The Azure function invocation context
- * @returns {Promise<Result>}
+ * @returns {Promise<IHttpResult>}
  */
 export const sendTemplateEmail: SendTemplateEmail = async (recipientEmail: string, templateId: string, templateData: any, context: Context) => {
   // Build request

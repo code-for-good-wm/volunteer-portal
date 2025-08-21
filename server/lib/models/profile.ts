@@ -15,11 +15,13 @@ export interface IAgreements {
 export interface IProfile {
   _id?: Types.ObjectId;
   user: IUser['_id'];
-  completionDate?: string; // ISO date; timestamp of initial profile completion
   roles: Role[];
+  preferredName?: string;
+  pronouns?: string;
   linkedInUrl?: string;
   websiteUrl?: string;
   portfolioUrl?: string;
+  currentEmployer?: string; // Sponsorship opportunity
   previousVolunteer?: boolean;
   teamLeadCandidate?:boolean;
   shirtSize?: ShirtSize;
@@ -29,15 +31,19 @@ export interface IProfile {
   agreements?: IAgreements;
   skills: Types.DocumentArray<IUserSkill>;
   additionalSkills?: string;
+  completionDate?: string; // ISO date; timestamp of initial profile completion
+  updatedDate?: string; // ISO date; timestamp of last profile update
 }
 
 const profileSchema = new Schema<IProfile>({
   user: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
-  completionDate: String,
   roles: [{ type: String, enum: Role }], // array of Role
+  preferredName: String,
+  pronouns: String,
   linkedInUrl: String,
   websiteUrl: String,
   portfolioUrl: String,
+  currentEmployer: String,
   previousVolunteer: Boolean,
   teamLeadCandidate: Boolean,
   shirtSize: { type: String, enum: ShirtSize },
@@ -50,7 +56,8 @@ const profileSchema = new Schema<IProfile>({
     codeOfConduct: String,
   }),
   skills: [{ type: Schema.Types.ObjectId, ref: 'UserSkill' }],
-  additionalSkills: String
+  additionalSkills: String,
+  completionDate: String
 }, MongooseOpts);
 
 export const ProfileModel = model<IProfile>('Profile', profileSchema);

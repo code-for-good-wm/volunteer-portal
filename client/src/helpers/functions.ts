@@ -5,7 +5,7 @@ import { updateAlert } from '../store/alertSlice';
 import { updateAuth } from '../store/authSlice';
 import { updateProfile } from '../store/profileSlice';
 import { store } from '../store/store';
-import { PrimaryProfileSectionId, SkillCode, UserSkill, UserSkillData } from '../types/profile';
+import { PrimaryProfileSectionId, UserSkill, UserSkillData } from '../types/profile';
 import { profileStructure } from './constants';
 
 /**
@@ -242,8 +242,8 @@ export const convertSkillDataToArray = (skillData: UserSkillData) => {
   const entries = Object.entries(skillData); // example: [ 'nameOfCode', '0' ]
 
   const arr: UserSkill[] = entries.map((entry) => {
-    const code = entry[0] as SkillCode;
-    const level = entry[1];
+    const code = entry[0] as string;
+    const level = entry[1] ?? 0;
 
     return { code, level };
   });
@@ -268,9 +268,12 @@ export const getGettingStartedProfileData = () => {
   // Pull profile and return data
   const { name, phone } = user;
   const {
+    preferredName,
+    pronouns,
     linkedInUrl,
     websiteUrl,
     portfolioUrl,
+    currentEmployer,
     previousVolunteer,
     teamLeadCandidate,
     shirtSize,
@@ -285,16 +288,19 @@ export const getGettingStartedProfileData = () => {
       basicInfo: {
         name,
         phone: parsePhone(phone).formatted,
+        preferredName: preferredName ?? '',
+        pronouns: pronouns ?? ''
       },
       contactInfo: {
         linkedInUrl: linkedInUrl ?? '',
         websiteUrl: websiteUrl ?? '',
         portfolioUrl: portfolioUrl ?? '',
+        currentEmployer: currentEmployer ?? '',
       },
       extraStuff: {
         previousVolunteer: !!previousVolunteer, // Could be undefined
         teamLeadCandidate: !!teamLeadCandidate,  // Could be undefined
-        shirtSize: shirtSize ?? '',
+        shirtSize: shirtSize ?? 'none',
         dietaryRestrictions,
         additionalDietaryRestrictions: additionalDietaryRestrictions ?? '',
       },

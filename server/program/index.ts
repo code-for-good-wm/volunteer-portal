@@ -1,5 +1,5 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, Result } from '../lib/core';
+import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
 import { programStore, userStore } from '../lib/models/store';
 import { checkAuthAndConnect } from '../lib/helpers';
 import { EDIT_ALL_EVENTS } from '../lib/models/enums/user-role.enum';
@@ -33,7 +33,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   context.res = result;
 };
 
-async function getProgram(context: Context): Promise<Result> {
+async function getProgram(context: Context): Promise<IHttpResult> {
   const programId = context.bindingData.programId;
   if (!programId) {
     return createErrorResult(404, 'Program not found', context);
@@ -48,7 +48,7 @@ async function getProgram(context: Context): Promise<Result> {
   return createSuccessResult(200, program, context);
 }
 
-async function createProgram(context: Context, userIdent: string): Promise<Result> {
+async function createProgram(context: Context, userIdent: string): Promise<IHttpResult> {
   // Attempt to acquire current user data
   const user = await userStore.list(userIdent);
   if (!user) {
@@ -67,7 +67,7 @@ async function createProgram(context: Context, userIdent: string): Promise<Resul
   return createSuccessResult(201, programData, context);
 }
 
-async function updateProgram(context: Context, userIdent: string): Promise<Result> {
+async function updateProgram(context: Context, userIdent: string): Promise<IHttpResult> {
   // Attempt to acquire current user data
   const user = await userStore.list(userIdent);
   if (!user) {
@@ -96,7 +96,7 @@ async function updateProgram(context: Context, userIdent: string): Promise<Resul
   return createSuccessResult(200, programData, context);
 }
 
-async function deleteProgram(context: Context, userIdent: string): Promise<Result> {
+async function deleteProgram(context: Context, userIdent: string): Promise<IHttpResult> {
   // Attempt to acquire current user data
   const user = await userStore.list(userIdent);
   if (!user) {
