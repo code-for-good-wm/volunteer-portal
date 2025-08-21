@@ -405,6 +405,10 @@ export const otherExperience: Skill[] = [
     description: 'Agentic Coding'
   },
   {
+    code: 'cybersecurity',
+    description: 'Cybersecurity'
+  },
+  {
     code: 'projMgmt',
     description: 'Project Management'
   },
