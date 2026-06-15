@@ -80,7 +80,8 @@ async function exportUsersAndProfiles(context: Context, userIdent: string): Prom
     const csvRecord: any = {
       id: userId,
       email: user.email,
-      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
       preferredName: profile?.preferredName,
       phone: user.phone,
       pronouns: profile?.pronouns,

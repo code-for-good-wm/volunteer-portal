@@ -28,7 +28,8 @@ import { getGettingStartedProfileData, navigateToNextProfileSection, parsePhone 
 import { testPhone } from '../../../../helpers/validation';
 
 type BasicInfoForm = {
-  name: string,
+  firstName: string,
+  lastName: string,
   preferredName?: string,
   pronouns?: string,
   phone: string,
@@ -63,7 +64,8 @@ type AgreementUpdate = {
 
 const GettingStarted = () => {
   const [basicInfoForm, setBasicInfoForm] = useState<BasicInfoForm>({
-    name: '',
+    firstName: '',
+    lastName: '',
     preferredName: '',
     pronouns: '',
     phone: '',
@@ -139,10 +141,11 @@ const GettingStarted = () => {
   // Test for form validity
   useEffect(() => {
     const testBasicInfoForm = () => {
-      const nameTrimmed = basicInfoForm.name.trim();
+      const firstNameTrimmed = basicInfoForm.firstName.trim();
+      const lastNameTrimmed = basicInfoForm.lastName.trim();
       const phoneTrimmed = parsePhone(basicInfoForm.phone).number;
 
-      if (nameTrimmed.length < 3 || !testPhone(phoneTrimmed)) {
+      if (!firstNameTrimmed || !lastNameTrimmed || !testPhone(phoneTrimmed)) {
         return false;
       }
 
@@ -175,11 +178,21 @@ const GettingStarted = () => {
   }, [basicInfoForm, contactInfoForm, extraStuff, agreements]);
 
   // Handlers
-  const handleName = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFirstName = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setBasicInfoForm((prevState) => ({
       ...prevState,
-      name: value,
+      firstName: value,
+      showAlert: false,
+      alertText: '',
+    }));
+  };
+
+  const handleLastName = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setBasicInfoForm((prevState) => ({
+      ...prevState,
+      lastName: value,
       showAlert: false,
       alertText: '',
     }));
@@ -332,7 +345,8 @@ const GettingStarted = () => {
 
   const handleNext = () => {
     // Prep data
-    const name = basicInfoForm.name.trim();
+    const firstName = basicInfoForm.firstName.trim();
+    const lastName = basicInfoForm.lastName.trim();
     const phone = parsePhone(basicInfoForm.phone).number;
     const preferredName = basicInfoForm.preferredName?.trim() || '';
     const pronouns = basicInfoForm.pronouns?.trim() || '';
@@ -382,7 +396,8 @@ const GettingStarted = () => {
     };
 
     const userUpdate: UserUpdate = {
-      name,
+      firstName,
+      lastName,
       phone,
     };
 
@@ -460,18 +475,37 @@ const GettingStarted = () => {
           <div className="divider" />
           <section className="bottomPadding">
             <form className="profileForm">
-              <div className="textFieldWrapperMedium">
+              <div className="textFieldRow">
                 <TextField
                   variant="outlined"
                   fullWidth
                   margin="dense"
                   size="medium"
-                  id="name"
-                  name="name"
+                  id="firstName"
+                  name="firstName"
                   type="text"
-                  label={<TextFieldLabel label="First and Last Name" required />}
-                  value={basicInfoForm.name}
-                  onChange={handleName}
+                  label={<TextFieldLabel label="First Name" required />}
+                  value={basicInfoForm.firstName}
+                  onChange={handleFirstName}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <BadgeOutlined />
+                      </InputAdornment>
+                    )
+                  }}
+                />
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  margin="dense"
+                  size="medium"
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  label={<TextFieldLabel label="Last Name" required />}
+                  value={basicInfoForm.lastName}
+                  onChange={handleLastName}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">

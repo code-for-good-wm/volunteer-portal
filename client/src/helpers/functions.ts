@@ -266,7 +266,7 @@ export const getGettingStartedProfileData = () => {
   }
 
   // Pull profile and return data
-  const { name, phone } = user;
+  const { firstName, lastName, phone } = user;
   const {
     preferredName,
     pronouns,
@@ -286,7 +286,8 @@ export const getGettingStartedProfileData = () => {
   return (
     {
       basicInfo: {
-        name,
+        firstName,
+        lastName,
         phone: parsePhone(phone).formatted,
         preferredName: preferredName ?? '',
         pronouns: pronouns ?? ''
