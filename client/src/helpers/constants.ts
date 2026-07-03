@@ -3,7 +3,8 @@ import { User } from '../types/user';
 
 export const testUserData: User = {
   _id: '76iatw8omMRPY5VmwIf9HqrlSTe2',
-  name: '',
+  firstName: 'Sloth',
+  lastName: 'I',
   email: 'test1@slothwerks.com',
   phone: '',
   userRole: 'volunteer'
