@@ -344,6 +344,16 @@ export const getAdditionalSkills = () => {
 };
 
 /**
+ * Pull the user's saved profile and return the profile's
+ * aiSkills (a string)
+ */
+export const getAiSkills = () => {
+  const appState = store.getState();
+  const profile = appState.profile.data;
+  return profile?.aiSkills;
+};
+
+/**
  * Returns the string as title case e.g. A Title String
  */
 export const toTitleCase = (str: string) => {

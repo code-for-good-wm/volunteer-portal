@@ -423,7 +423,11 @@ export const otherExperience: Skill[] = [
   },
   {
     code: 'crm',
-    description: 'CRM Tools (e.g. Salesforce)'
+    description: 'CRM Tools'
+  },
+  {
+    code: 'salesforce',
+    description: 'Salesforce'
   },
   {
     code: 'marketing',

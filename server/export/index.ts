@@ -109,6 +109,7 @@ async function exportUsersAndProfiles(context: Context, userIdent: string): Prom
     }
 
     csvRecord.additionalSkills = profile?.additionalSkills;
+    csvRecord.aiSkills = profile?.aiSkills;
 
     csvData.push(csvRecord);
   }

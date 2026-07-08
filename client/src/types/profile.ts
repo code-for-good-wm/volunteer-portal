@@ -71,6 +71,7 @@ export interface Profile {
   agreements?: Agreements;
   skills: UserSkill[];
   additionalSkills?: string;
+  aiSkills?: string;
   completionDate?: string; // ISO date
   updatedDate?: string; // ISO date; timestamp of last profile update
 }
@@ -92,6 +93,7 @@ export interface ProfileUpdate {
   agreements?: Agreements;
   skills?: UserSkill[];
   additionalSkills?: string;
+  aiSkills?: string;
   completionDate?: string; // ISO date
 }
 
