@@ -203,7 +203,12 @@ export const defaultSkillOptions: SkillOption[] = [
   },
   {
     code: 'crm',
-    description: 'CRM Tools (e.g. Salesforce)',
+    description: 'CRM Tools',
+    category: 'other'
+  },
+  {
+    code: 'salesforce',
+    description: 'Salesforce',
     category: 'other'
   },
   {

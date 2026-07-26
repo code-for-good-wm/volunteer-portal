@@ -13,7 +13,7 @@ import SkillCard from '../../../../components/cards/SkillCard';
 
 import { TextField } from '@mui/material';
 
-import { convertSkillDataToObject, getAdditionalSkills, getUserSkills } from '../../../../helpers/functions';
+import { convertSkillDataToObject, getAdditionalSkills, getAiSkills, getUserSkills } from '../../../../helpers/functions';
 import { updateAdditionalSkills } from '../../../../services/profile';
 import { skillLevels, otherExperience } from '../../../../helpers/constants';
 
@@ -21,6 +21,8 @@ const AdditionalSkills = () => {
   const [otherExperienceLevels, setOtherExperienceLevels] = useState<ProfileSkill[]>([]);
   
   const [otherSkills, setOtherSkills] = useState('');
+
+  const [aiSkills, setAiSkills] = useState('');
 
   const [processing, setProcessing] = useState(false);
 
@@ -55,9 +57,11 @@ const AdditionalSkills = () => {
     });
 
     const otherSkillsContent = getAdditionalSkills() ?? '';
+    const aiSkillsContent = getAiSkills() ?? '';
 
     setOtherExperienceLevels(populatedOtherExperienceLevels);
     setOtherSkills(otherSkillsContent);
+    setAiSkills(aiSkillsContent);
   }, []);
 
   const handleOtherExperienceLevelUpdate = (skillData: UserSkill) => {
@@ -80,6 +84,11 @@ const AdditionalSkills = () => {
   const handleOtherSkills = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setOtherSkills(value);
+  };
+
+  const handleAiSkills = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setAiSkills(value);
   };
 
   const handleBack = () => {
@@ -114,6 +123,7 @@ const AdditionalSkills = () => {
     updateAdditionalSkills({
       skills: skillUpdate,
       additionalSkills: otherSkills,
+      aiSkills,
       success,
       failure
     });
@@ -200,6 +210,29 @@ const AdditionalSkills = () => {
                 multiline={true}
                 rows={2}
                 onChange={handleOtherSkills}
+              />
+            </form>
+          </section>
+
+          {/* AI Skills */}
+
+          <section>
+            <form className="profileForm">
+              <p className="profileQuestion" id="aiSkills">
+                <span className="question">
+                  Any other AI tools or experience you want to share?
+                </span>
+              </p>
+              <TextField
+                margin="normal"
+                fullWidth
+                aria-labelledby="aiSkills"
+                name="aiSkills"
+                value={aiSkills}
+                placeholder="e.g. prompt engineering, specific LLMs/agents, AI-assisted development tools."
+                multiline={true}
+                rows={2}
+                onChange={handleAiSkills}
               />
             </form>
           </section>

@@ -70,7 +70,8 @@ async function createUser(context: Context, userIdent: string): Promise<IHttpRes
   const newUser: IUser = {
     ident: userIdent,
     authProvider: 'firebase',
-    name: '',
+    firstName: '',
+    lastName: '',
     phone: '',
     email,
     userRole: UserRole.VOLUNTEER

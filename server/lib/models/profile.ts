@@ -31,6 +31,7 @@ export interface IProfile {
   agreements?: IAgreements;
   skills: Types.DocumentArray<IUserSkill>;
   additionalSkills?: string;
+  aiSkills?: string;
   completionDate?: string; // ISO date; timestamp of initial profile completion
   updatedDate?: string; // ISO date; timestamp of last profile update
 }
@@ -57,6 +58,7 @@ const profileSchema = new Schema<IProfile>({
   }),
   skills: [{ type: Schema.Types.ObjectId, ref: 'UserSkill' }],
   additionalSkills: String,
+  aiSkills: String,
   completionDate: String
 }, MongooseOpts);
 

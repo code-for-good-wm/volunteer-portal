@@ -29,7 +29,7 @@ import { Attendance } from '../../../types/event';
 import { selectAllAttendances } from '../../../store/eventAttendanceSlice';
 
 interface Column {
-  id: 'userRole' | 'name' | 'email' | 'phone' | 'roles' | 'previousVolunteer' | 'teamLeadCandidate' 
+  id: 'userRole' | 'firstName' | 'lastName' | 'email' | 'phone' | 'roles' | 'previousVolunteer' | 'teamLeadCandidate'
     | 'shirtSize' | 'dietaryRestrictions' | 'additionalDietaryRestrictions' | 'accessibilityRequirements'
     | 'photoRelease' | 'hasSkills' | 'attendance';
   label: string;
@@ -41,7 +41,8 @@ interface Column {
 
 const columns: Column[] = [
   { id: 'userRole', label: 'Type', minWidth: 100, format: (value: string) => toTitleCase(value) },
-  { id: 'name', label: 'Name', minWidth: 170 },
+  { id: 'firstName', label: 'First Name', minWidth: 170 },
+  { id: 'lastName', label: 'Last Name', minWidth: 170 },
   { id: 'email', label: 'Email', minWidth: 170 },
   { id: 'phone', label: 'Phone #', minWidth: 170, format: (value: string) => value ? parsePhone(value).formatted : '' },
   { id: 'roles', label: 'Roles', minWidth: 100, format: (value: Role[]) => toTitleCase(value.join(', ')) },
@@ -59,7 +60,8 @@ const columns: Column[] = [
 type Data = {
   id: string;
   userRole: UserRole;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   phone: string;
   roles: Role[];
@@ -123,7 +125,8 @@ const Users = () => {
       const row = {
         id: user._id,
         userRole: user.userRole,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         phone: user.phone,
         roles: profile?.roles ?? [],
@@ -160,7 +163,11 @@ const Users = () => {
 
     const searchVal = filter.toLocaleLowerCase();
 
-    return rows.filter(r => r.email?.includes(searchVal) || r.name?.includes(searchVal));
+    return rows.filter(r =>
+      r.email?.toLocaleLowerCase().includes(searchVal)
+      || r.firstName?.toLocaleLowerCase().includes(searchVal)
+      || r.lastName?.toLocaleLowerCase().includes(searchVal)
+    );
   }, [filter, rows]);
 
   const handleChangePage = (_: unknown, newPage: number) => {
