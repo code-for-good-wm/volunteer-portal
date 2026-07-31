@@ -6,7 +6,8 @@ export interface IUser {
   _id?: Types.ObjectId,
   ident: string, // unique identifier for user from auth provider
   authProvider: string, // track the auth provider in case of conflicts
-  name: string,
+  firstName: string,
+  lastName: string,
   email: string,
   phone: string,
   emailValidated?: boolean
@@ -16,7 +17,8 @@ export interface IUser {
 export const UserModel = model<IUser>('User', new Schema({
   ident: { type: String, required: true },
   authProvider: { type: String, required: true },
-  name: String,
+  firstName: String,
+  lastName: String,
   email: { type: String, required: true },
   phone: String,
   emailValidated: Boolean,

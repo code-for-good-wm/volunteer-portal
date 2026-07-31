@@ -250,6 +250,7 @@ export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParam
   const {
     skills,
     additionalSkills,
+    aiSkills,
     success,
     failure
   } = params;
@@ -294,6 +295,7 @@ export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParam
     const profileUpdate: ProfileUpdate = {
       skills: skillUpdate,
       additionalSkills,
+      aiSkills,
     };
 
     // If this is the first completion of the profile section, 

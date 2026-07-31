@@ -49,7 +49,8 @@ export interface UpdateUserSkillsParams extends ServiceParams {
 
 export interface UpdateAdditionalSkillsParams extends ServiceParams {
   skills: UserSkill[],
-  additionalSkills: string
+  additionalSkills: string,
+  aiSkills: string
 }
 
 export interface UpdateEventAttendanceParams extends ServiceParams {
