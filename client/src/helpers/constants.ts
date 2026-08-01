@@ -613,3 +613,21 @@ export const usStateAbbreviations: Record<string, string> = {
   Wisconsin: 'WI',
   Wyoming: 'WY',
 };
+
+export const brandAssetsStatusOptions: {
+  id: 'yes' | 'partial' | 'no';
+  label: string;
+}[] = [
+  { id: 'yes', label: 'Yes' },
+  { id: 'partial', label: 'Partial' },
+  { id: 'no', label: 'No' },
+];
+
+export const onsiteContactAvailabilityOptions: {
+  id: 'in-person' | 'remote' | 'none';
+  label: string;
+}[] = [
+  { id: 'in-person', label: 'In person' },
+  { id: 'remote', label: 'Remote' },
+  { id: 'none', label: 'None' },
+];

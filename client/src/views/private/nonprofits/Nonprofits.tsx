@@ -29,7 +29,7 @@ import PageLayout from '../../../layouts/PageLayout';
 import StatusChip, { StatusChipTheme } from '../../../components/elements/StatusChip';
 import { colors } from '../../../material/colors';
 
-type FilterId = 'interested' | 'archived' | 'accepted' | 'rejected' | 'all';
+type FilterId = 'interested' | 'archived' | 'accepted' | 'all';
 
 const filterTabs: { id: FilterId, label: string }[] = [
   { id: 'interested', label: 'Interested' },
@@ -41,7 +41,6 @@ const filterTabs: { id: FilterId, label: string }[] = [
 const statusDisplay: Record<NonprofitStatus, { label: string, theme: StatusChipTheme }> = {
   interested: { label: 'Interested', theme: 'teal' },
   accepted: { label: 'Accepted', theme: 'success' },
-  rejected: { label: 'Declined', theme: 'neutral' },
   archived: { label: 'Archived', theme: 'neutral' },
 };
 
@@ -107,7 +106,7 @@ const Nonprofits = () => {
   }, [nonprofitsData, projectsData]);
 
   const filterCounts = useMemo(() => {
-    const counts: Record<FilterId, number> = { interested: 0, archived: 0, accepted: 0, rejected: 0, all: rows.length };
+    const counts: Record<FilterId, number> = { interested: 0, archived: 0, accepted: 0, all: rows.length };
     for (const row of rows) {
       counts[row.status] += 1;
     }
@@ -201,7 +200,7 @@ const Nonprofits = () => {
                     <StyledTableCell>Contact</StyledTableCell>
                     <StyledTableCell>Requested Project</StyledTableCell>
                     <StyledTableCell>Submitted</StyledTableCell>
-                    <StyledTableCell>State</StyledTableCell>
+                    <StyledTableCell>Status</StyledTableCell>
                     <StyledTableCell />
                   </TableRow>
                 </TableHead>

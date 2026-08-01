@@ -8,6 +8,8 @@ import eventAttendancesReducer from './eventAttendanceSlice';
 import programsReducer from './programsSlice';
 import nonprofitsReducer from './nonprofitsSlice';
 import projectsReducer from './projectsSlice';
+import positionsReducer from './positionsSlice';
+import slotsReducer from './slotsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +22,8 @@ export const store = configureStore({
     programs: programsReducer,
     nonprofits: nonprofitsReducer,
     projects: projectsReducer,
+    positions: positionsReducer,
+    slots: slotsReducer,
   },
 });
 

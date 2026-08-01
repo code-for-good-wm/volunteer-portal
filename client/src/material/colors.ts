@@ -19,6 +19,8 @@ export const colors = {
     success: '#216944',
     neutralSurface: '#E5E6EA',
     neutral: '#676C7E',
+    errorSurface: '#FBE9E7',
+    error: '#B3261E',
   },
   surface: {
     page: '#F8F8F9',

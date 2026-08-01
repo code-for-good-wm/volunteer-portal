@@ -121,7 +121,7 @@ const NonprofitForm = () => {
   const backTarget = isEdit ? `/nonprofits/${nonprofitId}` : '/nonprofits';
 
   const handleCancel = () => {
-    navigate(backTarget);
+    navigate(-1);
   };
 
   const handleSave = () => {
@@ -178,10 +178,10 @@ const NonprofitForm = () => {
       <div className="fullViewContainer">
         <div className="gutters">
           <a
-            onClick={() => navigate(backTarget)}
+            onClick={() => navigate(-1)}
             style={{ cursor: 'pointer', color: colors.text.secondary, fontSize: 15 }}
           >
-            ← Back to {isEdit ? 'nonprofit' : 'nonprofits'}
+            ← Back
           </a>
 
           <h1 style={{ textAlign: 'center', color: colors.teal.main }}>

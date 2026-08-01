@@ -311,7 +311,7 @@ export const projectStore = {
     return await ProjectModel.create(project);
   },
   update: async (_id: mongoose.Types.ObjectId, project: IProject) => {
-    return await ProjectModel.updateOne({ _id }, project);
+    return await ProjectModel.findOneAndUpdate({ _id }, project, { new: true });
   },
   delete: async (_id: mongoose.Types.ObjectId) => {
     return await ProjectModel.deleteOne({ _id });

@@ -66,12 +66,21 @@ async function createProject(
     return createErrorResult(404, 'User not found', context);
   }
 
-  // Any authenticated user may submit a project on behalf of a nonprofit (intake);
-  // status/event are always forced regardless of what was submitted, so submissions
-  // always start in the 'interested' state until board/admin acts on them.
+  // This is the admin "add a project manually" flow; only board/admin can use it.
+  if (!EDIT_ALL_PROJECTS.includes(user.userRole)) {
+    return createErrorResult(403, 'Forbidden', context);
+  }
+
   const projectCreate = context.req?.body;
-  projectCreate.status = ProjectStatus.INTERESTED;
-  projectCreate.event = undefined;
+  // Only the two states this form's Save buttons offer are valid at creation;
+  // anything else (or missing) falls back to 'proposed'.
+  const allowedCreateStatuses = [
+    ProjectStatus.PROPOSED,
+    ProjectStatus.ACCEPTED,
+  ];
+  projectCreate.status = allowedCreateStatuses.includes(projectCreate.status)
+    ? projectCreate.status
+    : ProjectStatus.PROPOSED;
   projectCreate.submittedAt = new Date();
 
   const projectData = await projectStore.create(projectCreate);
