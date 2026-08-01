@@ -4,19 +4,24 @@ import { getAuth } from 'firebase/auth';
 import { Profile, ProfileUpdate, UserSkill } from '../types/profile';
 import { User } from '../types/user';
 import { updateAuth } from '../store/authSlice';
-import { UpdateAdditionalSkillsParams, UpdateGettingStartedProfileDataParams, UpdateUserRolesParams, UpdateUserSkillsParams } from '../types/services';
+import {
+  UpdateAdditionalSkillsParams,
+  UpdateGettingStartedProfileDataParams,
+  UpdateUserRolesParams,
+  UpdateUserSkillsParams,
+} from '../types/services';
 
 import { updateProfile } from '../store/profileSlice';
 import { updateAlert } from '../store/alertSlice';
-import { designSkillCodes, otherSkillCodes, technicalSkillCodes } from '../helpers/constants';
+import {
+  designSkillCodes,
+  otherSkillCodes,
+  technicalSkillCodes,
+} from '../helpers/constants';
 import { getApiBaseUrl, getDefaultRequestHeaders } from '../helpers/functions';
 
 export const updateUserRoles = async (params: UpdateUserRolesParams) => {
-  const {
-    roles,
-    success,
-    failure
-  } = params;
+  const { roles, success, failure } = params;
 
   const auth = getAuth();
   const appState = store.getState();
@@ -24,7 +29,7 @@ export const updateUserRoles = async (params: UpdateUserRolesParams) => {
   try {
     // Acquire bearer token
     const fbUser = auth.currentUser;
-    const token = await fbUser?.getIdToken() || '';
+    const token = (await fbUser?.getIdToken()) || '';
 
     const userId = appState.auth.user?._id;
 
@@ -44,13 +49,13 @@ export const updateUserRoles = async (params: UpdateUserRolesParams) => {
       throw new Error('Failed to update user profile.');
     }
 
-    const newProfileData = await profileResponse.json() as Profile;
+    const newProfileData = (await profileResponse.json()) as Profile;
 
     // Update local data
     store.dispatch(
       updateProfile({
         data: newProfileData,
-      })
+      }),
     );
 
     if (success) {
@@ -65,7 +70,7 @@ export const updateUserRoles = async (params: UpdateUserRolesParams) => {
         visible: true,
         theme: 'error',
         content: message,
-      })
+      }),
     );
 
     if (failure) {
@@ -74,13 +79,10 @@ export const updateUserRoles = async (params: UpdateUserRolesParams) => {
   }
 };
 
-export const updateGettingStartedProfileData = async (params: UpdateGettingStartedProfileDataParams) => {
-  const {
-    userUpdate,
-    profileUpdate,
-    success,
-    failure
-  } = params;
+export const updateGettingStartedProfileData = async (
+  params: UpdateGettingStartedProfileDataParams,
+) => {
+  const { userUpdate, profileUpdate, success, failure } = params;
 
   const auth = getAuth();
   const appState = store.getState();
@@ -88,7 +90,7 @@ export const updateGettingStartedProfileData = async (params: UpdateGettingStart
   try {
     // Acquire bearer token
     const fbUser = auth.currentUser;
-    const token = await fbUser?.getIdToken() || '';
+    const token = (await fbUser?.getIdToken()) || '';
 
     const userId = appState.auth.user?._id;
 
@@ -98,20 +100,20 @@ export const updateGettingStartedProfileData = async (params: UpdateGettingStart
     const userResponse = await fetch(userUrl, {
       method: 'PUT',
       headers: getDefaultRequestHeaders(token),
-      body: JSON.stringify(userUpdate)
+      body: JSON.stringify(userUpdate),
     });
 
     if (!userResponse.ok) {
       throw new Error('Failed to update user data.');
     }
 
-    const newUserData = await userResponse.json() as User;
+    const newUserData = (await userResponse.json()) as User;
 
     // Update local data
     store.dispatch(
       updateAuth({
         user: newUserData,
-      })
+      }),
     );
 
     // Attempt profile update
@@ -127,13 +129,13 @@ export const updateGettingStartedProfileData = async (params: UpdateGettingStart
       throw new Error('Failed to update user profile.');
     }
 
-    const newProfileData = await profileResponse.json() as Profile;
+    const newProfileData = (await profileResponse.json()) as Profile;
 
     // Update local data
     store.dispatch(
       updateProfile({
         data: newProfileData,
-      })
+      }),
     );
 
     if (success) {
@@ -148,7 +150,7 @@ export const updateGettingStartedProfileData = async (params: UpdateGettingStart
         visible: true,
         theme: 'error',
         content: message,
-      })
+      }),
     );
 
     if (failure) {
@@ -158,11 +160,7 @@ export const updateGettingStartedProfileData = async (params: UpdateGettingStart
 };
 
 export const updateUserSkills = async (params: UpdateUserSkillsParams) => {
-  const {
-    skills,
-    success,
-    failure
-  } = params;
+  const { skills, success, failure } = params;
 
   const auth = getAuth();
   const appState = store.getState();
@@ -185,7 +183,7 @@ export const updateUserSkills = async (params: UpdateUserSkillsParams) => {
       merge = {
         _id: existing._id,
         code: skill.code,
-        level: skill.level
+        level: skill.level,
       };
     } else {
       merge = skill;
@@ -196,7 +194,7 @@ export const updateUserSkills = async (params: UpdateUserSkillsParams) => {
   try {
     // Acquire bearer token
     const fbUser = auth.currentUser;
-    const token = await fbUser?.getIdToken() || '';
+    const token = (await fbUser?.getIdToken()) || '';
 
     const userId = appState.auth.user?._id;
 
@@ -216,13 +214,13 @@ export const updateUserSkills = async (params: UpdateUserSkillsParams) => {
       throw new Error('Failed to update user profile.');
     }
 
-    const newProfileData = await profileResponse.json() as Profile;
+    const newProfileData = (await profileResponse.json()) as Profile;
 
     // Update local data
     store.dispatch(
       updateProfile({
         data: newProfileData,
-      })
+      }),
     );
 
     if (success) {
@@ -237,7 +235,7 @@ export const updateUserSkills = async (params: UpdateUserSkillsParams) => {
         visible: true,
         theme: 'error',
         content: message,
-      })
+      }),
     );
 
     if (failure) {
@@ -246,14 +244,10 @@ export const updateUserSkills = async (params: UpdateUserSkillsParams) => {
   }
 };
 
-export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParams) => {
-  const {
-    skills,
-    additionalSkills,
-    aiSkills,
-    success,
-    failure
-  } = params;
+export const updateAdditionalSkills = async (
+  params: UpdateAdditionalSkillsParams,
+) => {
+  const { skills, additionalSkills, aiSkills, success, failure } = params;
 
   const auth = getAuth();
   const appState = store.getState();
@@ -276,7 +270,7 @@ export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParam
       merge = {
         _id: existing._id,
         code: skill.code,
-        level: skill.level
+        level: skill.level,
       };
     } else {
       merge = skill;
@@ -287,7 +281,7 @@ export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParam
   try {
     // Acquire bearer token
     const fbUser = auth.currentUser;
-    const token = await fbUser?.getIdToken() || '';
+    const token = (await fbUser?.getIdToken()) || '';
 
     const userId = appState.auth.user?._id;
 
@@ -298,7 +292,7 @@ export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParam
       aiSkills,
     };
 
-    // If this is the first completion of the profile section, 
+    // If this is the first completion of the profile section,
     // add a timestamp and send a registration completion email
     let sendConfirmationEmail = false;
     if (!profile.completionDate) {
@@ -321,13 +315,13 @@ export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParam
       throw new Error('Failed to update user profile.');
     }
 
-    const newProfileData = await profileResponse.json() as Profile;
+    const newProfileData = (await profileResponse.json()) as Profile;
 
     // Update local data
     store.dispatch(
       updateProfile({
         data: newProfileData,
-      })
+      }),
     );
 
     // Send completion email
@@ -344,7 +338,7 @@ export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParam
       store.dispatch(
         updateProfile({
           showRegistrationComplete: true,
-        })
+        }),
       );
     }
 
@@ -360,7 +354,7 @@ export const updateAdditionalSkills = async (params: UpdateAdditionalSkillsParam
         visible: true,
         theme: 'error',
         content: message,
-      })
+      }),
     );
 
     if (failure) {
@@ -384,8 +378,11 @@ export const calculateProfilePercentComplete = (profile: Profile) => {
 
   // figure out how many sections plus (roles + profile) are needed
   // roles, profile, tech / design skills, additional
-  const sections = 2 + (profile.roles.includes('designer') ? 1 : 0)
-    + (profile.roles.includes('developer') ? 1 : 0) + 1;
+  const sections =
+    2 +
+    (profile.roles.includes('designer') ? 1 : 0) +
+    (profile.roles.includes('developer') ? 1 : 0) +
+    1;
   const increment = Math.ceil(100 / sections);
 
   pct += increment;
@@ -402,22 +399,24 @@ export const calculateProfilePercentComplete = (profile: Profile) => {
   }
 
   // determine which skills sections have been done
-  const skillCodes = profile.skills.filter(s => s.level > 0).map(s => s.code);
-  profile.roles.forEach(r => {
+  const skillCodes = profile.skills
+    .filter((s) => s.level > 0)
+    .map((s) => s.code);
+  profile.roles.forEach((r) => {
     switch (r) {
-    case 'designer':
-      if (designSkillCodes.find(s => skillCodes.includes(s))) {
-        pct += increment;
-      }
-      break;
-    case 'developer':
-      if (technicalSkillCodes.find(s => skillCodes.includes(s))) {
-        pct += increment;
-      }
-      break;
+      case 'designer':
+        if (designSkillCodes.find((s) => skillCodes.includes(s))) {
+          pct += increment;
+        }
+        break;
+      case 'developer':
+        if (technicalSkillCodes.find((s) => skillCodes.includes(s))) {
+          pct += increment;
+        }
+        break;
     }
   });
-  if (otherSkillCodes.find(s => skillCodes.includes(s))) {
+  if (otherSkillCodes.find((s) => skillCodes.includes(s))) {
     pct += increment;
   }
 

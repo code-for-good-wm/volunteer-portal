@@ -4,57 +4,58 @@ export type EventType = 'in-person' | 'online' | 'hybrid';
 
 export type Status = 'draft' | 'upcoming' | 'active' | 'complete' | 'cancelled';
 
-export type Attendance  = 'attending' | 'partial-attending' | 'not-attending';
+export type Attendance = 'attending' | 'partial-attending' | 'not-attending';
 
-export type Allocation = 'unassigned' | 'assigned' | 'backup' | 'general' | 'float';
+export type Allocation =
+  'unassigned' | 'assigned' | 'backup' | 'general' | 'float';
 
 export interface Event {
   _id: string; // ID of program document in database
-  program: Program,
-  name: string,
-  description: string,
-  additionalInfo: string,
-  startDate: string, // ISO date with time zone
-  endDate: string, // ISO date with time zone
-  rsvpDeadline?: string, // ISO date with time zone
-  location: string, // full address of event
-  allowSignUps: boolean,
-  allowPartialAttendance: boolean,
-  allocationRequired: boolean,
-  eventType: EventType,
-  status: Status
+  program: Program;
+  name: string;
+  description: string;
+  additionalInfo: string;
+  startDate: string; // ISO date with time zone
+  endDate: string; // ISO date with time zone
+  rsvpDeadline?: string; // ISO date with time zone
+  location: string; // full address of event
+  allowSignUps: boolean;
+  allowPartialAttendance: boolean;
+  allocationRequired: boolean;
+  eventType: EventType;
+  status: Status;
 }
 
 export interface EventCreate {
-  program: string, // ID of the program this event belongs to
-  name: string,
-  description?: string,
-  additionalInfo?: string,
-  startDate: string, // ISO date with time zone
-  endDate: string, // ISO date with time zone
-  rsvpDeadline?: string, // ISO date with time zone
-  location?: string, // full address of event
-  allowSignUps?: boolean,
-  allowPartialAttendance?: boolean,
-  allocationRequired?: boolean,
-  eventType: EventType,
-  status: Status
+  program: string; // ID of the program this event belongs to
+  name: string;
+  description?: string;
+  additionalInfo?: string;
+  startDate: string; // ISO date with time zone
+  endDate: string; // ISO date with time zone
+  rsvpDeadline?: string; // ISO date with time zone
+  location?: string; // full address of event
+  allowSignUps?: boolean;
+  allowPartialAttendance?: boolean;
+  allocationRequired?: boolean;
+  eventType: EventType;
+  status: Status;
 }
 
 export interface EventUpdate {
-  program?: string, // ID of the program this event belongs to
-  name?: string,
-  description?: string,
-  additionalInfo?: string,
-  startDate?: string, // ISO date with time zone
-  endDate?: string, // ISO date with time zone
-  rsvpDeadline?: string, // ISO date with time zone
-  location?: string, // full address of event
-  allowSignUps?: boolean,
-  allowPartialAttendance?: boolean,
-  allocationRequired?: boolean,
-  eventType?: EventType,
-  status?: Status
+  program?: string; // ID of the program this event belongs to
+  name?: string;
+  description?: string;
+  additionalInfo?: string;
+  startDate?: string; // ISO date with time zone
+  endDate?: string; // ISO date with time zone
+  rsvpDeadline?: string; // ISO date with time zone
+  location?: string; // full address of event
+  allowSignUps?: boolean;
+  allowPartialAttendance?: boolean;
+  allocationRequired?: boolean;
+  eventType?: EventType;
+  status?: Status;
 }
 
 export interface Program {
@@ -72,18 +73,18 @@ export interface ProgramUpdate {
 }
 
 export interface EventAttendance {
-  _id: string,
-  user: string,
-  event: string,
-  attendance: Attendance,
-  attendanceDetail: string,
+  _id: string;
+  user: string;
+  event: string;
+  attendance: Attendance;
+  attendanceDetail: string;
   roles: Role[];
-  allocation: Allocation
+  allocation: Allocation;
 }
 
 export interface EventAttendanceUpdate {
-  attendance: Attendance | null,
-  attendanceDetail: string | null,
+  attendance: Attendance | null;
+  attendanceDetail: string | null;
   roles?: Role[];
-  allocation?: Allocation
+  allocation?: Allocation;
 }

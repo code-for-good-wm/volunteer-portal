@@ -1,6 +1,6 @@
-export type ProjectStatus = "interested" | "accepted" | "rejected" | "archived";
-export type OnsiteContactAvailability = "in-person" | "remote" | "none";
-export type BrandAssetsStatus = "yes" | "partial" | "no";
+export type ProjectStatus = 'interested' | 'accepted' | 'rejected' | 'archived';
+export type OnsiteContactAvailability = 'in-person' | 'remote' | 'none';
+export type BrandAssetsStatus = 'yes' | 'partial' | 'no';
 
 export interface Project {
   _id: string;
@@ -28,11 +28,7 @@ export interface Position {
 }
 
 export type SlotStatus =
-  | "open"
-  | "invited"
-  | "confirmed"
-  | "confirmed-partial"
-  | "declined";
+  'open' | 'invited' | 'confirmed' | 'confirmed-partial' | 'declined';
 
 export interface Slot {
   _id: string;

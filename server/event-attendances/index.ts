@@ -1,10 +1,17 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
+import {
+  createErrorResult,
+  createSuccessResult,
+  IHttpResult,
+} from '../lib/core';
 import { eventAttendanceStore, userStore } from '../lib/models/store';
 import { checkAuthAndConnect } from '../lib/helpers';
 import { READ_ALL_EVENTS } from '../lib/models/enums/user-role.enum';
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest,
+): Promise<void> {
   // get caller uid from token and connect to DB
   // eslint-disable-next-line prefer-const
   let { uid, result } = await checkAuthAndConnect(context, req);
@@ -16,15 +23,18 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 
   switch (req.method) {
-  case 'GET':
-    result = await getEventAttendances(context, uid);
-    break;
+    case 'GET':
+      result = await getEventAttendances(context, uid);
+      break;
   }
 
   context.res = result;
 };
 
-async function getEventAttendances(context: Context, userIdent: string): Promise<IHttpResult> {
+async function getEventAttendances(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // Attempt to acquire user data
   const user = await userStore.list(userIdent);
   if (!user) {
@@ -45,7 +55,7 @@ async function getEventAttendances(context: Context, userIdent: string): Promise
     if (!attendance) {
       return createErrorResult(404, 'Event Attendance data not found', context);
     }
-  
+
     return createSuccessResult(200, attendance, context);
   }
 

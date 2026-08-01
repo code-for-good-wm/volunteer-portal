@@ -1,7 +1,6 @@
 export enum Role {
-  DESIGNER  = 'designer',
+  DESIGNER = 'designer',
   DEVELOPER = 'developer',
   SUPPORT = 'support',
-  LEAD = 'lead'
+  LEAD = 'lead',
 }
-

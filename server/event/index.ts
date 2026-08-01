@@ -1,10 +1,17 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
+import {
+  createErrorResult,
+  createSuccessResult,
+  IHttpResult,
+} from '../lib/core';
 import { eventStore, userStore } from '../lib/models/store';
 import { checkAuthAndConnect, tryParseDateToISO } from '../lib/helpers';
 import { EDIT_ALL_EVENTS } from '../lib/models/enums/user-role.enum';
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest,
+): Promise<void> {
   // get caller uid from token and connect to DB
   // eslint-disable-next-line prefer-const
   let { uid, result } = await checkAuthAndConnect(context, req);
@@ -16,18 +23,18 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 
   switch (req.method) {
-  case 'GET':
-    result = await getEvent(context);
-    break;
-  case 'POST':
-    result = await createEvent(context, uid);
-    break;
-  case 'PUT':
-    result = await updateEvent(context, uid);
-    break;
-  case 'DELETE':
-    result = await deleteEvent(context, uid);
-    break;
+    case 'GET':
+      result = await getEvent(context);
+      break;
+    case 'POST':
+      result = await createEvent(context, uid);
+      break;
+    case 'PUT':
+      result = await updateEvent(context, uid);
+      break;
+    case 'DELETE':
+      result = await deleteEvent(context, uid);
+      break;
   }
 
   context.res = result;
@@ -48,7 +55,10 @@ async function getEvent(context: Context): Promise<IHttpResult> {
   return createSuccessResult(200, event, context);
 }
 
-async function createEvent(context: Context, userIdent: string): Promise<IHttpResult> {
+async function createEvent(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // Attempt to acquire current user data
   const user = await userStore.list(userIdent);
   if (!user) {
@@ -69,13 +79,16 @@ async function createEvent(context: Context, userIdent: string): Promise<IHttpRe
   if (eventCreate.endDate) {
     eventCreate.endDate = tryParseDateToISO(eventCreate.endDate);
   }
-  
+
   const eventData = await eventStore.create(eventCreate);
 
   return createSuccessResult(201, eventData, context);
 }
 
-async function updateEvent(context: Context, userIdent: string): Promise<IHttpResult> {
+async function updateEvent(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // Attempt to acquire current user data
   const user = await userStore.list(userIdent);
   if (!user) {
@@ -112,7 +125,10 @@ async function updateEvent(context: Context, userIdent: string): Promise<IHttpRe
   return createSuccessResult(200, eventData, context);
 }
 
-async function deleteEvent(context: Context, userIdent: string): Promise<IHttpResult> {
+async function deleteEvent(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // Attempt to acquire current user data
   const user = await userStore.list(userIdent);
   if (!user) {

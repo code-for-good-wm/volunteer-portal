@@ -23,7 +23,7 @@ export interface IProfile {
   portfolioUrl?: string;
   currentEmployer?: string; // Sponsorship opportunity
   previousVolunteer?: boolean;
-  teamLeadCandidate?:boolean;
+  teamLeadCandidate?: boolean;
   shirtSize?: ShirtSize;
   dietaryRestrictions: DietaryRestriction[];
   additionalDietaryRestrictions?: string;
@@ -36,30 +36,33 @@ export interface IProfile {
   updatedDate?: string; // ISO date; timestamp of last profile update
 }
 
-const profileSchema = new Schema<IProfile>({
-  user: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
-  roles: [{ type: String, enum: Role }], // array of Role
-  preferredName: String,
-  pronouns: String,
-  linkedInUrl: String,
-  websiteUrl: String,
-  portfolioUrl: String,
-  currentEmployer: String,
-  previousVolunteer: Boolean,
-  teamLeadCandidate: Boolean,
-  shirtSize: { type: String, enum: ShirtSize },
-  dietaryRestrictions: [{ type: String, enum: DietaryRestriction }], // array of DietaryRestriction
-  additionalDietaryRestrictions: String,
-  accessibilityRequirements: String,
-  agreements: new Schema<IAgreements>({
-    termsAndConditions: String,
-    photoRelease: String,
-    codeOfConduct: String,
-  }),
-  skills: [{ type: Schema.Types.ObjectId, ref: 'UserSkill' }],
-  additionalSkills: String,
-  aiSkills: String,
-  completionDate: String
-}, MongooseOpts);
+const profileSchema = new Schema<IProfile>(
+  {
+    user: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+    roles: [{ type: String, enum: Role }], // array of Role
+    preferredName: String,
+    pronouns: String,
+    linkedInUrl: String,
+    websiteUrl: String,
+    portfolioUrl: String,
+    currentEmployer: String,
+    previousVolunteer: Boolean,
+    teamLeadCandidate: Boolean,
+    shirtSize: { type: String, enum: ShirtSize },
+    dietaryRestrictions: [{ type: String, enum: DietaryRestriction }], // array of DietaryRestriction
+    additionalDietaryRestrictions: String,
+    accessibilityRequirements: String,
+    agreements: new Schema<IAgreements>({
+      termsAndConditions: String,
+      photoRelease: String,
+      codeOfConduct: String,
+    }),
+    skills: [{ type: Schema.Types.ObjectId, ref: 'UserSkill' }],
+    additionalSkills: String,
+    aiSkills: String,
+    completionDate: String,
+  },
+  MongooseOpts,
+);
 
 export const ProfileModel = model<IProfile>('Profile', profileSchema);

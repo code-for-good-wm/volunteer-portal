@@ -1,11 +1,18 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
+import {
+  createErrorResult,
+  createSuccessResult,
+  IHttpResult,
+} from '../lib/core';
 import { checkAuthAndConnect, checkRole } from '../lib/helpers';
 import { skillOptionsStore } from '../lib/models/store';
 import { EDIT_ALL_SKILLS } from '../lib/models/enums/user-role.enum';
 import { defaultSkillOptions } from './defaults';
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest,
+): Promise<void> {
   // get caller uid from token and connect to DB
   // eslint-disable-next-line prefer-const
   let { uid, result } = await checkAuthAndConnect(context, req);
@@ -17,18 +24,18 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 
   switch (req.method) {
-  case 'GET':
-    result = await getSkillOptions(context);
-    break;
-  case 'POST':
-    result = await createSkillOption(context, req);
-    break;
-  case 'PUT':
-    result = await updateSkillOption(context, req);
-    break;
-  case 'DELETE':
-    result = await deleteSkillOptions(context, req);
-    break;
+    case 'GET':
+      result = await getSkillOptions(context);
+      break;
+    case 'POST':
+      result = await createSkillOption(context, req);
+      break;
+    case 'PUT':
+      result = await updateSkillOption(context, req);
+      break;
+    case 'DELETE':
+      result = await deleteSkillOptions(context, req);
+      break;
   }
 
   if (result) {
@@ -60,7 +67,10 @@ async function getSkillOptions(context: Context): Promise<IHttpResult> {
   return createSuccessResult(200, skillOptions, context);
 }
 
-async function createSkillOption(context: Context, req: HttpRequest): Promise<IHttpResult> {
+async function createSkillOption(
+  context: Context,
+  req: HttpRequest,
+): Promise<IHttpResult> {
   // Only admins can create skill options
   const allowed = await checkRole(context, req, EDIT_ALL_SKILLS);
 
@@ -70,7 +80,11 @@ async function createSkillOption(context: Context, req: HttpRequest): Promise<IH
 
   const skillData = req.body;
   if (!skillData || !skillData.code || !skillData.name) {
-    return createErrorResult(400, 'Skill data missing required properties', context);
+    return createErrorResult(
+      400,
+      'Skill data missing required properties',
+      context,
+    );
   }
 
   // Create the skill option
@@ -86,7 +100,10 @@ async function createSkillOption(context: Context, req: HttpRequest): Promise<IH
   return createSuccessResult(201, createdSkillOption, context);
 }
 
-async function updateSkillOption(context: Context, req: HttpRequest): Promise<IHttpResult> {
+async function updateSkillOption(
+  context: Context,
+  req: HttpRequest,
+): Promise<IHttpResult> {
   // Only admins can update skill options
   const allowed = await checkRole(context, req, EDIT_ALL_SKILLS);
 
@@ -101,7 +118,11 @@ async function updateSkillOption(context: Context, req: HttpRequest): Promise<IH
 
   const skillData = req.body;
   if (!skillData || !skillData.name) {
-    return createErrorResult(400, 'Skill data missing required properties', context);
+    return createErrorResult(
+      400,
+      'Skill data missing required properties',
+      context,
+    );
   }
 
   // Update the skill option
@@ -115,13 +136,20 @@ async function updateSkillOption(context: Context, req: HttpRequest): Promise<IH
 
   const result = await skillOptionsStore.update(skillCode, updatedSkillOption);
   if (result.modifiedCount === 0) {
-    return createErrorResult(404, 'Skill option not found or no changes made', context);
+    return createErrorResult(
+      404,
+      'Skill option not found or no changes made',
+      context,
+    );
   }
 
   return createSuccessResult(200, updatedSkillOption, context);
 }
 
-async function deleteSkillOptions(context: Context, req: HttpRequest): Promise<IHttpResult> {
+async function deleteSkillOptions(
+  context: Context,
+  req: HttpRequest,
+): Promise<IHttpResult> {
   // Only admins can delete skill options
   const allowed = await checkRole(context, req, EDIT_ALL_SKILLS);
 
@@ -131,7 +159,11 @@ async function deleteSkillOptions(context: Context, req: HttpRequest): Promise<I
 
   const skillCode = context.bindingData.skillCode;
   if (!skillCode) {
-    return createErrorResult(400, 'Skill code is required for deletion', context);
+    return createErrorResult(
+      400,
+      'Skill code is required for deletion',
+      context,
+    );
   }
 
   // Delete the skill option

@@ -3,24 +3,30 @@ import { MongooseOpts } from './default-opts';
 import { UserRole } from './enums/user-role.enum';
 
 export interface IUser {
-  _id?: Types.ObjectId,
-  ident: string, // unique identifier for user from auth provider
-  authProvider: string, // track the auth provider in case of conflicts
-  firstName: string,
-  lastName: string,
-  email: string,
-  phone: string,
-  emailValidated?: boolean
-  userRole: UserRole
+  _id?: Types.ObjectId;
+  ident: string; // unique identifier for user from auth provider
+  authProvider: string; // track the auth provider in case of conflicts
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  emailValidated?: boolean;
+  userRole: UserRole;
 }
 
-export const UserModel = model<IUser>('User', new Schema({
-  ident: { type: String, required: true },
-  authProvider: { type: String, required: true },
-  firstName: String,
-  lastName: String,
-  email: { type: String, required: true },
-  phone: String,
-  emailValidated: Boolean,
-  userRole: { type: String, required: true }
-}, MongooseOpts));
+export const UserModel = model<IUser>(
+  'User',
+  new Schema(
+    {
+      ident: { type: String, required: true },
+      authProvider: { type: String, required: true },
+      firstName: String,
+      lastName: String,
+      email: { type: String, required: true },
+      phone: String,
+      emailValidated: Boolean,
+      userRole: { type: String, required: true },
+    },
+    MongooseOpts,
+  ),
+);

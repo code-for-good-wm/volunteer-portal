@@ -42,37 +42,53 @@ const parseEntries = (path: string): NameEntry[] => {
   const data = JSON.parse(raw);
 
   if (!Array.isArray(data)) {
-    throw new Error('Input file must contain a JSON array of { email, firstName, lastName }.');
+    throw new Error(
+      'Input file must contain a JSON array of { email, firstName, lastName }.',
+    );
   }
 
   return data.map((entry, i) => {
     const { email, firstName, lastName } = entry ?? {};
     if (!email || !firstName || !lastName) {
-      throw new Error(`Entry at index ${i} is missing email, firstName, or lastName.`);
+      throw new Error(
+        `Entry at index ${i} is missing email, firstName, or lastName.`,
+      );
     }
-    return { email: String(email).trim(), firstName: String(firstName).trim(), lastName: String(lastName).trim() };
+    return {
+      email: String(email).trim(),
+      firstName: String(firstName).trim(),
+      lastName: String(lastName).trim(),
+    };
   });
 };
 
 const run = async () => {
   const args = process.argv.slice(2);
   const dryRun = args.includes('--dry-run');
-  const inputPath = args.find(a => !a.startsWith('--'));
+  const inputPath = args.find((a) => !a.startsWith('--'));
 
   if (!inputPath) {
-    log('Usage: ts-node scripts/split-user-names.ts <path-to-names.json> [--dry-run]');
+    log(
+      'Usage: ts-node scripts/split-user-names.ts <path-to-names.json> [--dry-run]',
+    );
     process.exit(1);
   }
 
   const entries = parseEntries(inputPath);
-  log(`Loaded ${entries.length} name entr${entries.length === 1 ? 'y' : 'ies'} from ${inputPath}.`);
+  log(
+    `Loaded ${entries.length} name entr${entries.length === 1 ? 'y' : 'ies'} from ${inputPath}.`,
+  );
 
   const config = await getConfig();
   if (!config.database.connectionString) {
-    throw new Error('No database connection string provided (set DATABASE_URI).');
+    throw new Error(
+      'No database connection string provided (set DATABASE_URI).',
+    );
   }
 
-  await mongoose.connect(config.database.connectionString, { dbName: config.database.databaseName });
+  await mongoose.connect(config.database.connectionString, {
+    dbName: config.database.databaseName,
+  });
   log(`Connected to database "${config.database.databaseName}".`);
 
   const matched: string[] = [];
@@ -81,7 +97,12 @@ const run = async () => {
   try {
     for (const { email, firstName, lastName } of entries) {
       // Case-insensitive exact match on email
-      const filter = { email: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') };
+      const filter = {
+        email: new RegExp(
+          `^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
+          'i',
+        ),
+      };
 
       if (dryRun) {
         const existing = await UserModel.findOne(filter).select('email').lean();
@@ -109,7 +130,7 @@ const run = async () => {
   log(`Unmatched (no user with that email): ${unmatched.length}`);
   if (unmatched.length) {
     log('Unmatched emails:');
-    unmatched.forEach(e => log(`  - ${e}`));
+    unmatched.forEach((e) => log(`  - ${e}`));
   }
 };
 

@@ -1,10 +1,17 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
+import {
+  createErrorResult,
+  createSuccessResult,
+  IHttpResult,
+} from '../lib/core';
 import { programStore, userStore } from '../lib/models/store';
 import { checkAuthAndConnect } from '../lib/helpers';
 import { EDIT_ALL_EVENTS } from '../lib/models/enums/user-role.enum';
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest,
+): Promise<void> {
   // get caller uid from token and connect to DB
   // eslint-disable-next-line prefer-const
   let { uid, result } = await checkAuthAndConnect(context, req);
@@ -16,18 +23,18 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 
   switch (req.method) {
-  case 'GET':
-    result = await getProgram(context);
-    break;
-  case 'POST':
-    result = await createProgram(context, uid);
-    break;
-  case 'PUT':
-    result = await updateProgram(context, uid);
-    break;
-  case 'DELETE':
-    result = await deleteProgram(context, uid);
-    break;
+    case 'GET':
+      result = await getProgram(context);
+      break;
+    case 'POST':
+      result = await createProgram(context, uid);
+      break;
+    case 'PUT':
+      result = await updateProgram(context, uid);
+      break;
+    case 'DELETE':
+      result = await deleteProgram(context, uid);
+      break;
   }
 
   context.res = result;
@@ -48,7 +55,10 @@ async function getProgram(context: Context): Promise<IHttpResult> {
   return createSuccessResult(200, program, context);
 }
 
-async function createProgram(context: Context, userIdent: string): Promise<IHttpResult> {
+async function createProgram(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // Attempt to acquire current user data
   const user = await userStore.list(userIdent);
   if (!user) {
@@ -61,13 +71,16 @@ async function createProgram(context: Context, userIdent: string): Promise<IHttp
   }
 
   const programCreate = context.req?.body;
-  
+
   const programData = await programStore.create(programCreate);
 
   return createSuccessResult(201, programData, context);
 }
 
-async function updateProgram(context: Context, userIdent: string): Promise<IHttpResult> {
+async function updateProgram(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // Attempt to acquire current user data
   const user = await userStore.list(userIdent);
   if (!user) {
@@ -96,7 +109,10 @@ async function updateProgram(context: Context, userIdent: string): Promise<IHttp
   return createSuccessResult(200, programData, context);
 }
 
-async function deleteProgram(context: Context, userIdent: string): Promise<IHttpResult> {
+async function deleteProgram(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // Attempt to acquire current user data
   const user = await userStore.list(userIdent);
   if (!user) {

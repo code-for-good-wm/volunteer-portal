@@ -38,7 +38,8 @@ export const profileSlice = createSlice({
         draftState.data = action.payload.data;
       }
       if (action.payload.showRegistrationComplete !== undefined) {
-        draftState.showRegistrationComplete = action.payload.showRegistrationComplete;
+        draftState.showRegistrationComplete =
+          action.payload.showRegistrationComplete;
       }
     },
   },
@@ -46,8 +47,10 @@ export const profileSlice = createSlice({
 
 export const { updateProfile } = profileSlice.actions;
 
-export const currentSection = (state: RootState) => state.profile.currentSection;
+export const currentSection = (state: RootState) =>
+  state.profile.currentSection;
 export const profile = (state: RootState) => state.profile.data;
-export const showRegistrationComplete = (state: RootState) => state.profile.showRegistrationComplete;
+export const showRegistrationComplete = (state: RootState) =>
+  state.profile.showRegistrationComplete;
 
 export default profileSlice.reducer;

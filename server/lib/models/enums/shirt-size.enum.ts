@@ -1,4 +1,3 @@
-
 export enum ShirtSize {
   NONE = 'none',
   SMALL = 'small',
@@ -6,5 +5,5 @@ export enum ShirtSize {
   LARGE = 'large',
   XL = 'xl',
   XXL = 'xxl',
-  XXXL = '3xl'
+  XXXL = '3xl',
 }

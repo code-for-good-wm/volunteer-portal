@@ -15,9 +15,9 @@ export const muiTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          height: 36
-        }
-      }
+          height: 36,
+        },
+      },
     },
   },
 });

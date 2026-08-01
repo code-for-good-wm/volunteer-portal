@@ -1,13 +1,20 @@
 import * as mongoose from 'mongoose';
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
+import {
+  createErrorResult,
+  createSuccessResult,
+  IHttpResult,
+} from '../lib/core';
 import { profileStore, skillStore } from '../lib/models/store';
 import { IProfile } from '../lib/models/profile';
 import { checkBindingDataUserId, checkAuthAndConnect } from '../lib/helpers';
 import { IUserSkill } from '../lib/models/user-skill';
 import { Types } from 'mongoose';
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest,
+): Promise<void> {
   // get caller uid from token and connect to DB
   // eslint-disable-next-line prefer-const
   let { uid, result } = await checkAuthAndConnect(context, req);
@@ -19,24 +26,27 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 
   switch (req.method) {
-  case 'GET':
-    result = await getProfile(context, uid);
-    break;
-  case 'POST':
-    result = await createProfile(context, uid);
-    break;
-  case 'PUT':
-    result = await updateProfile(context, uid);
-    break;
-  case 'DELETE':
-    result = await deleteProfile(context, uid);
-    break;
+    case 'GET':
+      result = await getProfile(context, uid);
+      break;
+    case 'POST':
+      result = await createProfile(context, uid);
+      break;
+    case 'PUT':
+      result = await updateProfile(context, uid);
+      break;
+    case 'DELETE':
+      result = await deleteProfile(context, uid);
+      break;
   }
 
   context.res = result;
 };
 
-async function getProfile(context: Context, userIdent: string): Promise<IHttpResult> {
+async function getProfile(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // For MVP we're allowing users to access only their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {
@@ -46,10 +56,13 @@ async function getProfile(context: Context, userIdent: string): Promise<IHttpRes
   const userId = checkResult.body._id;
 
   // Pull this user's corresponding profile & skills data
-  const [profile, skills] = await Promise.all([profileStore.list(userId), skillStore.list(userId)]);
+  const [profile, skills] = await Promise.all([
+    profileStore.list(userId),
+    skillStore.list(userId),
+  ]);
   if (profile) {
     profile.skills.push(...skills);
-  } 
+  }
 
   if (!profile) {
     return createErrorResult(404, 'Profile data not found', context);
@@ -58,7 +71,10 @@ async function getProfile(context: Context, userIdent: string): Promise<IHttpRes
   return createSuccessResult(200, profile, context);
 }
 
-async function createProfile(context: Context, userIdent: string): Promise<IHttpResult> {
+async function createProfile(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // For MVP we're allowing users to access only their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {
@@ -80,7 +96,10 @@ async function createProfile(context: Context, userIdent: string): Promise<IHttp
   return createSuccessResult(201, profileData, context);
 }
 
-async function updateProfile(context: Context, userIdent: string): Promise<IHttpResult> {
+async function updateProfile(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // For MVP we're allowing users to access only their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {
@@ -101,7 +120,11 @@ async function updateProfile(context: Context, userIdent: string): Promise<IHttp
   delete profileUpdate?.skills;
 
   // Attempt profile update
-  const profileUpdateResult = await profileStore.update(profileId, userId, profileUpdate);
+  const profileUpdateResult = await profileStore.update(
+    profileId,
+    userId,
+    profileUpdate,
+  );
 
   if (profileUpdateResult.modifiedCount !== 1) {
     // Profile not found, status 404
@@ -116,12 +139,12 @@ async function updateProfile(context: Context, userIdent: string): Promise<IHttp
     const skills = await skillStore.list(userId);
 
     // Create a dictionary for easy lookup
-    const existing = new Map(skills.map(s => [s.code, s]));
+    const existing = new Map(skills.map((s) => [s.code, s]));
     // Targets for new / updated skills
     const newSkills: IUserSkill[] = [];
     const existingSkills: IUserSkill[] = [];
 
-    skillsUpdate.forEach(({code, level}) => {
+    skillsUpdate.forEach(({ code, level }) => {
       if (code && level !== undefined) {
         if (existing.has(code)) {
           const s = existing.get(code);
@@ -129,13 +152,13 @@ async function updateProfile(context: Context, userIdent: string): Promise<IHttp
             _id: s?._id,
             user: userId,
             code: s?.code,
-            level
+            level,
           } as IUserSkill);
         } else {
           newSkills.push({
             user: userId,
             code,
-            level
+            level,
           });
         }
       }
@@ -146,13 +169,18 @@ async function updateProfile(context: Context, userIdent: string): Promise<IHttp
       await skillStore.createMany(userId, newSkills);
     }
     if (existingSkills.length > 0) {
-      const updates = existingSkills.map(s => skillStore.update(s._id as Types.ObjectId, userId, s));
+      const updates = existingSkills.map((s) =>
+        skillStore.update(s._id as Types.ObjectId, userId, s),
+      );
       await Promise.all(updates);
     }
   }
 
   // Acquire updated data
-  const [updatedProfile, updatedSkills] = await Promise.all([profileStore.list(userId), skillStore.list(userId)]);
+  const [updatedProfile, updatedSkills] = await Promise.all([
+    profileStore.list(userId),
+    skillStore.list(userId),
+  ]);
   if (updatedProfile) {
     updatedProfile.skills.push(...updatedSkills);
   }
@@ -160,7 +188,10 @@ async function updateProfile(context: Context, userIdent: string): Promise<IHttp
   return createSuccessResult(200, updatedProfile, context);
 }
 
-async function deleteProfile(context: Context, userIdent: string): Promise<IHttpResult> {
+async function deleteProfile(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // For MVP we're allowing users to access only their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {

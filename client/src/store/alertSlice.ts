@@ -3,16 +3,16 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
 
 interface AlertState {
-  visible: boolean,
-  theme: AlertColor,
-  duration: number, // milliseconds
+  visible: boolean;
+  theme: AlertColor;
+  duration: number; // milliseconds
   content: string;
 }
 
 interface AlertUpdate {
-  visible?: boolean,
-  theme?: AlertColor,
-  duration?: number, // milliseconds
+  visible?: boolean;
+  theme?: AlertColor;
+  duration?: number; // milliseconds
   content?: string;
 }
 

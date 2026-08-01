@@ -1,11 +1,18 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { Types } from 'mongoose';
-import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
+import {
+  createErrorResult,
+  createSuccessResult,
+  IHttpResult,
+} from '../lib/core';
 import { checkBindingDataUserId, checkAuthAndConnect } from '../lib/helpers';
 import { skillStore } from '../lib/models/store';
 import { IUserSkill } from '../lib/models/user-skill';
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest,
+): Promise<void> {
   // get caller uid from token and connect to DB
   // eslint-disable-next-line prefer-const
   let { uid, result } = await checkAuthAndConnect(context, req);
@@ -17,18 +24,18 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 
   switch (req.method) {
-  case 'GET':
-    result = await getUserSkills(context, uid);
-    break;
-  case 'POST':
-    result = await createUserSkills(context, uid);
-    break;
-  case 'PUT':
-    result = await updateUserSkills(context, uid);
-    break;
-  case 'DELETE':
-    result = await deleteUserSkills(context, uid);
-    break;
+    case 'GET':
+      result = await getUserSkills(context, uid);
+      break;
+    case 'POST':
+      result = await createUserSkills(context, uid);
+      break;
+    case 'PUT':
+      result = await updateUserSkills(context, uid);
+      break;
+    case 'DELETE':
+      result = await deleteUserSkills(context, uid);
+      break;
   }
 
   if (result) {
@@ -36,7 +43,10 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 };
 
-async function getUserSkills(context: Context, userIdent: string): Promise<IHttpResult> {
+async function getUserSkills(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // For MVP we're allowing users to access only their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {
@@ -50,13 +60,16 @@ async function getUserSkills(context: Context, userIdent: string): Promise<IHttp
 
   // Filter by provided code
   if (skillCode) {
-    userSkills = userSkills.filter(s => s.code === skillCode);
+    userSkills = userSkills.filter((s) => s.code === skillCode);
   }
 
   return createSuccessResult(200, userSkills, context);
 }
 
-async function createUserSkills(context: Context, userIdent: string): Promise<IHttpResult> {
+async function createUserSkills(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // For MVP we're allowing users to access only their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {
@@ -68,20 +81,28 @@ async function createUserSkills(context: Context, userIdent: string): Promise<IH
 
   if (Array.isArray(skills)) {
     const newSkills = skills
-      .filter(({code, level}) => code && level !== undefined)
-      .map(({code, level}) => {
+      .filter(({ code, level }) => code && level !== undefined)
+      .map(({ code, level }) => {
         return {
           user: userId,
           code,
-          level
+          level,
         } as IUserSkill;
       });
 
     if (newSkills.length === 0) {
-      return createErrorResult(400, 'Skill data missing expected properties', context);
+      return createErrorResult(
+        400,
+        'Skill data missing expected properties',
+        context,
+      );
     }
 
-    return createSuccessResult(201, await skillStore.createMany(userId, newSkills), context);
+    return createSuccessResult(
+      201,
+      await skillStore.createMany(userId, newSkills),
+      context,
+    );
   }
 
   // Treat as a single skill
@@ -89,7 +110,11 @@ async function createUserSkills(context: Context, userIdent: string): Promise<IH
   const level = skills?.level;
 
   if (!code || level === undefined) {
-    return createErrorResult(400, 'Skill data missing expected properties', context);
+    return createErrorResult(
+      400,
+      'Skill data missing expected properties',
+      context,
+    );
   }
 
   const newSkill = {
@@ -98,10 +123,17 @@ async function createUserSkills(context: Context, userIdent: string): Promise<IH
     level,
   };
 
-  return createSuccessResult(201, await skillStore.create(userId, newSkill), context);
+  return createSuccessResult(
+    201,
+    await skillStore.create(userId, newSkill),
+    context,
+  );
 }
 
-async function updateUserSkills(context: Context, userIdent: string): Promise<IHttpResult> {
+async function updateUserSkills(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // For MVP we're allowing users to access only their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {
@@ -117,31 +149,35 @@ async function updateUserSkills(context: Context, userIdent: string): Promise<IH
   // if _id is not included, discard the data
   if (Array.isArray(skills)) {
     skills
-      .filter(({_id, code, level}) => _id && code && level !== undefined)
-      .forEach(({_id, code, level}) => {
+      .filter(({ _id, code, level }) => _id && code && level !== undefined)
+      .forEach(({ _id, code, level }) => {
         newSkills.push({
           _id,
           user: userId,
           code,
-          level
+          level,
         } as IUserSkill);
       });
   } else {
     // Treat as a single skill
     if (skills?._id && skills?.code && skills?.level) {
-      const {_id, code, level} = skills;
+      const { _id, code, level } = skills;
 
       newSkills.push({
         _id,
         user: userId,
         code,
-        level
+        level,
       } as IUserSkill);
     }
   }
 
   if (newSkills.length === 0) {
-    return createErrorResult(400, 'Skill data missing expected properties', context);
+    return createErrorResult(
+      400,
+      'Skill data missing expected properties',
+      context,
+    );
   }
 
   // Attempt updates
@@ -150,7 +186,11 @@ async function updateUserSkills(context: Context, userIdent: string): Promise<IH
   for (let i = 0; i < newSkills.length; i++) {
     const s = newSkills[i];
     s.user = userId;
-    const updateResult = await skillStore.update(s._id as Types.ObjectId, userId, s);
+    const updateResult = await skillStore.update(
+      s._id as Types.ObjectId,
+      userId,
+      s,
+    );
     if (updateResult && updateResult.modifiedCount === 1) {
       updatedSkills.push(s);
     }
@@ -163,13 +203,16 @@ async function updateUserSkills(context: Context, userIdent: string): Promise<IH
   return createSuccessResult(201, updatedSkills, context);
 }
 
-async function deleteUserSkills(context: Context, userIdent: string): Promise<IHttpResult> {
+async function deleteUserSkills(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // For MVP we're allowing users to access only their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {
     return checkResult;
   }
-  
+
   const userId = checkResult.body._id;
   const skillCode = context.bindingData.skillCode;
   const skillId = context.req?.body?._id;
@@ -178,12 +221,12 @@ async function deleteUserSkills(context: Context, userIdent: string): Promise<IH
   // 2) delete by skill code, or 3) delete all skills for a user.
   if (skillId) {
     await skillStore.delete(skillId, userId); // Remove a specific skill document
-  } else if (skillCode)  {
+  } else if (skillCode) {
     await skillStore.deleteByCode(userId, skillCode); // Remove all skills with passed skill code
   } else {
     await skillStore.deleteAllForUser(userId); // Remove all skill documents for user
   }
-  
+
   return createSuccessResult(202, null, context);
 }
 

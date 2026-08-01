@@ -1,14 +1,28 @@
 import { FirebaseError } from '@firebase/util';
-import { createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword, User as FirebaseUser } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  User as FirebaseUser,
+} from 'firebase/auth';
 
 import { Profile } from '../types/profile';
 import { User } from '../types/user';
-import { SignInParams, RecoverPasswordParams, ServiceParams } from '../types/services';
+import {
+  SignInParams,
+  RecoverPasswordParams,
+  ServiceParams,
+} from '../types/services';
 
 import { store } from '../store/store';
 import { updateAuth } from '../store/authSlice';
 import { updateProfile } from '../store/profileSlice';
-import { getDefaultRequestHeaders, getApiBaseUrl, resetAppState } from '../helpers/functions';
+import {
+  getDefaultRequestHeaders,
+  getApiBaseUrl,
+  resetAppState,
+} from '../helpers/functions';
 import { updateAlert } from '../store/alertSlice';
 
 export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
@@ -23,9 +37,9 @@ export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
       store.dispatch(
         updateAuth({
           updating: true,
-        })
+        }),
       );
-      
+
       try {
         // Acquire bearer token
         const token = await fbUser.getIdToken();
@@ -38,7 +52,7 @@ export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
           updateAuth({
             signedIn: true,
             updating: false,
-          })
+          }),
         );
       } catch (error) {
         // Reset app state
@@ -61,28 +75,23 @@ export const handleAuthStateChange = async (fbUser: FirebaseUser | null) => {
 };
 
 export const signInUser = async (params: SignInParams) => {
-  const {
-    email,
-    password,
-    success,
-    failure,
-  } = params;
+  const { email, password, success, failure } = params;
 
   const auth = getAuth();
-  
+
   try {
     // Set updating to true to avoid automatic data load
     store.dispatch(
       updateAuth({
         updating: true,
-      })
+      }),
     );
 
     await signInWithEmailAndPassword(auth, email, password);
-  
+
     // Acquire bearer token
     const fbUser = auth.currentUser;
-    const token = await fbUser?.getIdToken() || '';
+    const token = (await fbUser?.getIdToken()) || '';
 
     // Pull user data and store in state
     await getUserData(token);
@@ -92,7 +101,7 @@ export const signInUser = async (params: SignInParams) => {
       updateAuth({
         signedIn: true,
         updating: false,
-      })
+      }),
     );
 
     if (success) {
@@ -111,15 +120,19 @@ export const signInUser = async (params: SignInParams) => {
     }
 
     // Build custom error messaging
-    let message = 'Could not sign in at this time.  Check your network connection and try again later.';
+    let message =
+      'Could not sign in at this time.  Check your network connection and try again later.';
     if (code === 'auth/user-not-found' || code === 'auth/wrong-password') {
-      message = 'Could not sign in with these credentials.  Check your information and try again.';
+      message =
+        'Could not sign in with these credentials.  Check your information and try again.';
     } else if (code === 'auth/email-invalid') {
       message = 'The email address is invalid and cannot be used.';
     } else if (code === 'auth/user-disabled') {
-      message = 'This account has been disabled; please contact the admin team for assistance.';
+      message =
+        'This account has been disabled; please contact the admin team for assistance.';
     } else if (code === 'auth/too-many-requests') {
-      message = 'This device has made too many consecutive authorization requests and, due to security concerns, has been temporarily disabled.  Please try again later.';
+      message =
+        'This device has made too many consecutive authorization requests and, due to security concerns, has been temporarily disabled.  Please try again later.';
     }
 
     if (failure) {
@@ -129,25 +142,24 @@ export const signInUser = async (params: SignInParams) => {
 };
 
 export const createNewUser = async (params: SignInParams) => {
-  const {
-    email,
-    password,
-    success,
-    failure,
-  } = params;
+  const { email, password, success, failure } = params;
 
   const auth = getAuth();
-  
+
   try {
     // Set updating to true to avoid automatic data load
     store.dispatch(
       updateAuth({
         updating: true,
-      })
+      }),
     );
-    
+
     // Create the new Firebase user
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
 
     // Acquire bearer token
     const { user } = userCredential;
@@ -162,15 +174,17 @@ export const createNewUser = async (params: SignInParams) => {
     const userResponse = await fetch(userUrl, {
       method: 'POST',
       headers: getDefaultRequestHeaders(token),
-      body
+      body,
     });
 
     if (!userResponse.ok) {
       // TODO: Parameterize the email
-      throw new Error('Failed to create a new user. Please contact us at volunteer@codeforgoodwm.org');
+      throw new Error(
+        'Failed to create a new user. Please contact us at volunteer@codeforgoodwm.org',
+      );
     }
 
-    const userData = await userResponse.json() as User;
+    const userData = (await userResponse.json()) as User;
 
     // Acquire user profile
     const { _id } = userData;
@@ -184,12 +198,12 @@ export const createNewUser = async (params: SignInParams) => {
       throw new Error('Failed to acquire user profile.');
     }
 
-    const profileData = await profileResponse.json() as Profile;
+    const profileData = (await profileResponse.json()) as Profile;
 
     store.dispatch(
       updateProfile({
-        data: profileData
-      })
+        data: profileData,
+      }),
     );
 
     store.dispatch(
@@ -197,7 +211,7 @@ export const createNewUser = async (params: SignInParams) => {
         signedIn: true,
         user: userData,
         updating: false,
-      })
+      }),
     );
 
     if (success) {
@@ -216,11 +230,13 @@ export const createNewUser = async (params: SignInParams) => {
     }
 
     // Build custom error messaging
-    let message = 'Could not create account at this time.  Check your network connection and try again later.';
+    let message =
+      'Could not create account at this time.  Check your network connection and try again later.';
     if (code === 'auth/email-already-in-use') {
       message = 'An account already exists for this email address.';
     } else if (code === 'auth/invalid-email') {
-      message = 'The email address is invalid and cannot be used to create an account.';
+      message =
+        'The email address is invalid and cannot be used to create an account.';
     } else if (code === 'auth/invalid-password') {
       message = 'The submitted password does not meet minimum requirements.';
     }
@@ -231,18 +247,15 @@ export const createNewUser = async (params: SignInParams) => {
   }
 };
 
-export const refreshCurrentUserData = async(params: ServiceParams) => {
-  const {
-    success,
-    failure,
-  } = params;
+export const refreshCurrentUserData = async (params: ServiceParams) => {
+  const { success, failure } = params;
 
   const auth = getAuth();
-  
-  try {  
+
+  try {
     // Acquire bearer token
     const fbUser = auth.currentUser;
-    const token = await fbUser?.getIdToken() || '';
+    const token = (await fbUser?.getIdToken()) || '';
 
     // Pull user data and store in state
     await getUserData(token);
@@ -252,14 +265,14 @@ export const refreshCurrentUserData = async(params: ServiceParams) => {
     }
   } catch (error) {
     const message = 'An error occurred while refreshing user data.';
- 
+
     // Show alert
     store.dispatch(
       updateAlert({
         visible: true,
         theme: 'error',
         content: message,
-      })
+      }),
     );
 
     if (failure) {
@@ -269,14 +282,10 @@ export const refreshCurrentUserData = async(params: ServiceParams) => {
 };
 
 export const recoverPassword = async (params: RecoverPasswordParams) => {
-  const {
-    email,
-    success,
-    failure,
-  } = params;
+  const { email, success, failure } = params;
 
   const auth = getAuth();
-  
+
   try {
     await sendPasswordResetEmail(auth, email);
     // We'll use an auth listener to handle changes
@@ -288,7 +297,8 @@ export const recoverPassword = async (params: RecoverPasswordParams) => {
     const { code } = authError;
 
     // Build custom error messaging
-    let message = 'Could not send a password recovery email.  Check your network connection and try again later.';
+    let message =
+      'Could not send a password recovery email.  Check your network connection and try again later.';
     if (code === 'auth/invalid-email') {
       message = 'The email address is invalid and cannot be used.';
     } else if (code === 'auth/user-not-found') {
@@ -307,15 +317,17 @@ export const recoverPassword = async (params: RecoverPasswordParams) => {
 const getUserData = async (token: string) => {
   // Acquire user document
   const userUrl = `${getApiBaseUrl()}/user`;
-  
-  const requestInit = { headers: getDefaultRequestHeaders(token) } as RequestInit;
+
+  const requestInit = {
+    headers: getDefaultRequestHeaders(token),
+  } as RequestInit;
   const userResponse = await fetch(userUrl, requestInit);
 
   if (!userResponse.ok) {
     throw new Error('Failed to acquire user data.');
   }
 
-  const userData = await userResponse.json() as User;
+  const userData = (await userResponse.json()) as User;
 
   // Acquire user profile
   const { _id } = userData;
@@ -327,18 +339,18 @@ const getUserData = async (token: string) => {
     throw new Error('Failed to acquire user profile.');
   }
 
-  const profileData = await profileResponse.json() as Profile;
+  const profileData = (await profileResponse.json()) as Profile;
 
   store.dispatch(
     updateProfile({
       data: profileData,
-    })
+    }),
   );
 
   store.dispatch(
     updateAuth({
       user: userData,
-    })
+    }),
   );
 
   return true;

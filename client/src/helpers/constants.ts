@@ -1,4 +1,14 @@
-import { DesignSkillsData, DietaryRestrictionData, PrimaryProfileSection, Profile, RoleData, ShirtSizeData, Skill, SkillLevelData, TechnicalSkillsData } from '../types/profile';
+import {
+  DesignSkillsData,
+  DietaryRestrictionData,
+  PrimaryProfileSection,
+  Profile,
+  RoleData,
+  ShirtSizeData,
+  Skill,
+  SkillLevelData,
+  TechnicalSkillsData,
+} from '../types/profile';
 import { User } from '../types/user';
 
 export const testUserData: User = {
@@ -7,7 +17,7 @@ export const testUserData: User = {
   lastName: 'I',
   email: 'test1@slothwerks.com',
   phone: '',
-  userRole: 'volunteer'
+  userRole: 'volunteer',
 };
 
 export const testProfileData: Profile = {
@@ -117,29 +127,29 @@ export const dietaryRestrictions: DietaryRestrictionData[] = [
   {
     id: 'other',
     description: 'Other',
-  }
+  },
 ];
 
 export const skillLevels: SkillLevelData[] = [
   {
     level: 0,
-    description: 'None'
+    description: 'None',
   },
   {
     level: 1,
-    description: 'Newbie'
+    description: 'Newbie',
   },
   {
     level: 2,
-    description: 'Familiar'
+    description: 'Familiar',
   },
   {
     level: 3,
-    description: 'Very Familiar'
+    description: 'Very Familiar',
   },
   {
     level: 4,
-    description: 'Daily Use'
+    description: 'Daily Use',
   },
 ];
 
@@ -152,19 +162,19 @@ export const profileStructure: PrimaryProfileSection[] = [
       {
         id: 'basic-information',
         type: 'secondary',
-        description: 'Basic Information'
+        description: 'Basic Information',
       },
       {
         id: 'accessibility',
         type: 'secondary',
-        description: 'Accessibility'
+        description: 'Accessibility',
       },
       {
         id: 'terms-and-conditions',
         type: 'secondary',
-        description: 'Terms & Conditions'
+        description: 'Terms & Conditions',
       },
-    ]
+    ],
   },
   {
     id: 'technical-skills',
@@ -181,7 +191,7 @@ export const profileStructure: PrimaryProfileSection[] = [
       //   type: 'secondary',
       //   description: 'Tools & Languages'
       // },
-    ]
+    ],
   },
   {
     id: 'design-skills',
@@ -203,7 +213,7 @@ export const profileStructure: PrimaryProfileSection[] = [
       //   type: 'secondary',
       //   description: 'Development'
       // },
-    ]
+    ],
   },
   {
     id: 'additional-skills',
@@ -220,7 +230,7 @@ export const profileStructure: PrimaryProfileSection[] = [
       //   type: 'secondary',
       //   description: 'Other Skills'
       // },
-    ]
+    ],
   },
 ];
 
@@ -228,65 +238,65 @@ export const technicalSkills: TechnicalSkillsData = {
   experienceLevel: [
     {
       code: 'frontEndDev',
-      description: 'Front End Dev'
+      description: 'Front End Dev',
     },
     {
       code: 'backEndDev',
-      description: 'Back End Dev'
+      description: 'Back End Dev',
     },
     {
       code: 'databases',
-      description: 'Databases'
+      description: 'Databases',
     },
     {
       code: 'mobileDev',
-      description: 'Mobile Dev'
+      description: 'Mobile Dev',
     },
     {
       code: 'devOps',
-      description: 'DevOps'
+      description: 'DevOps',
     },
   ],
   toolsAndLanguages: [
     {
       code: 'wordPress',
-      description: 'WordPress'
+      description: 'WordPress',
     },
     {
       code: 'squarespace',
-      description: 'Squarespace'
+      description: 'Squarespace',
     },
     {
       code: 'wix',
-      description: 'Wix'
+      description: 'Wix',
     },
     {
       code: 'htmlCss',
-      description: 'HTML / CSS'
+      description: 'HTML / CSS',
     },
     {
       code: 'javaScript',
-      description: 'JavaScript'
+      description: 'JavaScript',
     },
     {
       code: 'typeScript',
-      description: 'TypeScript'
+      description: 'TypeScript',
     },
     {
       code: 'react',
-      description: 'React'
+      description: 'React',
     },
     {
       code: 'vue',
-      description: 'Vue'
+      description: 'Vue',
     },
     {
       code: 'angular',
-      description: 'Angular'
+      description: 'Angular',
     },
     {
       code: 'nodeExpress',
-      description: 'Node / Express'
+      description: 'Node / Express',
     },
     {
       code: 'csharp',
@@ -310,88 +320,88 @@ export const technicalSkills: TechnicalSkillsData = {
     },
     {
       code: 'phpLaravel',
-      description: 'PHP / Laravel'
+      description: 'PHP / Laravel',
     },
-  ]
+  ],
 };
 
 export const designSkills: DesignSkillsData = {
   experienceLevel: [
     {
       code: 'print',
-      description: 'Print Design'
+      description: 'Print Design',
     },
     {
       code: 'ux',
-      description: 'User Experience (UX)'
+      description: 'User Experience (UX)',
     },
     {
       code: 'ui',
-      description: 'User Interface (UI)'
+      description: 'User Interface (UI)',
     },
     {
       code: 'designThinking',
-      description: 'Design Thinking'
+      description: 'Design Thinking',
     },
     {
       code: 'illustration',
-      description: 'Illustration'
+      description: 'Illustration',
     },
     {
       code: 'brand',
-      description: 'Branding'
+      description: 'Branding',
     },
     {
       code: 'motionGraphics',
-      description: 'Motion Graphics'
+      description: 'Motion Graphics',
     },
   ],
   tools: [
     {
       code: 'adobeSuite',
-      description: 'Adobe Creative Suite'
+      description: 'Adobe Creative Suite',
     },
     {
       code: 'canva',
-      description: 'Canva'
+      description: 'Canva',
     },
     {
       code: 'figma',
-      description: 'Figma'
+      description: 'Figma',
     },
     {
       code: 'zeplin',
-      description: 'Zeplin'
+      description: 'Zeplin',
     },
     {
       code: 'inVision',
-      description: 'InVision'
+      description: 'InVision',
     },
     {
       code: 'sketch',
-      description: 'Sketch'
-    }
+      description: 'Sketch',
+    },
   ],
   development: [
     {
       code: 'frontEndDev',
-      description: 'Front End Dev'
+      description: 'Front End Dev',
     },
     {
       code: 'backEndDev',
-      description: 'Back End Dev'
+      description: 'Back End Dev',
     },
     {
       code: 'databases',
-      description: 'Databases'
+      description: 'Databases',
     },
     {
       code: 'mobileDev',
-      description: 'Mobile Dev'
+      description: 'Mobile Dev',
     },
     {
       code: 'devOps',
-      description: 'DevOps'
+      description: 'DevOps',
     },
   ],
 };
@@ -399,83 +409,89 @@ export const designSkills: DesignSkillsData = {
 export const otherExperience: Skill[] = [
   {
     code: 'aitools',
-    description: 'AI/LLMs'
+    description: 'AI/LLMs',
   },
   {
     code: 'agenticcode',
-    description: 'Agentic Coding'
+    description: 'Agentic Coding',
   },
   {
     code: 'cybersecurity',
-    description: 'Cybersecurity'
+    description: 'Cybersecurity',
   },
   {
     code: 'projMgmt',
-    description: 'Project Management'
+    description: 'Project Management',
   },
   {
     code: 'brand',
-    description: 'Brand Strategy'
+    description: 'Brand Strategy',
   },
   {
     code: 'copy',
-    description: 'Copywriting'
+    description: 'Copywriting',
   },
   {
     code: 'crm',
-    description: 'CRM Tools'
+    description: 'CRM Tools',
   },
   {
     code: 'salesforce',
-    description: 'Salesforce'
+    description: 'Salesforce',
   },
   {
     code: 'marketing',
-    description: 'Marketing'
+    description: 'Marketing',
   },
   {
     code: 'seo',
-    description: 'SEO'
+    description: 'SEO',
   },
   {
     code: 'social',
-    description: 'Social Media'
+    description: 'Social Media',
   },
   {
     code: 'technicalWriting',
-    description: 'Technical Writing'
+    description: 'Technical Writing',
   },
   {
     code: 'testing',
-    description: 'User Testing / Compliance Testing'
+    description: 'User Testing / Compliance Testing',
   },
   {
     code: 'accessibleDesign',
-    description: 'Accessible Design'
+    description: 'Accessible Design',
   },
   {
     code: 'accessibleDevelopment',
-    description: 'Accessible Development'
+    description: 'Accessible Development',
   },
   {
     code: 'assistiveTechnology',
-    description: 'Assistive Technology'
+    description: 'Assistive Technology',
   },
   {
     code: 'photography',
-    description: 'Photography'
+    description: 'Photography',
   },
   {
     code: 'videography',
-    description: 'Videography'
+    description: 'Videography',
   },
 ];
 
-export const technicalSkillCodes = [...technicalSkills.experienceLevel, ...technicalSkills.toolsAndLanguages].map(s => s.code);
+export const technicalSkillCodes = [
+  ...technicalSkills.experienceLevel,
+  ...technicalSkills.toolsAndLanguages,
+].map((s) => s.code);
 
-export const designSkillCodes = [...designSkills.experienceLevel, ...designSkills.tools].map(s => s.code);
+export const designSkillCodes = [
+  ...designSkills.experienceLevel,
+  ...designSkills.tools,
+].map((s) => s.code);
 
-export const otherSkillCodes = otherExperience.map(s => s.code);
+export const otherSkillCodes = otherExperience.map((s) => s.code);
 
 export const agreementUrl = {
   termsAndConditions: 'https://codeforgoodwm.org/participant-agreement/',
@@ -484,30 +500,116 @@ export const agreementUrl = {
 };
 
 export const usStates = [
-  'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware',
-  'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
-  'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi',
-  'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico',
-  'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania',
-  'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
-  'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming',
+  'Alabama',
+  'Alaska',
+  'Arizona',
+  'Arkansas',
+  'California',
+  'Colorado',
+  'Connecticut',
+  'Delaware',
+  'Florida',
+  'Georgia',
+  'Hawaii',
+  'Idaho',
+  'Illinois',
+  'Indiana',
+  'Iowa',
+  'Kansas',
+  'Kentucky',
+  'Louisiana',
+  'Maine',
+  'Maryland',
+  'Massachusetts',
+  'Michigan',
+  'Minnesota',
+  'Mississippi',
+  'Missouri',
+  'Montana',
+  'Nebraska',
+  'Nevada',
+  'New Hampshire',
+  'New Jersey',
+  'New Mexico',
+  'New York',
+  'North Carolina',
+  'North Dakota',
+  'Ohio',
+  'Oklahoma',
+  'Oregon',
+  'Pennsylvania',
+  'Rhode Island',
+  'South Carolina',
+  'South Dakota',
+  'Tennessee',
+  'Texas',
+  'Utah',
+  'Vermont',
+  'Virginia',
+  'Washington',
+  'West Virginia',
+  'Wisconsin',
+  'Wyoming',
 ];
 
-export const is501c3StatusOptions: { id: 'yes' | 'no' | 'in-progress', label: string }[] = [
+export const is501c3StatusOptions: {
+  id: 'yes' | 'no' | 'in-progress';
+  label: string;
+}[] = [
   { id: 'yes', label: 'Yes' },
   { id: 'no', label: 'No' },
   { id: 'in-progress', label: 'In progress' },
 ];
 
 export const usStateAbbreviations: Record<string, string> = {
-  'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR', 'California': 'CA',
-  'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE', 'Florida': 'FL', 'Georgia': 'GA',
-  'Hawaii': 'HI', 'Idaho': 'ID', 'Illinois': 'IL', 'Indiana': 'IN', 'Iowa': 'IA', 'Kansas': 'KS',
-  'Kentucky': 'KY', 'Louisiana': 'LA', 'Maine': 'ME', 'Maryland': 'MD', 'Massachusetts': 'MA',
-  'Michigan': 'MI', 'Minnesota': 'MN', 'Mississippi': 'MS', 'Missouri': 'MO', 'Montana': 'MT',
-  'Nebraska': 'NE', 'Nevada': 'NV', 'New Hampshire': 'NH', 'New Jersey': 'NJ', 'New Mexico': 'NM',
-  'New York': 'NY', 'North Carolina': 'NC', 'North Dakota': 'ND', 'Ohio': 'OH', 'Oklahoma': 'OK',
-  'Oregon': 'OR', 'Pennsylvania': 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC',
-  'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX', 'Utah': 'UT', 'Vermont': 'VT',
-  'Virginia': 'VA', 'Washington': 'WA', 'West Virginia': 'WV', 'Wisconsin': 'WI', 'Wyoming': 'WY',
+  Alabama: 'AL',
+  Alaska: 'AK',
+  Arizona: 'AZ',
+  Arkansas: 'AR',
+  California: 'CA',
+  Colorado: 'CO',
+  Connecticut: 'CT',
+  Delaware: 'DE',
+  Florida: 'FL',
+  Georgia: 'GA',
+  Hawaii: 'HI',
+  Idaho: 'ID',
+  Illinois: 'IL',
+  Indiana: 'IN',
+  Iowa: 'IA',
+  Kansas: 'KS',
+  Kentucky: 'KY',
+  Louisiana: 'LA',
+  Maine: 'ME',
+  Maryland: 'MD',
+  Massachusetts: 'MA',
+  Michigan: 'MI',
+  Minnesota: 'MN',
+  Mississippi: 'MS',
+  Missouri: 'MO',
+  Montana: 'MT',
+  Nebraska: 'NE',
+  Nevada: 'NV',
+  'New Hampshire': 'NH',
+  'New Jersey': 'NJ',
+  'New Mexico': 'NM',
+  'New York': 'NY',
+  'North Carolina': 'NC',
+  'North Dakota': 'ND',
+  Ohio: 'OH',
+  Oklahoma: 'OK',
+  Oregon: 'OR',
+  Pennsylvania: 'PA',
+  'Rhode Island': 'RI',
+  'South Carolina': 'SC',
+  'South Dakota': 'SD',
+  Tennessee: 'TN',
+  Texas: 'TX',
+  Utah: 'UT',
+  Vermont: 'VT',
+  Virginia: 'VA',
+  Washington: 'WA',
+  'West Virginia': 'WV',
+  Wisconsin: 'WI',
+  Wyoming: 'WY',
 };

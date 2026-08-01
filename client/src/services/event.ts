@@ -1,23 +1,18 @@
-import { store } from "../store/store";
+import { store } from '../store/store';
 
-import { Event, EventAttendance } from "../types/event";
-import {
-  CreateEventParams,
-  DeleteEventParams,
-  UpdateEventAttendanceParams,
-  UpdateEventParams,
-} from "../types/services";
-import { eventAdded, eventRemoved, eventsReceived } from "../store/eventsSlice";
+import { Event, EventAttendance } from '../types/event';
+import { UpdateEventAttendanceParams } from '../types/services';
+import { eventsReceived } from '../store/eventsSlice';
 import {
   attendanceAdded,
   attendancesReceived,
-} from "../store/eventAttendanceSlice";
-import { updateAlert } from "../store/alertSlice";
+} from '../store/eventAttendanceSlice';
+import { updateAlert } from '../store/alertSlice';
 import {
   getApiBaseUrl,
   getAuthToken,
   getDefaultRequestHeaders,
-} from "../helpers/functions";
+} from '../helpers/functions';
 
 export const loadUpcomingEvents = async () => {
   try {
@@ -33,7 +28,7 @@ export const loadUpcomingEvents = async () => {
       requestInit,
     );
     if (!eventsResponse.ok) {
-      throw new Error("Failed to load upcoming events.");
+      throw new Error('Failed to load upcoming events.');
     }
 
     const eventsData = (await eventsResponse.json()) as Event[];
@@ -48,8 +43,8 @@ export const loadUpcomingEvents = async () => {
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "error",
-        content: "An error occurred while loading upcoming events.",
+        theme: 'error',
+        content: 'An error occurred while loading upcoming events.',
       }),
     );
   }
@@ -69,7 +64,7 @@ export const loadAllEvents = async () => {
       requestInit,
     );
     if (!eventsResponse.ok) {
-      throw new Error("Failed to load events.");
+      throw new Error('Failed to load events.');
     }
 
     const eventsData = (await eventsResponse.json()) as Event[];
@@ -84,8 +79,8 @@ export const loadAllEvents = async () => {
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "error",
-        content: "An error occurred while loading events.",
+        theme: 'error',
+        content: 'An error occurred while loading events.',
       }),
     );
   }
@@ -99,13 +94,13 @@ export const createEvent = async (params: CreateEventParams) => {
     const token = await getAuthToken();
 
     const eventResponse = await fetch(`${getApiBaseUrl()}/event`, {
-      method: "POST",
+      method: 'POST',
       headers: getDefaultRequestHeaders(token),
       body: JSON.stringify(eventCreate),
     });
 
     if (!eventResponse.ok) {
-      throw new Error("Failed to create event.");
+      throw new Error('Failed to create event.');
     }
 
     const newEvent = (await eventResponse.json()) as Event;
@@ -116,13 +111,13 @@ export const createEvent = async (params: CreateEventParams) => {
       success(newEvent);
     }
   } catch (error) {
-    const message = "An error occurred while creating the event.";
+    const message = 'An error occurred while creating the event.';
 
     // Show alert
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "error",
+        theme: 'error',
         content: message,
       }),
     );
@@ -146,7 +141,7 @@ export const loadEvent = async (eventId: string) => {
       requestInit,
     );
     if (!eventResponse.ok) {
-      throw new Error("Failed to load event.");
+      throw new Error('Failed to load event.');
     }
 
     const eventData = (await eventResponse.json()) as Event;
@@ -157,8 +152,8 @@ export const loadEvent = async (eventId: string) => {
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "error",
-        content: "An error occurred while loading the event.",
+        theme: 'error',
+        content: 'An error occurred while loading the event.',
       }),
     );
   }
@@ -172,13 +167,13 @@ export const updateEvent = async (params: UpdateEventParams) => {
     const token = await getAuthToken();
 
     const eventResponse = await fetch(`${getApiBaseUrl()}/event/${eventId}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: getDefaultRequestHeaders(token),
       body: JSON.stringify(eventUpdate),
     });
 
     if (!eventResponse.ok) {
-      throw new Error("Failed to update event.");
+      throw new Error('Failed to update event.');
     }
 
     const updatedEvent = (await eventResponse.json()) as Event;
@@ -189,13 +184,13 @@ export const updateEvent = async (params: UpdateEventParams) => {
       success();
     }
   } catch (error) {
-    const message = "An error occurred while updating the event.";
+    const message = 'An error occurred while updating the event.';
 
     // Show alert
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "error",
+        theme: 'error',
         content: message,
       }),
     );
@@ -214,12 +209,12 @@ export const deleteEvent = async (params: DeleteEventParams) => {
     const token = await getAuthToken();
 
     const eventResponse = await fetch(`${getApiBaseUrl()}/event/${eventId}`, {
-      method: "DELETE",
+      method: 'DELETE',
       headers: getDefaultRequestHeaders(token),
     });
 
     if (!eventResponse.ok) {
-      throw new Error("Failed to delete event.");
+      throw new Error('Failed to delete event.');
     }
 
     store.dispatch(eventRemoved(eventId));
@@ -228,13 +223,13 @@ export const deleteEvent = async (params: DeleteEventParams) => {
       success();
     }
   } catch (error) {
-    const message = "An error occurred while deleting the event.";
+    const message = 'An error occurred while deleting the event.';
 
     // Show alert
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "error",
+        theme: 'error',
         content: message,
       }),
     );
@@ -273,15 +268,15 @@ export const loadUpcomingEventsAndAttendance = async () => {
         }),
       );
     } else {
-      console.log("Unable to load attendance");
+      console.log('Unable to load attendance');
     }
   } catch (error) {
     // Show alert
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "error",
-        content: "An error occurred while loading upcoming attendance.",
+        theme: 'error',
+        content: 'An error occurred while loading upcoming attendance.',
       }),
     );
   }
@@ -303,7 +298,7 @@ export const loadAttendance = async (eventId?: string) => {
     // Load upcoming events
     const eventAttendanceResponse = await fetch(attendanceUrl, requestInit);
     if (!eventAttendanceResponse.ok) {
-      throw new Error("Failed to load event attendance.");
+      throw new Error('Failed to load event attendance.');
     }
 
     const attendanceData =
@@ -319,8 +314,8 @@ export const loadAttendance = async (eventId?: string) => {
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "error",
-        content: "An error occurred while loading attendance data.",
+        theme: 'error',
+        content: 'An error occurred while loading attendance data.',
       }),
     );
   }
@@ -344,13 +339,13 @@ export const updateEventAttendance = async (
     const body = JSON.stringify(attendanceUpdate);
 
     const attendanceResponse = await fetch(attendanceUrl, {
-      method: "PUT",
+      method: 'PUT',
       headers: getDefaultRequestHeaders(token),
       body,
     });
 
     if (!attendanceResponse.ok) {
-      throw new Error("Failed to update event attendance.");
+      throw new Error('Failed to update event attendance.');
     }
 
     const newAttendanceData =
@@ -363,8 +358,8 @@ export const updateEventAttendance = async (
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "success",
-        content: "Attendance selections saved.",
+        theme: 'success',
+        content: 'Attendance selections saved.',
       }),
     );
 
@@ -373,13 +368,13 @@ export const updateEventAttendance = async (
     }
   } catch (error) {
     console.log(error);
-    const message = "An error occurred while updating your attendance.";
+    const message = 'An error occurred while updating your attendance.';
 
     // Show alert
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "error",
+        theme: 'error',
         content: message,
       }),
     );
