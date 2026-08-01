@@ -1,12 +1,38 @@
-export type PrimaryProfileSectionId = 'roles' | 'getting-started' | 'technical-skills' | 'design-skills' | 'additional-skills';
+export type PrimaryProfileSectionId =
+  | 'roles'
+  | 'getting-started'
+  | 'technical-skills'
+  | 'design-skills'
+  | 'additional-skills';
 
-export type SecondaryProfileSectionId = 'basic-information' | 'accessibility' | 'terms-and-conditions' | 'experience-level' | 'tools-and-languages' | 'tools' | 'development' | 'other-experience' | 'other-skills';
+export type SecondaryProfileSectionId =
+  | 'basic-information'
+  | 'accessibility'
+  | 'terms-and-conditions'
+  | 'experience-level'
+  | 'tools-and-languages'
+  | 'tools'
+  | 'development'
+  | 'other-experience'
+  | 'other-skills';
 
 export type Role = 'designer' | 'developer' | 'support' | 'lead';
 
-export type ShirtSize = 'small' | 'medium' | 'large' | 'xl' | '2xl' | '3xl' | '4xl' | 'none';
+export type ShirtSize =
+  'small' | 'medium' | 'large' | 'xl' | '2xl' | '3xl' | '4xl' | 'none';
 
-export type DietaryRestriction = 'vegan' | 'vegetarian' | 'dairy' | 'gluten' | 'kosher' | 'nuts' | 'fish' | 'eggs' | 'soy' | 'corn' | 'other';
+export type DietaryRestriction =
+  | 'vegan'
+  | 'vegetarian'
+  | 'dairy'
+  | 'gluten'
+  | 'kosher'
+  | 'nuts'
+  | 'fish'
+  | 'eggs'
+  | 'soy'
+  | 'corn'
+  | 'other';
 
 export type Agreement = 'termsAndConditions' | 'photoRelease' | 'codeOfConduct';
 
@@ -18,7 +44,7 @@ export interface PrimaryProfileSection {
   id: PrimaryProfileSectionId;
   type: 'primary';
   description: string;
-  sections?: SecondaryProfileSection[]
+  sections?: SecondaryProfileSection[];
 }
 
 export interface SecondaryProfileSection {

@@ -2,17 +2,36 @@
 import { Context, HttpRequest, Logger } from '@azure/functions';
 import { getAuth, DecodedIdToken } from 'firebase-admin/auth';
 import { fbApp } from './firebase/init';
-import { createErrorResult, createSuccessResult, IHttpResult, Result } from './core';
+import {
+  createErrorResult,
+  createSuccessResult,
+  IHttpResult,
+  Result,
+} from './core';
 import { connect, userStore } from './models/store';
 import fetch from 'node-fetch';
 import { IUser } from './models/user';
 import { Types } from 'mongoose';
 import { UserRole } from './models/enums/user-role.enum';
 
-type CheckRequestAuth = (authorization: string | undefined, logger: Logger) => Promise<DecodedIdToken | null>
-type CheckBindingDataUserId = (context: Context, userIdent: string) => Promise<IHttpResult>
-type CheckAuthAndConnect = (context: Context, req: HttpRequest) => Promise<{ uid: string, result?: IHttpResult }>
-type SendTemplateEmail = (recipientEmail: string, templateId: string, templateData: any, context: Context) => Promise<IHttpResult>
+type CheckRequestAuth = (
+  authorization: string | undefined,
+  logger: Logger,
+) => Promise<DecodedIdToken | null>;
+type CheckBindingDataUserId = (
+  context: Context,
+  userIdent: string,
+) => Promise<IHttpResult>;
+type CheckAuthAndConnect = (
+  context: Context,
+  req: HttpRequest,
+) => Promise<{ uid: string; result?: IHttpResult }>;
+type SendTemplateEmail = (
+  recipientEmail: string,
+  templateId: string,
+  templateData: any,
+  context: Context,
+) => Promise<IHttpResult>;
 
 // Set SendGrid variables
 const senderEmail = 'volunteer@codeforgoodwm.org';
@@ -41,7 +60,8 @@ export const checkRequestAuth: CheckRequestAuth = (authorization, logger) => {
     }
 
     // Verify token with Firebase Admin SDK
-    getAuth(fbApp).verifyIdToken(token)
+    getAuth(fbApp)
+      .verifyIdToken(token)
       .then((decoded) => {
         resolve(decoded);
       })
@@ -59,7 +79,10 @@ export const checkRequestAuth: CheckRequestAuth = (authorization, logger) => {
  * @param {string} userIdent - the user's identifier from the app's auth system
  * @returns {Promise<IHttpResult>}
  */
-export const checkBindingDataUserId: CheckBindingDataUserId = async (context: Context, userIdent: string) => {
+export const checkBindingDataUserId: CheckBindingDataUserId = async (
+  context: Context,
+  userIdent: string,
+) => {
   // Attempt to acquire user data from userIdent
   const user = await userStore.list(userIdent);
   if (!user) {
@@ -83,11 +106,14 @@ export const checkBindingDataUserId: CheckBindingDataUserId = async (context: Co
 
 /**
  * Checks the provided auth token and attempts to connect to the database
- * @param context 
- * @param req 
+ * @param context
+ * @param req
  * @returns The uid, and a result if there was an error
  */
-export const checkAuthAndConnect: CheckAuthAndConnect = async (context: Context, req: HttpRequest) => {
+export const checkAuthAndConnect: CheckAuthAndConnect = async (
+  context: Context,
+  req: HttpRequest,
+) => {
   const logger = context.log;
 
   // Attempt to capture caller information from token
@@ -121,7 +147,11 @@ export const checkAuthAndConnect: CheckAuthAndConnect = async (context: Context,
   return { uid };
 };
 
-export const checkRole = async (context: Context, req: HttpRequest, roles: UserRole[]) => {
+export const checkRole = async (
+  context: Context,
+  req: HttpRequest,
+  roles: UserRole[],
+) => {
   const { uid, result } = await checkAuthAndConnect(context, req);
 
   // result will be non-null if there was an error
@@ -132,7 +162,10 @@ export const checkRole = async (context: Context, req: HttpRequest, roles: UserR
   // Check if user has the required role
   const user = await userStore.list(uid);
   if (!user || !roles.includes(user.userRole)) {
-    return { success: false, error: createErrorResult(403, 'Forbidden', context) };
+    return {
+      success: false,
+      error: createErrorResult(403, 'Forbidden', context),
+    };
   }
 
   return { success: true, data: user } as Result;
@@ -147,17 +180,22 @@ export const checkRole = async (context: Context, req: HttpRequest, roles: UserR
  * @param {Context} context - The Azure function invocation context
  * @returns {Promise<IHttpResult>}
  */
-export const sendTemplateEmail: SendTemplateEmail = async (recipientEmail: string, templateId: string, templateData: any, context: Context) => {
+export const sendTemplateEmail: SendTemplateEmail = async (
+  recipientEmail: string,
+  templateId: string,
+  templateData: any,
+  context: Context,
+) => {
   // Build request
   const body = JSON.stringify({
     from: {
-      email: senderEmail
+      email: senderEmail,
     },
     personalizations: [
       {
         to: [{ email: recipientEmail }],
         dynamic_template_data: templateData,
-      }
+      },
     ],
     template_id: templateId,
   });
@@ -165,12 +203,12 @@ export const sendTemplateEmail: SendTemplateEmail = async (recipientEmail: strin
   // Send message via SendGrid
   try {
     const response = await fetch(mailSendUrl, {
-      method: 'post', 
+      method: 'post',
       body,
       headers: {
-        'authorization': `Bearer ${SENDGRID_API_KEY}`,
-        'content-type': 'application/json'
-      }
+        authorization: `Bearer ${SENDGRID_API_KEY}`,
+        'content-type': 'application/json',
+      },
     });
 
     // This service will return 202 ('Accepted') if the request is good
@@ -192,14 +230,17 @@ export const sendTemplateEmail: SendTemplateEmail = async (recipientEmail: strin
 //   return ((<IUser>user)?._id ?? (<Types.ObjectId>user)).toString();
 // }
 
-export function getUserId (user: Types.ObjectId | undefined): string {
+export function getUserId(user: Types.ObjectId | undefined): string {
   return user === undefined ? '' : (<Types.ObjectId>user).toString();
 }
 
 /**
  * Compares two User | ObjectId records
  */
-export const compareUser = (a: IUser | Types.ObjectId, b: IUser | Types.ObjectId) => {
+export const compareUser = (
+  a: IUser | Types.ObjectId,
+  b: IUser | Types.ObjectId,
+) => {
   const aId = (<IUser>a)?._id ?? <Types.ObjectId>a;
   const bId = (<IUser>b)?._id ?? <Types.ObjectId>b;
   return aId === bId;
@@ -208,14 +249,22 @@ export const compareUser = (a: IUser | Types.ObjectId, b: IUser | Types.ObjectId
 /**
  * Group a collection using the provided function to return the grouping key. Ignores objects with null/undefined keys.
  */
-export function groupBy<T> (data: T[], keyProvider: (item: T) => string) : Record<string, T[]> {
-  return data.reduce((grouped, item) => {
-    const key = keyProvider(item);
-    if (key === null || key === undefined) { return grouped; }
-    grouped[key] = grouped[key] ?? [];
-    grouped[key].push(item);
-    return grouped;
-  }, {} as Record<string, T[]>);
+export function groupBy<T>(
+  data: T[],
+  keyProvider: (item: T) => string,
+): Record<string, T[]> {
+  return data.reduce(
+    (grouped, item) => {
+      const key = keyProvider(item);
+      if (key === null || key === undefined) {
+        return grouped;
+      }
+      grouped[key] = grouped[key] ?? [];
+      grouped[key].push(item);
+      return grouped;
+    },
+    {} as Record<string, T[]>,
+  );
 }
 
 /**
@@ -223,7 +272,7 @@ export function groupBy<T> (data: T[], keyProvider: (item: T) => string) : Recor
  * @param dateString the date string to parse
  * @returns The date as an ISO string, if valid, or the original string
  */
-export function tryParseDateToISO (dateString: string) : string {
+export function tryParseDateToISO(dateString: string): string {
   if (!dateString) {
     return '';
   }

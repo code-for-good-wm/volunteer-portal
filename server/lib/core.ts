@@ -13,17 +13,20 @@ export function getUserIdent(req: HttpRequest): string {
 
 /**
  * Tries to retrieve the user from the current request header
- * @param req The current request 
+ * @param req The current request
  * @param context Status code is 401 if unauthenticated
  */
-export function tryGetUserIdent(req: HttpRequest, context: Context): { userIdent: string | null, status: number } {
+export function tryGetUserIdent(
+  req: HttpRequest,
+  context: Context,
+): { userIdent: string | null; status: number } {
   let userId = null;
   let status = 200;
 
   try {
     userId = getUserIdent(req);
     // If no current user, return unauthorized
-    if(!userId) {
+    if (!userId) {
       context.log.error('No user ID present');
       status = 401;
     }
@@ -36,39 +39,53 @@ export function tryGetUserIdent(req: HttpRequest, context: Context): { userIdent
   return { userIdent: userId, status };
 }
 
-export function createSuccessResult(code: number, data: unknown, context: Context): IHttpResult {
+export function createSuccessResult(
+  code: number,
+  data: unknown,
+  context: Context,
+): IHttpResult {
   return {
-    headers: { 'Content-Type': 'application/json', 'X-Invocation-ID': context.invocationId },
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Invocation-ID': context.invocationId,
+    },
     body: data,
-    status: code 
+    status: code,
   };
 }
 
-export function createErrorResult(code: number, message: string | null, context: Context): IHttpResult {
-  return { 
-    headers: { 'Content-Type': 'application/json', 'X-Invocation-ID': context.invocationId },
-    body: { 
-      'error': {
-        'code': code,
-        'message': message,
-        'requestId': context.invocationId
-      }
-    }, 
-    status: code 
+export function createErrorResult(
+  code: number,
+  message: string | null,
+  context: Context,
+): IHttpResult {
+  return {
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Invocation-ID': context.invocationId,
+    },
+    body: {
+      error: {
+        code: code,
+        message: message,
+        requestId: context.invocationId,
+      },
+    },
+    status: code,
   };
 }
 
 export interface IHttpResult {
-  headers?: {[key: string]: string},
+  headers?: { [key: string]: string };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  body: any,
-  status: number
+  body: any;
+  status: number;
 }
 
 export interface Result {
-  success: boolean,
+  success: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  error?: any,
+  error?: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data?: any,
+  data?: any;
 }

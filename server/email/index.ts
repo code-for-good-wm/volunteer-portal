@@ -1,10 +1,12 @@
-
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { createErrorResult, IHttpResult } from '../lib/core';
 import { userStore } from '../lib/models/store';
 import { checkAuthAndConnect, sendTemplateEmail } from '../lib/helpers';
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest,
+): Promise<void> {
   // get caller uid from token and connect to DB
   // eslint-disable-next-line prefer-const
   let { uid, result } = await checkAuthAndConnect(context, req);
@@ -16,9 +18,9 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 
   switch (req.method) {
-  case 'POST':
-    result = await createEmail(context, uid);
-    break;
+    case 'POST':
+      result = await createEmail(context, uid);
+      break;
   }
 
   if (result) {
@@ -26,7 +28,10 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 };
 
-async function createEmail(context: Context, userIdent: string): Promise<IHttpResult> {
+async function createEmail(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // Attempt to acquire user data from userIdent
   const user = await userStore.list(userIdent);
   if (!user) {
@@ -58,7 +63,12 @@ async function createEmail(context: Context, userIdent: string): Promise<IHttpRe
   const templateData = context.req?.body ?? {};
 
   // const result = await sendTestEmail(recipientEmail, context);
-  const result = await sendTemplateEmail(recipientEmail, templateId, templateData, context);
+  const result = await sendTemplateEmail(
+    recipientEmail,
+    templateId,
+    templateData,
+    context,
+  );
 
   return result;
 }

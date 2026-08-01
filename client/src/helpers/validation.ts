@@ -1,6 +1,6 @@
 /**
  * Test email for validity
- * @param {string} email 
+ * @param {string} email
  * @returns {boolean}
  */
 export const testEmail = (email: string) => {
@@ -10,7 +10,7 @@ export const testEmail = (email: string) => {
 
 /**
  * Test password for validity
- * @param {string} password 
+ * @param {string} password
  * @returns {boolean}
  */
 export const testPassword = (password: string) => {
@@ -23,7 +23,7 @@ export const testPassword = (password: string) => {
 
 /**
  * Test phone for validity
- * @param {string} phone 
+ * @param {string} phone
  * @returns {boolean}
  */
 export const testPhone = (phone: string) => {

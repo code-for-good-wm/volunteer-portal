@@ -3,54 +3,54 @@ import { ProfileUpdate, Role, UserSkill } from './profile';
 import { UserUpdate } from './user';
 
 export interface ServiceParams {
-  success?: () => void,
-  failure?: (message: string) => void,
+  success?: () => void;
+  failure?: (message: string) => void;
 }
 
 export interface TypedServiceParams<T> {
-  success?: (data: T) => void,
-  failure?: (message: string) => void,
+  success?: (data: T) => void;
+  failure?: (message: string) => void;
 }
 
 export interface SignInParams extends ServiceParams {
-  email: string,
-  password: string,
+  email: string;
+  password: string;
 }
 
 export interface RecoverPasswordParams extends ServiceParams {
-  email: string,
+  email: string;
 }
 
 export interface UpdateUserEmailParams extends ServiceParams {
-  email: string,
-  password: string,
+  email: string;
+  password: string;
 }
 
 export interface UpdateUserPasswordParams extends ServiceParams {
-  password: string,
-  newPassword: string,
+  password: string;
+  newPassword: string;
 }
 
 export interface DeleteUserAccountParams extends ServiceParams {
-  password: string,
+  password: string;
 }
 export interface UpdateUserRolesParams extends ServiceParams {
-  roles: Role[],
+  roles: Role[];
 }
 
 export interface UpdateGettingStartedProfileDataParams extends ServiceParams {
-  userUpdate: UserUpdate,
-  profileUpdate: ProfileUpdate
+  userUpdate: UserUpdate;
+  profileUpdate: ProfileUpdate;
 }
 
 export interface UpdateUserSkillsParams extends ServiceParams {
-  skills: UserSkill[]
+  skills: UserSkill[];
 }
 
 export interface UpdateAdditionalSkillsParams extends ServiceParams {
-  skills: UserSkill[],
-  additionalSkills: string,
-  aiSkills: string
+  skills: UserSkill[];
+  additionalSkills: string;
+  aiSkills: string;
 }
 
 export interface UpdateEventAttendanceParams extends ServiceParams {

@@ -1,20 +1,26 @@
 import { FirebaseError } from '@firebase/util';
-import { deleteUser, EmailAuthProvider, getAuth, reauthenticateWithCredential, updateEmail, updatePassword } from 'firebase/auth';
+import {
+  deleteUser,
+  EmailAuthProvider,
+  getAuth,
+  reauthenticateWithCredential,
+  updateEmail,
+  updatePassword,
+} from 'firebase/auth';
 
 import { User } from '../types/user';
-import { DeleteUserAccountParams, UpdateUserEmailParams, UpdateUserPasswordParams } from '../types/services';
+import {
+  DeleteUserAccountParams,
+  UpdateUserEmailParams,
+  UpdateUserPasswordParams,
+} from '../types/services';
 
 import { store } from '../store/store';
 import { updateAuth } from '../store/authSlice';
 import { getApiBaseUrl, getDefaultRequestHeaders } from '../helpers/functions';
 
 export const updateUserEmail = async (params: UpdateUserEmailParams) => {
-  const {
-    email,
-    password,
-    success,
-    failure
-  } = params;
+  const { email, password, success, failure } = params;
 
   const auth = getAuth();
   const fbUser = auth.currentUser;
@@ -42,7 +48,7 @@ export const updateUserEmail = async (params: UpdateUserEmailParams) => {
     await updateEmail(fbUser, email);
 
     // Acquire bearer token
-    const token = await fbUser?.getIdToken() || '';
+    const token = (await fbUser?.getIdToken()) || '';
 
     const userId = appState.auth.user?._id;
 
@@ -53,21 +59,21 @@ export const updateUserEmail = async (params: UpdateUserEmailParams) => {
       method: 'PUT',
       headers: getDefaultRequestHeaders(token),
       body: JSON.stringify({
-        email
-      })
+        email,
+      }),
     });
 
     if (!userResponse.ok) {
       throw new Error('Failed to update user data.');
     }
 
-    const newUserData = await userResponse.json() as User;
+    const newUserData = (await userResponse.json()) as User;
 
     // Update local data
     store.dispatch(
       updateAuth({
         user: newUserData,
-      })
+      }),
     );
 
     if (success) {
@@ -78,13 +84,15 @@ export const updateUserEmail = async (params: UpdateUserEmailParams) => {
     const { code } = authError;
 
     // Build custom error messaging
-    let message = 'Could not update email at this time.  Check your network connection and try again later.';
+    let message =
+      'Could not update email at this time.  Check your network connection and try again later.';
     if (code === 'auth/email-already-in-use') {
       message = 'An account already exists for this email address.';
     } else if (code === 'auth/invalid-email') {
       message = 'The email address is invalid and cannot be used.';
     } else if (code === 'auth/wrong-password') {
-      message = 'The current password you entered is incorrect; please try again.';
+      message =
+        'The current password you entered is incorrect; please try again.';
     }
 
     if (failure) {
@@ -94,12 +102,7 @@ export const updateUserEmail = async (params: UpdateUserEmailParams) => {
 };
 
 export const updateUserPassword = async (params: UpdateUserPasswordParams) => {
-  const {
-    password,
-    newPassword,
-    success,
-    failure
-  } = params;
+  const { password, newPassword, success, failure } = params;
 
   const auth = getAuth();
   const fbUser = auth.currentUser;
@@ -134,9 +137,11 @@ export const updateUserPassword = async (params: UpdateUserPasswordParams) => {
     const { code } = authError;
 
     // Build custom error messaging
-    let message = 'Could not update password at this time.  Check your network connection and try again later.';
+    let message =
+      'Could not update password at this time.  Check your network connection and try again later.';
     if (code === 'auth/wrong-password') {
-      message = 'The current password you entered is incorrect; please try again.';
+      message =
+        'The current password you entered is incorrect; please try again.';
     } else if (code === 'auth/invalid-password') {
       message = 'The submitted password does not meet minimum requirements.';
     }
@@ -148,11 +153,7 @@ export const updateUserPassword = async (params: UpdateUserPasswordParams) => {
 };
 
 export const deleteUserAccount = async (params: DeleteUserAccountParams) => {
-  const {
-    password,
-    success,
-    failure
-  } = params;
+  const { password, success, failure } = params;
 
   const auth = getAuth();
   const fbUser = auth.currentUser;
@@ -177,7 +178,7 @@ export const deleteUserAccount = async (params: DeleteUserAccountParams) => {
     await reauthenticateWithCredential(fbUser, credential);
 
     // Acquire bearer token
-    const token = await fbUser?.getIdToken() || '';
+    const token = (await fbUser?.getIdToken()) || '';
 
     const userId = appState.auth.user?._id;
 
@@ -206,9 +207,11 @@ export const deleteUserAccount = async (params: DeleteUserAccountParams) => {
     const { code } = authError;
 
     // Build custom error messaging
-    let message = 'Could not remove account at this time.  Check your network connection and try again later.';
+    let message =
+      'Could not remove account at this time.  Check your network connection and try again later.';
     if (code === 'auth/wrong-password') {
-      message = 'The current password you entered is incorrect; please try again.';
+      message =
+        'The current password you entered is incorrect; please try again.';
     }
 
     if (failure) {

@@ -1,4 +1,3 @@
-
 export enum DietaryRestriction {
   VEGAN = 'vegan',
   VEGETARIAN = 'vegetarian',
@@ -10,5 +9,5 @@ export enum DietaryRestriction {
   EGGS = 'eggs',
   SOY = 'soy',
   CORN = 'corn',
-  OTHER = 'other'
+  OTHER = 'other',
 }

@@ -3,5 +3,5 @@ export enum SlotStatus {
   INVITED = 'invited',
   CONFIRMED = 'confirmed',
   CONFIRMED_PARTIAL = 'confirmed-partial',
-  DECLINED = 'declined'
+  DECLINED = 'declined',
 }

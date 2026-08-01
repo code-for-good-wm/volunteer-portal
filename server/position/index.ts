@@ -1,10 +1,17 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
+import {
+  createErrorResult,
+  createSuccessResult,
+  IHttpResult,
+} from '../lib/core';
 import { positionStore, projectStore, userStore } from '../lib/models/store';
 import { checkAuthAndConnect } from '../lib/helpers';
 import { EDIT_ALL_POSITIONS } from '../lib/models/enums/user-role.enum';
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest,
+): Promise<void> {
   // get caller uid from token and connect to DB
   // eslint-disable-next-line prefer-const
   let { uid, result } = await checkAuthAndConnect(context, req);
@@ -16,18 +23,18 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 
   switch (req.method) {
-  case 'GET':
-    result = await getPositions(context);
-    break;
-  case 'POST':
-    result = await createPosition(context, uid);
-    break;
-  case 'PUT':
-    result = await updatePosition(context, uid);
-    break;
-  case 'DELETE':
-    result = await deletePosition(context, uid);
-    break;
+    case 'GET':
+      result = await getPositions(context);
+      break;
+    case 'POST':
+      result = await createPosition(context, uid);
+      break;
+    case 'PUT':
+      result = await updatePosition(context, uid);
+      break;
+    case 'DELETE':
+      result = await deletePosition(context, uid);
+      break;
   }
 
   context.res = result;
@@ -53,7 +60,10 @@ async function getPositions(context: Context): Promise<IHttpResult> {
   return createSuccessResult(200, positions, context);
 }
 
-async function createPosition(context: Context, userIdent: string): Promise<IHttpResult> {
+async function createPosition(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   const user = await userStore.list(userIdent);
   if (!user) {
     return createErrorResult(404, 'User not found', context);
@@ -82,7 +92,10 @@ async function createPosition(context: Context, userIdent: string): Promise<IHtt
   return createSuccessResult(201, positionData, context);
 }
 
-async function updatePosition(context: Context, userIdent: string): Promise<IHttpResult> {
+async function updatePosition(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   const user = await userStore.list(userIdent);
   if (!user) {
     return createErrorResult(404, 'User not found', context);
@@ -112,7 +125,10 @@ async function updatePosition(context: Context, userIdent: string): Promise<IHtt
   return createSuccessResult(200, positionData, context);
 }
 
-async function deletePosition(context: Context, userIdent: string): Promise<IHttpResult> {
+async function deletePosition(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   const user = await userStore.list(userIdent);
   if (!user) {
     return createErrorResult(404, 'User not found', context);

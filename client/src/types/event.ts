@@ -4,9 +4,10 @@ export type EventType = 'in-person' | 'online' | 'hybrid';
 
 export type Status = 'draft' | 'upcoming' | 'active' | 'complete' | 'cancelled';
 
-export type Attendance  = 'attending' | 'partial-attending' | 'not-attending';
+export type Attendance = 'attending' | 'partial-attending' | 'not-attending';
 
-export type Allocation = 'unassigned' | 'assigned' | 'backup' | 'general' | 'float';
+export type Allocation =
+  'unassigned' | 'assigned' | 'backup' | 'general' | 'float';
 
 export interface Event {
   _id: string; // ID of program document in database
@@ -72,18 +73,18 @@ export interface ProgramUpdate {
 }
 
 export interface EventAttendance {
-  _id: string,
-  user: string,
-  event: string,
-  attendance: Attendance,
-  attendanceDetail: string,
+  _id: string;
+  user: string;
+  event: string;
+  attendance: Attendance;
+  attendanceDetail: string;
   roles: Role[];
-  allocation: Allocation
+  allocation: Allocation;
 }
 
 export interface EventAttendanceUpdate {
-  attendance: Attendance | null,
-  attendanceDetail: string | null,
+  attendance: Attendance | null;
+  attendanceDetail: string | null;
   roles?: Role[];
-  allocation?: Allocation
+  allocation?: Allocation;
 }

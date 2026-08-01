@@ -1,23 +1,18 @@
 import { store } from "../store/store";
 
-import { Event, EventAttendance } from "../types/event";
-import {
-  CreateEventParams,
-  DeleteEventParams,
-  UpdateEventAttendanceParams,
-  UpdateEventParams,
-} from "../types/services";
-import { eventAdded, eventRemoved, eventsReceived } from "../store/eventsSlice";
+import { Event, EventAttendance } from '../types/event';
+import { UpdateEventAttendanceParams } from '../types/services';
+import { eventsReceived } from '../store/eventsSlice';
 import {
   attendanceAdded,
   attendancesReceived,
-} from "../store/eventAttendanceSlice";
-import { updateAlert } from "../store/alertSlice";
+} from '../store/eventAttendanceSlice';
+import { updateAlert } from '../store/alertSlice';
 import {
   getApiBaseUrl,
   getAuthToken,
   getDefaultRequestHeaders,
-} from "../helpers/functions";
+} from '../helpers/functions';
 
 export const loadUpcomingEvents = async () => {
   try {
@@ -48,8 +43,8 @@ export const loadUpcomingEvents = async () => {
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "error",
-        content: "An error occurred while loading upcoming events.",
+        theme: 'error',
+        content: 'An error occurred while loading upcoming events.',
       }),
     );
   }
@@ -84,8 +79,8 @@ export const loadAllEvents = async () => {
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "error",
-        content: "An error occurred while loading events.",
+        theme: 'error',
+        content: 'An error occurred while loading events.',
       }),
     );
   }
@@ -280,8 +275,8 @@ export const loadUpcomingEventsAndAttendance = async () => {
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "error",
-        content: "An error occurred while loading upcoming attendance.",
+        theme: 'error',
+        content: 'An error occurred while loading upcoming attendance.',
       }),
     );
   }
@@ -319,8 +314,8 @@ export const loadAttendance = async (eventId?: string) => {
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "error",
-        content: "An error occurred while loading attendance data.",
+        theme: 'error',
+        content: 'An error occurred while loading attendance data.',
       }),
     );
   }
@@ -363,8 +358,8 @@ export const updateEventAttendance = async (
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "success",
-        content: "Attendance selections saved.",
+        theme: 'success',
+        content: 'Attendance selections saved.',
       }),
     );
 

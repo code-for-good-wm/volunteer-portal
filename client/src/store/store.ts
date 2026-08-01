@@ -19,12 +19,11 @@ export const store = configureStore({
     attendances: eventAttendancesReducer,
     programs: programsReducer,
     nonprofits: nonprofitsReducer,
-    projects: projectsReducer
-  }
+    projects: projectsReducer,
+  },
 });
 
 // Infer root state and app dispatch types within the store itself
 // https://redux.js.org/usage/usage-with-typescript
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-

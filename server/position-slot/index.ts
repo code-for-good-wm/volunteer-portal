@@ -1,11 +1,18 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
+import {
+  createErrorResult,
+  createSuccessResult,
+  IHttpResult,
+} from '../lib/core';
 import { checkAuthAndConnect } from '../lib/helpers';
 import { slotStore, userStore } from '../lib/models/store';
 import { EDIT_ALL_SLOTS } from '../lib/models/enums/user-role.enum';
 import { SlotStatus } from '../lib/models/enums/slot-status.enum';
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest,
+): Promise<void> {
   // get caller uid from token and connect to DB
   // eslint-disable-next-line prefer-const
   let { uid, result } = await checkAuthAndConnect(context, req);
@@ -29,15 +36,15 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 
   switch (req.method) {
-  case 'GET':
-    result = await getSlots(context);
-    break;
-  case 'PUT':
-    result = await updateSlot(context);
-    break;
-  case 'DELETE':
-    result = await deleteSlot(context);
-    break;
+    case 'GET':
+      result = await getSlots(context);
+      break;
+    case 'PUT':
+      result = await updateSlot(context);
+      break;
+    case 'DELETE':
+      result = await deleteSlot(context);
+      break;
   }
 
   if (result) {
@@ -81,15 +88,32 @@ async function updateSlot(context: Context): Promise<IHttpResult> {
     return createErrorResult(404, 'Slot not found', context);
   }
 
-  const { user, status, partialDetail, declineReason } = context.req?.body ?? {};
+  const { user, status, partialDetail, declineReason } =
+    context.req?.body ?? {};
   if (!status) {
-    return createErrorResult(400, 'Slot data missing expected properties', context);
+    return createErrorResult(
+      400,
+      'Slot data missing expected properties',
+      context,
+    );
   }
 
-  if ((status === SlotStatus.CONFIRMED || status === SlotStatus.CONFIRMED_PARTIAL) && user) {
-    const conflict = await slotStore.hasConfirmedSlotForEvent(user, positionId, slotId);
+  if (
+    (status === SlotStatus.CONFIRMED ||
+      status === SlotStatus.CONFIRMED_PARTIAL) &&
+    user
+  ) {
+    const conflict = await slotStore.hasConfirmedSlotForEvent(
+      user,
+      positionId,
+      slotId,
+    );
     if (conflict) {
-      return createErrorResult(409, 'Volunteer already has a confirmed slot for this event', context);
+      return createErrorResult(
+        409,
+        'Volunteer already has a confirmed slot for this event',
+        context,
+      );
     }
   }
 
@@ -98,11 +122,15 @@ async function updateSlot(context: Context): Promise<IHttpResult> {
     user: user ?? slot.user,
     status,
     invitedAt: status === SlotStatus.INVITED ? new Date() : slot.invitedAt,
-    respondedAt: [SlotStatus.CONFIRMED, SlotStatus.CONFIRMED_PARTIAL, SlotStatus.DECLINED].includes(status)
+    respondedAt: [
+      SlotStatus.CONFIRMED,
+      SlotStatus.CONFIRMED_PARTIAL,
+      SlotStatus.DECLINED,
+    ].includes(status)
       ? new Date()
       : slot.respondedAt,
     partialDetail: partialDetail ?? slot.partialDetail,
-    declineReason: declineReason ?? slot.declineReason
+    declineReason: declineReason ?? slot.declineReason,
   };
 
   const slotData = await slotStore.update(slotId, update);

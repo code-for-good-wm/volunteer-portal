@@ -1,10 +1,21 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
+import {
+  createErrorResult,
+  createSuccessResult,
+  IHttpResult,
+} from '../lib/core';
 import { checkAuthAndConnect } from '../lib/helpers';
-import { positionSkillStore, positionStore, userStore } from '../lib/models/store';
+import {
+  positionSkillStore,
+  positionStore,
+  userStore,
+} from '../lib/models/store';
 import { EDIT_ALL_POSITIONS } from '../lib/models/enums/user-role.enum';
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest,
+): Promise<void> {
   // get caller uid from token and connect to DB
   // eslint-disable-next-line prefer-const
   let { uid, result } = await checkAuthAndConnect(context, req);
@@ -16,18 +27,18 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 
   switch (req.method) {
-  case 'GET':
-    result = await getPositionSkills(context);
-    break;
-  case 'POST':
-    result = await createPositionSkill(context, uid);
-    break;
-  case 'PUT':
-    result = await updatePositionSkill(context, uid);
-    break;
-  case 'DELETE':
-    result = await deletePositionSkill(context, uid);
-    break;
+    case 'GET':
+      result = await getPositionSkills(context);
+      break;
+    case 'POST':
+      result = await createPositionSkill(context, uid);
+      break;
+    case 'PUT':
+      result = await updatePositionSkill(context, uid);
+      break;
+    case 'DELETE':
+      result = await deletePositionSkill(context, uid);
+      break;
   }
 
   if (result) {
@@ -46,13 +57,16 @@ async function getPositionSkills(context: Context): Promise<IHttpResult> {
   let positionSkills = await positionSkillStore.listByPosition(positionId);
 
   if (skillCode) {
-    positionSkills = positionSkills.filter(s => s.code === skillCode);
+    positionSkills = positionSkills.filter((s) => s.code === skillCode);
   }
 
   return createSuccessResult(200, positionSkills, context);
 }
 
-async function createPositionSkill(context: Context, userIdent: string): Promise<IHttpResult> {
+async function createPositionSkill(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   const user = await userStore.list(userIdent);
   if (!user) {
     return createErrorResult(404, 'User not found', context);
@@ -75,15 +89,27 @@ async function createPositionSkill(context: Context, userIdent: string): Promise
 
   const { code, minimumLevel, importance } = context.req?.body ?? {};
   if (!code || minimumLevel === undefined || !importance) {
-    return createErrorResult(400, 'Position skill data missing expected properties', context);
+    return createErrorResult(
+      400,
+      'Position skill data missing expected properties',
+      context,
+    );
   }
 
-  const positionSkillData = await positionSkillStore.create(positionId, { position: positionId, code, minimumLevel, importance });
+  const positionSkillData = await positionSkillStore.create(positionId, {
+    position: positionId,
+    code,
+    minimumLevel,
+    importance,
+  });
 
   return createSuccessResult(201, positionSkillData, context);
 }
 
-async function updatePositionSkill(context: Context, userIdent: string): Promise<IHttpResult> {
+async function updatePositionSkill(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   const user = await userStore.list(userIdent);
   if (!user) {
     return createErrorResult(404, 'User not found', context);
@@ -100,18 +126,34 @@ async function updatePositionSkill(context: Context, userIdent: string): Promise
 
   const { _id, code, minimumLevel, importance } = context.req?.body ?? {};
   if (!_id || !code || minimumLevel === undefined || !importance) {
-    return createErrorResult(400, 'Position skill data missing expected properties', context);
+    return createErrorResult(
+      400,
+      'Position skill data missing expected properties',
+      context,
+    );
   }
 
-  const updateResult = await positionSkillStore.update(_id, positionId, { position: positionId, code, minimumLevel, importance });
+  const updateResult = await positionSkillStore.update(_id, positionId, {
+    position: positionId,
+    code,
+    minimumLevel,
+    importance,
+  });
   if (!updateResult || updateResult.modifiedCount !== 1) {
     return createErrorResult(404, 'Position skill not found', context);
   }
 
-  return createSuccessResult(200, { _id, position: positionId, code, minimumLevel, importance }, context);
+  return createSuccessResult(
+    200,
+    { _id, position: positionId, code, minimumLevel, importance },
+    context,
+  );
 }
 
-async function deletePositionSkill(context: Context, userIdent: string): Promise<IHttpResult> {
+async function deletePositionSkill(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   const user = await userStore.list(userIdent);
   if (!user) {
     return createErrorResult(404, 'User not found', context);

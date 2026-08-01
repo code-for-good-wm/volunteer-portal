@@ -1,26 +1,39 @@
-import { Nonprofit, NonprofitCreate, NonprofitUpdate } from '../types/nonprofit';
+import {
+  Nonprofit,
+  NonprofitCreate,
+  NonprofitUpdate,
+} from '../types/nonprofit';
 import { TypedServiceParams } from '../types/services';
 import { store } from '../store/store';
 import { nonprofitAdded, nonprofitsReceived } from '../store/nonprofitsSlice';
 import { updateAlert } from '../store/alertSlice';
-import { getApiBaseUrl, getAuthToken, getDefaultRequestHeaders } from '../helpers/functions';
+import {
+  getApiBaseUrl,
+  getAuthToken,
+  getDefaultRequestHeaders,
+} from '../helpers/functions';
 
 export const loadNonprofits = async () => {
   try {
     const token = await getAuthToken();
-    const requestInit = { headers: getDefaultRequestHeaders(token) } as RequestInit;
+    const requestInit = {
+      headers: getDefaultRequestHeaders(token),
+    } as RequestInit;
 
-    const nonprofitsResponse = await fetch(`${getApiBaseUrl()}/nonprofits`, requestInit);
+    const nonprofitsResponse = await fetch(
+      `${getApiBaseUrl()}/nonprofits`,
+      requestInit,
+    );
     if (!nonprofitsResponse.ok) {
       throw new Error('Failed to load nonprofits.');
     }
 
-    const nonprofitsData = await nonprofitsResponse.json() as Nonprofit[];
+    const nonprofitsData = (await nonprofitsResponse.json()) as Nonprofit[];
 
     store.dispatch(
       nonprofitsReceived({
         nonprofits: nonprofitsData,
-      })
+      }),
     );
   } catch (error) {
     store.dispatch(
@@ -28,7 +41,7 @@ export const loadNonprofits = async () => {
         visible: true,
         theme: 'error',
         content: 'An error occurred while loading nonprofits.',
-      })
+      }),
     );
   }
 };
@@ -36,14 +49,19 @@ export const loadNonprofits = async () => {
 export const loadNonprofit = async (nonprofitId: string) => {
   try {
     const token = await getAuthToken();
-    const requestInit = { headers: getDefaultRequestHeaders(token) } as RequestInit;
+    const requestInit = {
+      headers: getDefaultRequestHeaders(token),
+    } as RequestInit;
 
-    const nonprofitResponse = await fetch(`${getApiBaseUrl()}/nonprofit/${nonprofitId}`, requestInit);
+    const nonprofitResponse = await fetch(
+      `${getApiBaseUrl()}/nonprofit/${nonprofitId}`,
+      requestInit,
+    );
     if (!nonprofitResponse.ok) {
       throw new Error('Failed to load nonprofit.');
     }
 
-    const nonprofitData = await nonprofitResponse.json() as Nonprofit;
+    const nonprofitData = (await nonprofitResponse.json()) as Nonprofit;
 
     store.dispatch(nonprofitAdded(nonprofitData));
   } catch (error) {
@@ -52,12 +70,15 @@ export const loadNonprofit = async (nonprofitId: string) => {
         visible: true,
         theme: 'error',
         content: 'An error occurred while loading this nonprofit.',
-      })
+      }),
     );
   }
 };
 
-export const createNonprofit = async (nonprofit: NonprofitCreate, params: TypedServiceParams<Nonprofit>) => {
+export const createNonprofit = async (
+  nonprofit: NonprofitCreate,
+  params: TypedServiceParams<Nonprofit>,
+) => {
   const { success, failure } = params;
 
   try {
@@ -73,7 +94,7 @@ export const createNonprofit = async (nonprofit: NonprofitCreate, params: TypedS
       throw new Error('Failed to create nonprofit.');
     }
 
-    const nonprofitData = await nonprofitResponse.json() as Nonprofit;
+    const nonprofitData = (await nonprofitResponse.json()) as Nonprofit;
 
     store.dispatch(nonprofitAdded(nonprofitData));
 
@@ -81,14 +102,15 @@ export const createNonprofit = async (nonprofit: NonprofitCreate, params: TypedS
       success(nonprofitData);
     }
   } catch (error) {
-    const message = 'An error occurred while saving this nonprofit. Check your network connection and try again.';
+    const message =
+      'An error occurred while saving this nonprofit. Check your network connection and try again.';
 
     store.dispatch(
       updateAlert({
         visible: true,
         theme: 'error',
         content: message,
-      })
+      }),
     );
 
     if (failure) {
@@ -97,23 +119,30 @@ export const createNonprofit = async (nonprofit: NonprofitCreate, params: TypedS
   }
 };
 
-export const updateNonprofit = async (nonprofitId: string, nonprofitUpdate: NonprofitUpdate, params: TypedServiceParams<Nonprofit>) => {
+export const updateNonprofit = async (
+  nonprofitId: string,
+  nonprofitUpdate: NonprofitUpdate,
+  params: TypedServiceParams<Nonprofit>,
+) => {
   const { success, failure } = params;
 
   try {
     const token = await getAuthToken();
 
-    const nonprofitResponse = await fetch(`${getApiBaseUrl()}/nonprofit/${nonprofitId}`, {
-      method: 'PUT',
-      headers: getDefaultRequestHeaders(token),
-      body: JSON.stringify(nonprofitUpdate),
-    });
+    const nonprofitResponse = await fetch(
+      `${getApiBaseUrl()}/nonprofit/${nonprofitId}`,
+      {
+        method: 'PUT',
+        headers: getDefaultRequestHeaders(token),
+        body: JSON.stringify(nonprofitUpdate),
+      },
+    );
 
     if (!nonprofitResponse.ok) {
       throw new Error('Failed to update nonprofit.');
     }
 
-    const nonprofitData = await nonprofitResponse.json() as Nonprofit;
+    const nonprofitData = (await nonprofitResponse.json()) as Nonprofit;
 
     store.dispatch(nonprofitAdded(nonprofitData));
 
@@ -121,14 +150,15 @@ export const updateNonprofit = async (nonprofitId: string, nonprofitUpdate: Nonp
       success(nonprofitData);
     }
   } catch (error) {
-    const message = 'An error occurred while updating this nonprofit. Check your network connection and try again.';
+    const message =
+      'An error occurred while updating this nonprofit. Check your network connection and try again.';
 
     store.dispatch(
       updateAlert({
         visible: true,
         theme: 'error',
         content: message,
-      })
+      }),
     );
 
     if (failure) {
@@ -136,4 +166,3 @@ export const updateNonprofit = async (nonprofitId: string, nonprofitUpdate: Nonp
     }
   }
 };
-

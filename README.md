@@ -1,4 +1,5 @@
 # Code for Good Volunteer Portal
+
 ## Powered by Azure
 
 For more details check out the readme files in the `client` and `server` folders. We're using authorization via [Firebase](https://firebase.google.com/), and MongoDB (CosmosDB) for data storage. To build and run the entire app locally (after seeting up MongoDB):

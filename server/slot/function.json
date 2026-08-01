@@ -5,10 +5,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": [
-        "get",
-        "put"
-      ],
+      "methods": ["get", "put"],
       "route": "user/{userId}/slot/{slotId?}"
     },
     {

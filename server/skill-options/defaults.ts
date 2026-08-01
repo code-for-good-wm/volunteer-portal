@@ -1,264 +1,264 @@
-import { SkillOption } from "../lib/models/skill-options";
+import { SkillOption } from '../lib/models/skill-options';
 
 export const defaultSkillOptions: SkillOption[] = [
   {
     code: 'frontEndDev',
     description: 'Front End Dev',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'backEndDev',
     description: 'Back End Dev',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'databases',
     description: 'Databases',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'mobileDev',
     description: 'Mobile Dev',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'devOps',
     description: 'DevOps',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'wordPress',
     description: 'WordPress',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'squarespace',
     description: 'Squarespace',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'wix',
     description: 'Wix',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'htmlCss',
     description: 'HTML / CSS',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'javaScript',
     description: 'JavaScript',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'typeScript',
     description: 'TypeScript',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'react',
     description: 'React',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'vue',
     description: 'Vue',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'angular',
     description: 'Angular',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'nodeExpress',
     description: 'Node / Express',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'csharp',
     description: 'C#',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'java',
     description: 'Java',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'python',
     description: 'Python',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'rust',
     description: 'Rust',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'go',
     description: 'Go',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'phpLaravel',
     description: 'PHP / Laravel',
-    category: 'technical'
+    category: 'technical',
   },
   {
     code: 'print',
     description: 'Print Design',
-    category: 'design'
+    category: 'design',
   },
   {
     code: 'ux',
     description: 'User Experience (UX)',
-    category: 'design'
+    category: 'design',
   },
   {
     code: 'ui',
     description: 'User Interface (UI)',
-    category: 'design'
+    category: 'design',
   },
   {
     code: 'designThinking',
     description: 'Design Thinking',
-    category: 'design'
+    category: 'design',
   },
   {
     code: 'illustration',
     description: 'Illustration',
-    category: 'design'
+    category: 'design',
   },
   {
     code: 'brand',
     description: 'Branding',
-    category: 'design'
+    category: 'design',
   },
   {
     code: 'motionGraphics',
     description: 'Motion Graphics',
-    category: 'design'
+    category: 'design',
   },
   {
     code: 'adobeSuite',
     description: 'Adobe Creative Suite',
-    category: 'design'
+    category: 'design',
   },
   {
     code: 'canva',
     description: 'Canva',
-    category: 'design'
+    category: 'design',
   },
   {
     code: 'figma',
     description: 'Figma',
-    category: 'design'
+    category: 'design',
   },
   {
     code: 'zeplin',
     description: 'Zeplin',
-    category: 'design'
+    category: 'design',
   },
   {
     code: 'inVision',
     description: 'InVision',
-    category: 'design'
+    category: 'design',
   },
   {
     code: 'sketch',
     description: 'Sketch',
-    category: 'design'
+    category: 'design',
   },
   {
     code: 'aitools',
     description: 'AI/LLMs',
-    category: 'other'
+    category: 'other',
   },
   {
     code: 'agenticcode',
     description: 'Agentic Coding',
-    category: 'other'
+    category: 'other',
   },
   {
     code: 'cybersecurity',
     description: 'Cybersecurity',
-    category: 'other'
+    category: 'other',
   },
   {
     code: 'projMgmt',
     description: 'Project Management',
-    category: 'other'
+    category: 'other',
   },
   {
     code: 'brand',
     description: 'Brand Strategy',
-    category: 'other'
+    category: 'other',
   },
   {
     code: 'copy',
     description: 'Copywriting',
-    category: 'other'
+    category: 'other',
   },
   {
     code: 'crm',
     description: 'CRM Tools',
-    category: 'other'
+    category: 'other',
   },
   {
     code: 'salesforce',
     description: 'Salesforce',
-    category: 'other'
+    category: 'other',
   },
   {
     code: 'marketing',
     description: 'Marketing',
-    category: 'other'
+    category: 'other',
   },
   {
     code: 'seo',
     description: 'SEO',
-    category: 'other'
+    category: 'other',
   },
   {
     code: 'social',
     description: 'Social Media',
-    category: 'other'
+    category: 'other',
   },
   {
     code: 'technicalWriting',
     description: 'Technical Writing',
-    category: 'other'
+    category: 'other',
   },
   {
     code: 'testing',
     description: 'User Testing / Compliance Testing',
-    category: 'other'
+    category: 'other',
   },
   {
     code: 'accessibleDesign',
     description: 'Accessible Design',
-    category: 'other'
+    category: 'other',
   },
   {
     code: 'accessibleDevelopment',
     description: 'Accessible Development',
-    category: 'other'
+    category: 'other',
   },
   {
     code: 'assistiveTechnology',
     description: 'Assistive Technology',
-    category: 'other'
+    category: 'other',
   },
   {
     code: 'photography',
     description: 'Photography',
-    category: 'other'
+    category: 'other',
   },
   {
     code: 'videography',
     description: 'Videography',
-    category: 'other'
+    category: 'other',
   },
-]
+];

@@ -5,7 +5,11 @@ import { updateAlert } from '../store/alertSlice';
 import { updateAuth } from '../store/authSlice';
 import { updateProfile } from '../store/profileSlice';
 import { store } from '../store/store';
-import { PrimaryProfileSectionId, UserSkill, UserSkillData } from '../types/profile';
+import {
+  PrimaryProfileSectionId,
+  UserSkill,
+  UserSkillData,
+} from '../types/profile';
 import { profileStructure } from './constants';
 
 /**
@@ -38,7 +42,7 @@ export const parsePhone = (phone: string) => {
   } else if (number.length > 6) {
     formatted = `(${number.substring(0, 3)}) ${number.substring(
       3,
-      6
+      6,
     )}-${number.substring(6, 10)}`;
   }
   return {
@@ -56,17 +60,19 @@ export function getApiBaseUrl(): string {
 export async function getAuthToken(): Promise<string> {
   const auth = getAuth();
   const fbUser = auth.currentUser;
-  return await fbUser?.getIdToken() || '';
+  return (await fbUser?.getIdToken()) || '';
 }
 
 /**
  * Create default request headers object with the provided auth token
  * @param token The auth token to send to the server, treated as a Bearer token
  */
-export function getDefaultRequestHeaders(token: string): Record<string, string> {
+export function getDefaultRequestHeaders(
+  token: string,
+): Record<string, string> {
   return {
     'Content-Type': 'application/json',
-    'x-firebase-auth': `Bearer ${token}`
+    'x-firebase-auth': `Bearer ${token}`,
   };
 }
 
@@ -79,7 +85,7 @@ export const resetAppState = () => {
       signedIn: false,
       updating: false,
       user: null,
-    })
+    }),
   );
 
   store.dispatch(
@@ -87,13 +93,13 @@ export const resetAppState = () => {
       currentSection: null,
       data: null,
       showRegistrationComplete: false,
-    })
+    }),
   );
 
   store.dispatch(
     updateAlert({
-      visible: false
-    })
+      visible: false,
+    }),
   );
 };
 
@@ -142,7 +148,7 @@ export const getNextProfileSectionId = () => {
 
   // Get index of current section
   const currentSectionIndex = displayedSections.findIndex((section) => {
-    return (section === currentSection);
+    return section === currentSection;
   });
 
   if (currentSectionIndex < 0) {
@@ -178,7 +184,7 @@ export const getPreviousProfileSection = () => {
 
   // Get index of current section
   const currentSectionIndex = displayedSections.findIndex((section) => {
-    return (section === currentSection);
+    return section === currentSection;
   });
 
   if (currentSectionIndex < 0) {
@@ -192,7 +198,7 @@ export const getPreviousProfileSection = () => {
   }
 
   const sectionData = profileStructure.find((section) => {
-    return (section.id === prevSectionId);
+    return section.id === prevSectionId;
   });
 
   return sectionData;
@@ -280,39 +286,37 @@ export const getGettingStartedProfileData = () => {
     dietaryRestrictions,
     additionalDietaryRestrictions,
     accessibilityRequirements,
-    agreements
+    agreements,
   } = profile;
 
-  return (
-    {
-      basicInfo: {
-        firstName,
-        lastName,
-        phone: parsePhone(phone).formatted,
-        preferredName: preferredName ?? '',
-        pronouns: pronouns ?? ''
-      },
-      contactInfo: {
-        linkedInUrl: linkedInUrl ?? '',
-        websiteUrl: websiteUrl ?? '',
-        portfolioUrl: portfolioUrl ?? '',
-        currentEmployer: currentEmployer ?? '',
-      },
-      extraStuff: {
-        previousVolunteer: !!previousVolunteer, // Could be undefined
-        teamLeadCandidate: !!teamLeadCandidate,  // Could be undefined
-        shirtSize: shirtSize ?? 'none',
-        dietaryRestrictions,
-        additionalDietaryRestrictions: additionalDietaryRestrictions ?? '',
-      },
-      accessibilityRequirements: accessibilityRequirements ?? '',
-      agreements: {
-        termsAndConditions: !!agreements?.termsAndConditions, // Convert to boolean
-        photoRelease: !!agreements?.photoRelease, // Convert to boolean
-        codeOfConduct: !!agreements?.codeOfConduct, // Convert to boolean
-      }
-    }
-  );
+  return {
+    basicInfo: {
+      firstName,
+      lastName,
+      phone: parsePhone(phone).formatted,
+      preferredName: preferredName ?? '',
+      pronouns: pronouns ?? '',
+    },
+    contactInfo: {
+      linkedInUrl: linkedInUrl ?? '',
+      websiteUrl: websiteUrl ?? '',
+      portfolioUrl: portfolioUrl ?? '',
+      currentEmployer: currentEmployer ?? '',
+    },
+    extraStuff: {
+      previousVolunteer: !!previousVolunteer, // Could be undefined
+      teamLeadCandidate: !!teamLeadCandidate, // Could be undefined
+      shirtSize: shirtSize ?? 'none',
+      dietaryRestrictions,
+      additionalDietaryRestrictions: additionalDietaryRestrictions ?? '',
+    },
+    accessibilityRequirements: accessibilityRequirements ?? '',
+    agreements: {
+      termsAndConditions: !!agreements?.termsAndConditions, // Convert to boolean
+      photoRelease: !!agreements?.photoRelease, // Convert to boolean
+      codeOfConduct: !!agreements?.codeOfConduct, // Convert to boolean
+    },
+  };
 };
 
 /**
@@ -357,8 +361,14 @@ export const getAiSkills = () => {
  * Returns the string as title case e.g. A Title String
  */
 export const toTitleCase = (str: string) => {
-  if (!str || str.length === 0) { return ''; }
-  return str.toLowerCase().split(' ').map(function(word) {
-    return (word.charAt(0).toUpperCase() + word.slice(1));
-  }).join(' ');
+  if (!str || str.length === 0) {
+    return '';
+  }
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map(function (word) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(' ');
 };

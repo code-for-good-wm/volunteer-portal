@@ -1,7 +1,7 @@
 export enum Status {
-  DRAFT  = 'draft',
+  DRAFT = 'draft',
   UPCOMING = 'upcoming',
   ACTIVE = 'active',
   COMPLETE = 'complete',
-  CANCELLED = 'cancelled'
+  CANCELLED = 'cancelled',
 }

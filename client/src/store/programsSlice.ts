@@ -16,7 +16,7 @@ interface ProgramUpdate {
 const initialState: ProgramsState = {
   programs: null,
   program: null,
-  events: null
+  events: null,
 };
 
 export const programsSlice = createSlice({
@@ -34,13 +34,20 @@ export const programsSlice = createSlice({
     updateProgramEvent: (draftState, action: PayloadAction<ProgramUpdate>) => {
       if (action.payload.event !== undefined && action.payload.event !== null) {
         const currEvents: Event[] = draftState.events ?? [];
-        const eventIndex = action.payload.event !== null
-          ? draftState.events?.findIndex((e: Event) => e !== null && e._id === action.payload.event?._id)
-          : -1;
+        const eventIndex =
+          action.payload.event !== null
+            ? draftState.events?.findIndex(
+                (e: Event) => e !== null && e._id === action.payload.event?._id,
+              )
+            : -1;
         // update
         if (eventIndex !== undefined && eventIndex > -1) {
           const newEvents = [...currEvents];
-          newEvents.splice(eventIndex as number, 0, action.payload.event as Event);
+          newEvents.splice(
+            eventIndex as number,
+            0,
+            action.payload.event as Event,
+          );
           draftState.events = newEvents;
         }
         //insert

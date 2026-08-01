@@ -1,9 +1,16 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
+import {
+  createErrorResult,
+  createSuccessResult,
+  IHttpResult,
+} from '../lib/core';
 import { checkAuthAndConnect } from '../lib/helpers';
 import { programStore, userStore } from '../lib/models/store';
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest,
+): Promise<void> {
   // get caller uid from token and connect to DB
   // eslint-disable-next-line prefer-const
   let { uid, result } = await checkAuthAndConnect(context, req);
@@ -17,9 +24,9 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   const includeEvents = !!req.query['includeEvents'];
 
   switch (req.method) {
-  case 'GET':
-    result = await getPrograms(context, uid, includeEvents);
-    break;
+    case 'GET':
+      result = await getPrograms(context, uid, includeEvents);
+      break;
   }
 
   if (result) {
@@ -27,7 +34,11 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 };
 
-async function getPrograms(context: Context, userIdent: string, includeEvents: boolean): Promise<IHttpResult> {
+async function getPrograms(
+  context: Context,
+  userIdent: string,
+  includeEvents: boolean,
+): Promise<IHttpResult> {
   // Attempt to acquire current user data
   const user = await userStore.list(userIdent);
   if (!user) {

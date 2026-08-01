@@ -25,5 +25,4 @@ function getFirebaseApp() {
   });
 }
 
-
 export const fbApp = getFirebaseApp();

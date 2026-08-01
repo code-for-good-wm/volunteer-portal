@@ -1,6 +1,10 @@
 import * as mongoose from 'mongoose';
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { createErrorResult, createSuccessResult, IHttpResult } from '../lib/core';
+import {
+  createErrorResult,
+  createSuccessResult,
+  IHttpResult,
+} from '../lib/core';
 import { checkBindingDataUserId, checkAuthAndConnect } from '../lib/helpers';
 import { profileStore, skillStore, userStore } from '../lib/models/store';
 import { IUser } from '../lib/models/user';
@@ -8,7 +12,10 @@ import { IProfile } from '../lib/models/profile';
 import { IUserSkill } from '../lib/models/user-skill';
 import { UserRole } from '../lib/models/enums/user-role.enum';
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest,
+): Promise<void> {
   // get caller uid from token and connect to DB
   // eslint-disable-next-line prefer-const
   let { uid, result } = await checkAuthAndConnect(context, req);
@@ -20,18 +27,18 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 
   switch (req.method) {
-  case 'GET':
-    result = await getUser(context, uid);
-    break;
-  case 'POST':
-    result = await createUser(context, uid);
-    break;
-  case 'PUT':
-    result = await updateUser(context, uid);
-    break;
-  case 'DELETE':
-    result = await deleteUser(context, uid);
-    break;
+    case 'GET':
+      result = await getUser(context, uid);
+      break;
+    case 'POST':
+      result = await createUser(context, uid);
+      break;
+    case 'PUT':
+      result = await updateUser(context, uid);
+      break;
+    case 'DELETE':
+      result = await deleteUser(context, uid);
+      break;
   }
 
   if (result) {
@@ -39,7 +46,10 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   }
 };
 
-async function getUser(context: Context, userIdent: string): Promise<IHttpResult> {
+async function getUser(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // Attempt to acquire user data
   const user = await userStore.list(userIdent);
   if (!user) {
@@ -54,7 +64,10 @@ async function getUser(context: Context, userIdent: string): Promise<IHttpResult
   return createSuccessResult(200, user, context);
 }
 
-async function createUser(context: Context, userIdent: string): Promise<IHttpResult> {
+async function createUser(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // Check to see if this user already exists; if so, return error
   const user = await userStore.list(userIdent);
   if (user) {
@@ -74,7 +87,7 @@ async function createUser(context: Context, userIdent: string): Promise<IHttpRes
     lastName: '',
     phone: '',
     email,
-    userRole: UserRole.VOLUNTEER
+    userRole: UserRole.VOLUNTEER,
   };
 
   const userData = await userStore.create(newUser);
@@ -92,7 +105,10 @@ async function createUser(context: Context, userIdent: string): Promise<IHttpRes
   return createSuccessResult(201, userData, context);
 }
 
-async function updateUser(context: Context, userIdent: string): Promise<IHttpResult> {
+async function updateUser(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // For MVP we're allowing users to access only their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {
@@ -119,7 +135,10 @@ async function updateUser(context: Context, userIdent: string): Promise<IHttpRes
   }
 }
 
-async function deleteUser(context: Context, userIdent: string): Promise<IHttpResult> {
+async function deleteUser(
+  context: Context,
+  userIdent: string,
+): Promise<IHttpResult> {
   // For MVP we're allowing users to delete only their own data
   const checkResult = await checkBindingDataUserId(context, userIdent);
   if (checkResult.body.error) {
