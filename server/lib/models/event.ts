@@ -11,6 +11,7 @@ export interface IEvent {
   additionalInfo: string,
   startDate: Date, // ISO date with time zone
   endDate: Date, // ISO date with time zone
+  rsvpDeadline?: Date, // ISO date with time zone; after this, volunteers can't change their RSVP
   location: string, // full address of event
   allowSignUps: boolean,
   allowPartialAttendance: boolean,
@@ -26,6 +27,7 @@ const eventSchema = new Schema<IEvent>({
   additionalInfo: String,
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
+  rsvpDeadline: Date,
   location: String,
   allowSignUps: Boolean,
   allowPartialAttendance: Boolean,

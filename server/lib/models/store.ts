@@ -14,6 +14,14 @@ import { IEvent, EventModel } from './event';
 import { IEventAttendance, EventAttendanceModel } from './event-attendance';
 import { create } from 'domain';
 
+// nonprofits & projects
+import { INonprofit, NonprofitModel } from './nonprofit';
+import { IProject, ProjectModel } from './project';
+import { IPosition, PositionModel } from './position';
+import { IPositionSkill, PositionSkillModel } from './position-skill';
+import { ISlot, SlotModel } from './slot';
+import { SlotStatus } from './enums/slot-status.enum';
+
 // Database config
 
 const configureMongoose = async function (log: Logger): Promise<void> {
@@ -225,5 +233,154 @@ export const eventAttendanceStore = {
   },
   delete: async(_id: mongoose.Types.ObjectId) => {
     return await EventAttendanceModel.deleteOne({_id});
+  }
+};
+
+export const nonprofitStore = {
+  list: async(_id: mongoose.Types.ObjectId) => {
+    return await NonprofitModel.findOne({_id});
+  },
+  listAll: async() => {
+    return await NonprofitModel.find();
+  },
+  create: async(nonprofit: INonprofit) => {
+    return await NonprofitModel.create(nonprofit);
+  },
+  update: async(_id: mongoose.Types.ObjectId, nonprofit: INonprofit) => {
+    return await NonprofitModel.updateOne({_id}, nonprofit);
+  },
+  delete: async(_id: mongoose.Types.ObjectId) => {
+    return await NonprofitModel.deleteOne({_id});
+  }
+};
+
+export const projectStore = {
+  list: async(_id: mongoose.Types.ObjectId) => {
+    return await ProjectModel.findOne({_id});
+  },
+  listAll: async() => {
+    return await ProjectModel.find();
+  },
+  listByNonprofit: async(nonprofitId: mongoose.Types.ObjectId) => {
+    return await ProjectModel.find({nonprofit: nonprofitId});
+  },
+  listByEvent: async(eventId: mongoose.Types.ObjectId) => {
+    return await ProjectModel.find({event: eventId});
+  },
+  create: async(project: IProject) => {
+    return await ProjectModel.create(project);
+  },
+  update: async(_id: mongoose.Types.ObjectId, project: IProject) => {
+    return await ProjectModel.updateOne({_id}, project);
+  },
+  delete: async(_id: mongoose.Types.ObjectId) => {
+    return await ProjectModel.deleteOne({_id});
+  }
+};
+
+export const positionStore = {
+  list: async(_id: mongoose.Types.ObjectId) => {
+    return await PositionModel.findOne({_id});
+  },
+  listByProject: async(projectId: mongoose.Types.ObjectId) => {
+    return await PositionModel.find({project: projectId});
+  },
+  // Creates the position along with one open Slot per slotCount, per the
+  // "a Position with slotCount: 2 creates two Slots" rule.
+  create: async(position: IPosition) => {
+    const created = await PositionModel.create(position);
+    const openSlots = Array.from({ length: created.slotCount }, () => ({
+      position: created._id,
+      status: SlotStatus.OPEN
+    })) as ISlot[];
+    await SlotModel.create(openSlots);
+    return created;
+  },
+  update: async(_id: mongoose.Types.ObjectId, position: IPosition) => {
+    return await PositionModel.updateOne({_id}, position);
+  },
+  delete: async(_id: mongoose.Types.ObjectId) => {
+    await SlotModel.deleteMany({position: _id});
+    await PositionSkillModel.deleteMany({position: _id});
+    return await PositionModel.deleteOne({_id});
+  }
+};
+
+export const positionSkillStore = {
+  listByPosition: async(positionId: mongoose.Types.ObjectId) => {
+    return await PositionSkillModel.find({position: positionId});
+  },
+  create: async(positionId: mongoose.Types.ObjectId, positionSkill: IPositionSkill) => {
+    positionSkill.position = positionId;
+    return await PositionSkillModel.create(positionSkill);
+  },
+  update: async(_id: mongoose.Types.ObjectId, positionId: mongoose.Types.ObjectId, positionSkill: IPositionSkill) => {
+    positionSkill.position = positionId;
+    return await PositionSkillModel.updateOne({_id, position: positionId}, positionSkill);
+  },
+  delete: async(_id: mongoose.Types.ObjectId, positionId: mongoose.Types.ObjectId) => {
+    return await PositionSkillModel.deleteOne({_id, position: positionId});
+  },
+  deleteByCode: async(positionId: mongoose.Types.ObjectId, code: string) => {
+    return await PositionSkillModel.deleteOne({position: positionId, code});
+  }
+};
+
+async function getEventIdForPosition(positionId: mongoose.Types.ObjectId): Promise<mongoose.Types.ObjectId | undefined> {
+  const position = await PositionModel.findById(positionId).populate({ path: 'project', select: 'event' });
+  const project = position?.project as unknown as IProject | undefined;
+  return project?.event as mongoose.Types.ObjectId | undefined;
+}
+
+export const slotStore = {
+  list: async(_id: mongoose.Types.ObjectId) => {
+    return await SlotModel.findOne({_id});
+  },
+  listByPosition: async(positionId: mongoose.Types.ObjectId) => {
+    return await SlotModel.find({position: positionId});
+  },
+  listByUser: async(userId: mongoose.Types.ObjectId) => {
+    return await SlotModel.find({user: userId});
+  },
+  update: async(_id: mongoose.Types.ObjectId, slot: ISlot) => {
+    return await SlotModel.updateOne({_id}, slot);
+  },
+  delete: async(_id: mongoose.Types.ObjectId) => {
+    return await SlotModel.deleteOne({_id});
+  },
+  /**
+   * Enforces "one assigned slot per volunteer per event": checks whether the
+   * given user already holds a confirmed slot on any position whose project
+   * is tied to the same event as the given position.
+   */
+  hasConfirmedSlotForEvent: async(
+    userId: mongoose.Types.ObjectId,
+    positionId: mongoose.Types.ObjectId,
+    excludeSlotId?: mongoose.Types.ObjectId
+  ): Promise<boolean> => {
+    const eventId = await getEventIdForPosition(positionId);
+    if (!eventId) {
+      return false; // project not yet assigned to an event; nothing to conflict with
+    }
+
+    const positionsForEvent = await PositionModel.find().populate({
+      path: 'project',
+      match: { event: eventId },
+      select: '_id'
+    });
+    const positionIds = positionsForEvent
+      .filter(p => p.project)
+      .map(p => p._id);
+
+    const query: mongoose.FilterQuery<ISlot> = {
+      user: userId,
+      position: { $in: positionIds },
+      status: { $in: [SlotStatus.CONFIRMED, SlotStatus.CONFIRMED_PARTIAL] }
+    };
+    if (excludeSlotId) {
+      query._id = { $ne: excludeSlotId };
+    }
+
+    return !!(await SlotModel.exists(query));
   }
 };
