@@ -18,11 +18,16 @@ export const projectsSlice = createSlice({
     projectsReceived(state, action: PayloadAction<{ projects: Project[] }>) {
       state.loading = false;
       projectsAdapter.setAll(state, action.payload.projects);
+    },
+    // For partial/filtered fetches (e.g. by nonprofit) that shouldn't clobber the full list
+    projectsUpserted(state, action: PayloadAction<{ projects: Project[] }>) {
+      state.loading = false;
+      projectsAdapter.upsertMany(state, action.payload.projects);
     }
   },
 });
 
-export const { projectAdded, projectsReceived } = projectsSlice.actions;
+export const { projectAdded, projectsReceived, projectsUpserted } = projectsSlice.actions;
 
 export const {
   selectAll: selectAllProjects,

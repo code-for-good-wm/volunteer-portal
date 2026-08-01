@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -23,7 +24,7 @@ import { selectAllNonprofits } from '../../../store/nonprofitsSlice';
 import { selectAllProjects } from '../../../store/projectsSlice';
 import { loadNonprofits } from '../../../services/nonprofit';
 import { loadProjects } from '../../../services/project';
-import { ProjectStatus } from '../../../types/project';
+import { NonprofitStatus } from '../../../types/nonprofit';
 import PageLayout from '../../../layouts/PageLayout';
 import StatusChip, { StatusChipTheme } from '../../../components/elements/StatusChip';
 import { colors } from '../../../material/colors';
@@ -31,14 +32,13 @@ import { colors } from '../../../material/colors';
 type FilterId = 'interested' | 'archived' | 'accepted' | 'rejected' | 'all';
 
 const filterTabs: { id: FilterId, label: string }[] = [
-  { id: 'interested', label: 'New' },
+  { id: 'interested', label: 'Interested' },
   { id: 'archived', label: 'Archived' },
   { id: 'accepted', label: 'Accepted' },
-  { id: 'rejected', label: 'Declined' },
   { id: 'all', label: 'All' },
 ];
 
-const statusDisplay: Record<ProjectStatus, { label: string, theme: StatusChipTheme }> = {
+const statusDisplay: Record<NonprofitStatus, { label: string, theme: StatusChipTheme }> = {
   interested: { label: 'Interested', theme: 'teal' },
   accepted: { label: 'Accepted', theme: 'success' },
   rejected: { label: 'Declined', theme: 'neutral' },
@@ -51,7 +51,7 @@ type Row = {
   contact: string;
   requestedProject: string;
   submitted?: string;
-  status: ProjectStatus;
+  status: NonprofitStatus;
 };
 
 const StyledTableCell = styled(TableCell)(() => ({
@@ -71,10 +71,12 @@ const formatSubmittedDate = (isoDate?: string) => {
 };
 
 const Nonprofits = () => {
-  const [activeFilter, setActiveFilter] = useState<FilterId>('interested');
+  const [activeFilter, setActiveFilter] = useState<FilterId>('all');
   const [filter, setFilter] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const navigate = useNavigate();
 
   const nonprofitsData = useAppSelector(selectAllNonprofits);
   const projectsData = useAppSelector(selectAllProjects);
@@ -85,20 +87,21 @@ const Nonprofits = () => {
   }, []);
 
   const rows: Row[] = useMemo(() => {
-    const nonprofitsById: Record<string, typeof nonprofitsData[number]> = {};
-    for (const nonprofit of nonprofitsData) {
-      nonprofitsById[nonprofit._id] = nonprofit;
-    }
+    // Each nonprofit gets one row; if it has an associated project (or several),
+    // show its most-recently-submitted one alongside it.
+    return nonprofitsData.map(nonprofit => {
+      const nonprofitProjects = projectsData
+        .filter(p => p.nonprofit === nonprofit._id)
+        .sort((a, b) => (b.submittedAt ?? '').localeCompare(a.submittedAt ?? ''));
+      const project = nonprofitProjects[0];
 
-    return projectsData.map(project => {
-      const nonprofit = nonprofitsById[project.nonprofit];
       return {
-        id: project._id,
-        organization: nonprofit?.name ?? 'Unknown organization',
-        contact: nonprofit?.contactName ?? '',
-        requestedProject: project.name,
-        submitted: project.submittedAt,
-        status: project.status,
+        id: nonprofit._id,
+        organization: nonprofit.name,
+        contact: nonprofit.contactName,
+        requestedProject: project?.name ?? '—',
+        submitted: nonprofit.createdDate,
+        status: nonprofit.status,
       };
     });
   }, [nonprofitsData, projectsData]);
@@ -133,6 +136,10 @@ const Nonprofits = () => {
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
+  };
+
+  const handleAddManually = () => {
+    navigate('/nonprofits/new');
   };
 
   return (
@@ -179,7 +186,7 @@ const Nonprofits = () => {
               />
             </Grid>
             <Grid item xs={4} md={3} sx={{ textAlign: 'right' }}>
-              <Button variant="outlined" color="primary">
+              <Button variant="outlined" color="primary" onClick={handleAddManually}>
                 + Add Manually
               </Button>
             </Grid>
@@ -222,6 +229,7 @@ const Nonprofits = () => {
                                 ? { backgroundColor: colors.primary.dark }
                                 : { borderColor: colors.primary.dark, color: colors.primary.dark }
                               }
+                              onClick={() => navigate(`/nonprofits/${row.id}`)}
                             >
                               {isNew ? 'Review' : 'Open'}
                             </Button>
