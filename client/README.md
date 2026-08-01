@@ -20,7 +20,7 @@ Uses [Azure Static Web App APIs](https://learn.microsoft.com/en-us/azure/static-
 
 In the root `client` folder, follow these instructions:
 
-- Run `npm install` to install necessary dependencies.  We recommend the use of Node 16 for this project.  [Learn how to manage Node versions on your development machine.](https://npm.github.io/installation-setup-docs/installing/using-a-node-version-manager.html)
+- Run `npm install` to install necessary dependencies.  We recommend the use of Node 22 for this project.  [Learn how to manage Node versions on your development machine.](https://npm.github.io/installation-setup-docs/installing/using-a-node-version-manager.html)
 - This application uses [environment variables](https://vitejs.dev/guide/env-and-mode.html) stored in `.env` files.  These variables are non-secret settings which are environment specific.  For local development, copy the settings from `.env.example` into a `.env.local` file.  React will use settings from `.env.local` as a default if present.
 - With packages installed and environment variables in place, spin up a local development server using `npm run serve`.  Changes to files should be immediately implemented upon save.
 
