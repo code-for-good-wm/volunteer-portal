@@ -24,6 +24,8 @@ export interface IProject {
   notes?: string;
   reference?: string; // tracking id for public form submissions
   submittedAt?: Date;
+  createdDate?: Date; // set automatically by MongooseOpts timestamps, not a schema field
+  updatedDate?: Date; // set automatically by MongooseOpts timestamps, not a schema field
 }
 
 const projectSchema = new Schema<IProject>(

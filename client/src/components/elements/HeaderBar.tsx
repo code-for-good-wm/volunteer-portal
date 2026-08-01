@@ -1,19 +1,20 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
-import { getAuth, signOut } from "firebase/auth";
+import { getAuth, signOut } from 'firebase/auth';
 
-import { useAppSelector } from "../../store/hooks";
-import { signedIn, user } from "../../store/authSlice";
+import { useAppSelector } from '../../store/hooks';
+import { signedIn, user } from '../../store/authSlice';
 
-import TransparentLogo from "../../assets/images/logo-transparent.png";
-import ExitToApp from "@mui/icons-material/ExitToApp";
-import Settings from "@mui/icons-material/Settings";
-import CalendarMonthOutlined from "@mui/icons-material/CalendarMonthOutlined";
-import EventOutlined from "@mui/icons-material/EventOutlined";
-import SupervisedUserCircleOutlined from "@mui/icons-material/SupervisedUserCircleOutlined";
-import VolunteerActivismOutlined from "@mui/icons-material/VolunteerActivismOutlined";
-import { Button, Menu, MenuItem } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import TransparentLogo from '../../assets/images/logo-transparent.png';
+import ExitToApp from '@mui/icons-material/ExitToApp';
+import Settings from '@mui/icons-material/Settings';
+import CalendarMonthOutlined from '@mui/icons-material/CalendarMonthOutlined';
+import AssignmentOutlined from '@mui/icons-material/AssignmentOutlined';
+import EventOutlined from '@mui/icons-material/EventOutlined';
+import SupervisedUserCircleOutlined from '@mui/icons-material/SupervisedUserCircleOutlined';
+import VolunteerActivismOutlined from '@mui/icons-material/VolunteerActivismOutlined';
+import { Button, Menu, MenuItem } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const HeaderBar = () => {
   const [showAccountMenu, setShowAccountMenu] = useState(false);
@@ -21,6 +22,7 @@ const HeaderBar = () => {
   const [showProgramsOption, setShowProgramsOption] = useState(false);
   const [showEventsOption, setShowEventsOption] = useState(false);
   const [showNonprofitsOption, setShowNonprofitsOption] = useState(false);
+  const [showProjectsOption, setShowProjectsOption] = useState(false);
 
   const accountMenuAnchorElRef = useRef<HTMLButtonElement | null>(null);
 
@@ -29,13 +31,14 @@ const HeaderBar = () => {
   const currentUser = useAppSelector(user);
 
   useEffect(() => {
-    const isAdminOrBoardmember = ["boardmember", "admin"].includes(
-      currentUser?.userRole ?? "volunteer",
+    const isAdminOrBoardmember = ['boardmember', 'admin'].includes(
+      currentUser?.userRole ?? 'volunteer',
     );
     setShowUsersOption(isAdminOrBoardmember);
     setShowProgramsOption(isAdminOrBoardmember);
     setShowEventsOption(isAdminOrBoardmember);
     setShowNonprofitsOption(isAdminOrBoardmember);
+    setShowProjectsOption(isAdminOrBoardmember);
   }, [currentUser]);
 
   const navigate = useNavigate();
@@ -46,27 +49,32 @@ const HeaderBar = () => {
 
   const handleAccountSettings = () => {
     toggleAccountMenu();
-    navigate("/account");
+    navigate('/account');
   };
 
   const handlePrograms = () => {
     toggleAccountMenu();
-    navigate("/programs");
+    navigate('/programs');
   };
 
   const handleUsers = () => {
     toggleAccountMenu();
-    navigate("/users");
+    navigate('/users');
   };
 
   const handleEvents = () => {
     toggleAccountMenu();
-    navigate("/events");
+    navigate('/events');
   };
 
   const handleNonprofits = () => {
     toggleAccountMenu();
-    navigate("/nonprofits");
+    navigate('/nonprofits');
+  };
+
+  const handleProjects = () => {
+    toggleAccountMenu();
+    navigate('/projects');
   };
 
   const handleSignOut = () => {
@@ -80,9 +88,9 @@ const HeaderBar = () => {
       ref={accountMenuAnchorElRef}
       variant="text"
       color="primary"
-      aria-controls={showAccountMenu ? "account-menu" : undefined}
+      aria-controls={showAccountMenu ? 'account-menu' : undefined}
       aria-haspopup="true"
-      aria-expanded={showAccountMenu ? "true" : undefined}
+      aria-expanded={showAccountMenu ? 'true' : undefined}
       onClick={toggleAccountMenu}
     >
       <span className="standardButtonText">Account</span>
@@ -127,6 +135,13 @@ const HeaderBar = () => {
         <MenuItem onClick={handleNonprofits} aria-label="Nonprofits">
           <VolunteerActivismOutlined />
           <span className="menuOptionLabel">Nonprofits</span>
+        </MenuItem>
+      )}
+
+      {showProjectsOption && (
+        <MenuItem onClick={handleProjects} aria-label="Projects">
+          <AssignmentOutlined />
+          <span className="menuOptionLabel">Projects</span>
         </MenuItem>
       )}
 

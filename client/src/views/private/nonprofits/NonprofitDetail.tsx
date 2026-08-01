@@ -40,12 +40,13 @@ const is501c3Label = (status: Is501c3Status) => {
 
 const ProjectHistoryRow = (props: { project: Project }) => {
   const { project } = props;
+  const navigate = useNavigate();
   const event = useAppSelector((state: RootState) => project.event ? selectEventById(state, project.event) : undefined);
 
   const { label, theme }: { label: string, theme: StatusChipTheme } = useMemo(() => {
     switch (project.status) {
-    case 'interested':
-      return { label: 'New Request', theme: 'teal' };
+    case 'proposed':
+      return { label: 'Proposed', theme: 'teal' };
     case 'accepted': {
       const isPast = event?.endDate ? new Date(event.endDate) < new Date() : false;
       return isPast ? { label: 'Completed', theme: 'success' } : { label: 'Accepted', theme: 'success' };
@@ -66,12 +67,14 @@ const ProjectHistoryRow = (props: { project: Project }) => {
       borderTop: `1px solid ${colors.border.subtle}`,
     }}>
       <div>
-        {/* No project detail page exists yet, so this isn't a link */}
-        <div style={{ textDecoration: 'underline', color: colors.text.primary, fontWeight: 500 }}>
+        <div
+          onClick={() => navigate(`/projects/${project._id}`)}
+          style={{ textDecoration: 'underline', color: colors.text.primary, fontWeight: 500, cursor: 'pointer' }}
+        >
           {project.name}
         </div>
         <div style={{ color: colors.text.secondary, fontSize: 14 }}>
-          {event?.description ?? event?.name ?? '—'}
+          {event?.name ?? '—'}
         </div>
       </div>
       <StatusChip label={label} theme={theme} />
@@ -103,13 +106,7 @@ const NonprofitDetail = () => {
   }, [nonprofitId]);
 
   const handleAddProject = () => {
-    dispatch(
-      updateAlert({
-        visible: true,
-        theme: 'info',
-        content: 'Adding a new project isn\'t available yet.',
-      })
-    );
+    navigate(`/projects/new?nonprofitId=${nonprofitId}`);
   };
 
   const handleAccept = () => {

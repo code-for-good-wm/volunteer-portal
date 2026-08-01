@@ -1,8 +1,8 @@
 import { store } from '../store/store';
 
 import { Event, EventAttendance } from '../types/event';
-import { UpdateEventAttendanceParams } from '../types/services';
-import { eventsReceived } from '../store/eventsSlice';
+import { CreateEventParams, DeleteEventParams, UpdateEventAttendanceParams, UpdateEventParams } from '../types/services';
+import { eventAdded, eventRemoved, eventsReceived } from '../store/eventsSlice';
 import {
   attendanceAdded,
   attendancesReceived,

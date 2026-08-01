@@ -1,5 +1,5 @@
 export enum ProjectStatus {
-  INTERESTED = 'interested',
+  PROPOSED = 'proposed',
   ACCEPTED = 'accepted',
   REJECTED = 'rejected',
   ARCHIVED = 'archived',

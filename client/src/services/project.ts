@@ -1,6 +1,17 @@
-import { Position, Project, Slot } from '../types/project';
+import {
+  Position,
+  Project,
+  ProjectCreate,
+  ProjectUpdate,
+  Slot,
+} from '../types/project';
+import { TypedServiceParams } from '../types/services';
 import { store } from '../store/store';
-import { projectsReceived, projectsUpserted } from '../store/projectsSlice';
+import {
+  projectAdded,
+  projectsReceived,
+  projectsUpserted,
+} from '../store/projectsSlice';
 import { updateAlert } from '../store/alertSlice';
 import {
   getApiBaseUrl,
@@ -72,6 +83,127 @@ export const loadProjectsForNonprofit = async (nonprofitId: string) => {
           "An error occurred while loading this organization's projects.",
       }),
     );
+  }
+};
+
+export const loadProject = async (projectId: string) => {
+  try {
+    const token = await getAuthToken();
+    const requestInit = {
+      headers: getDefaultRequestHeaders(token),
+    } as RequestInit;
+
+    const projectResponse = await fetch(
+      `${getApiBaseUrl()}/project/${projectId}`,
+      requestInit,
+    );
+    if (!projectResponse.ok) {
+      throw new Error('Failed to load project.');
+    }
+
+    const projectData = (await projectResponse.json()) as Project;
+
+    store.dispatch(projectAdded(projectData));
+  } catch (error) {
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: 'An error occurred while loading this project.',
+      }),
+    );
+  }
+};
+
+export const createProject = async (
+  project: ProjectCreate,
+  params: TypedServiceParams<Project>,
+) => {
+  const { success, failure } = params;
+
+  try {
+    const token = await getAuthToken();
+
+    const projectResponse = await fetch(`${getApiBaseUrl()}/project`, {
+      method: 'POST',
+      headers: getDefaultRequestHeaders(token),
+      body: JSON.stringify(project),
+    });
+
+    if (!projectResponse.ok) {
+      throw new Error('Failed to create project.');
+    }
+
+    const projectData = (await projectResponse.json()) as Project;
+
+    store.dispatch(projectAdded(projectData));
+
+    if (success) {
+      success(projectData);
+    }
+  } catch (error) {
+    const message =
+      'An error occurred while saving this project. Check your network connection and try again.';
+
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: message,
+      }),
+    );
+
+    if (failure) {
+      failure(message);
+    }
+  }
+};
+
+export const updateProject = async (
+  projectId: string,
+  projectUpdate: ProjectUpdate,
+  params: TypedServiceParams<Project>,
+) => {
+  const { success, failure } = params;
+
+  try {
+    const token = await getAuthToken();
+
+    const projectResponse = await fetch(
+      `${getApiBaseUrl()}/project/${projectId}`,
+      {
+        method: 'PUT',
+        headers: getDefaultRequestHeaders(token),
+        body: JSON.stringify(projectUpdate),
+      },
+    );
+
+    if (!projectResponse.ok) {
+      throw new Error('Failed to update project.');
+    }
+
+    const projectData = (await projectResponse.json()) as Project;
+
+    store.dispatch(projectAdded(projectData));
+
+    if (success) {
+      success(projectData);
+    }
+  } catch (error) {
+    const message =
+      'An error occurred while updating this project. Check your network connection and try again.';
+
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: message,
+      }),
+    );
+
+    if (failure) {
+      failure(message);
+    }
   }
 };
 
