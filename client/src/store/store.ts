@@ -6,6 +6,8 @@ import usersReducer from './usersSlice';
 import eventsReducer from './eventsSlice';
 import eventAttendancesReducer from './eventAttendanceSlice';
 import programsReducer from './programsSlice';
+import nonprofitsReducer from './nonprofitsSlice';
+import projectsReducer from './projectsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -15,7 +17,9 @@ export const store = configureStore({
     users: usersReducer,
     events: eventsReducer,
     attendances: eventAttendancesReducer,
-    programs: programsReducer
+    programs: programsReducer,
+    nonprofits: nonprofitsReducer,
+    projects: projectsReducer
   }
 });
 

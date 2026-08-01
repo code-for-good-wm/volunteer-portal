@@ -136,7 +136,7 @@ export const checkRole = async (context: Context, req: HttpRequest, roles: UserR
   }
 
   return { success: true, data: user } as Result;
-}
+};
 
 /**
  * Send template email w/SendGrid

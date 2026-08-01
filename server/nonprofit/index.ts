@@ -5,6 +5,7 @@ import { checkAuthAndConnect } from '../lib/helpers';
 import { EDIT_ALL_NONPROFITS, READ_NONPROFIT_PII } from '../lib/models/enums/user-role.enum';
 import { INonprofit } from '../lib/models/nonprofit';
 import { UserRole } from '../lib/models/enums/user-role.enum';
+import { NonprofitStatus } from '../lib/models/enums/nonprofit-status.enum';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   // get caller uid from token and connect to DB
@@ -76,6 +77,9 @@ async function createNonprofit(context: Context, userIdent: string): Promise<IHt
   }
 
   const nonprofitCreate = context.req?.body;
+  // New nonprofits always start in 'interested' status regardless of what was submitted;
+  // moving to 'accepted'/'archived' happens later via PUT.
+  nonprofitCreate.status = NonprofitStatus.INTERESTED;
 
   const nonprofitData = await nonprofitStore.create(nonprofitCreate);
 

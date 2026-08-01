@@ -254,7 +254,7 @@ export const nonprofitStore = {
     return await NonprofitModel.create(nonprofit);
   },
   update: async(_id: mongoose.Types.ObjectId, nonprofit: INonprofit) => {
-    return await NonprofitModel.updateOne({_id}, nonprofit);
+    return await NonprofitModel.findOneAndUpdate({_id}, nonprofit, {new: true});
   },
   delete: async(_id: mongoose.Types.ObjectId) => {
     return await NonprofitModel.deleteOne({_id});
