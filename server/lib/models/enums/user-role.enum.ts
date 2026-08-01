@@ -13,3 +13,12 @@ export const READ_ALL_EVENTS = [ UserRole.BOARDMEMBER, UserRole.ADMIN ];
 export const EDIT_ALL_EVENTS = [ UserRole.BOARDMEMBER, UserRole.ADMIN ];
 
 export const EDIT_ALL_SKILLS = [ UserRole.BOARDMEMBER, UserRole.ADMIN ];
+
+export const EDIT_ALL_NONPROFITS = [ UserRole.BOARDMEMBER, UserRole.ADMIN ];
+export const READ_NONPROFIT_PII = [ UserRole.BOARDMEMBER, UserRole.ADMIN ];
+
+export const EDIT_ALL_PROJECTS = [ UserRole.BOARDMEMBER, UserRole.ADMIN ];
+
+export const EDIT_ALL_POSITIONS = [ UserRole.BOARDMEMBER, UserRole.ADMIN ];
+
+export const EDIT_ALL_SLOTS = [ UserRole.BOARDMEMBER, UserRole.ADMIN ];

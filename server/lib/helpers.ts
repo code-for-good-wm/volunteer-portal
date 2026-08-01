@@ -37,7 +37,7 @@ export const checkRequestAuth: CheckRequestAuth = (authorization, logger) => {
     }
 
     if (!token) {
-      return null;
+      return resolve(null);
     }
 
     // Verify token with Firebase Admin SDK
