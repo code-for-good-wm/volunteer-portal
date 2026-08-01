@@ -222,6 +222,9 @@ export const eventStore = {
       new: true,
     }).populate('program');
   },
+  delete: async(_id: mongoose.Types.ObjectId) => {
+    return await EventModel.deleteOne({_id});
+  }
 };
 
 export const eventAttendanceStore = {
