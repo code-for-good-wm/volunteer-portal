@@ -36,7 +36,7 @@ Tests: `cd server && npm test` (currently a placeholder script). Neither client 
 3. A local MongoDB instance must be running (no `docker-compose.yml` — install and run it yourself).
 4. A Firebase service-account JSON (conventionally `fb-credentials.dev.json`, gitignored) is required for the server; its path goes in `GOOGLE_APPLICATION_CREDENTIALS`.
 
-Node version note: root and `client` require Node >=18 (`engines` field), but `server`'s `package.json` still declares `engines.node >=16` and its README recommends Node 16 — these are inconsistent; check with the team on which is authoritative before changing either.
+Node version: root, `client`, and `server` all require Node >=22 (`engines` field), matching the `node:22` `apiRuntime` in `staticwebapp.config.azure.json`/`staticwebapp.config.json` and the `azure-pipelines.yml` `NodeTool@0` version. Azure Static Web Apps' managed Functions API currently supports up to Node 22 — Node 24 is not yet available for this deployment model (only for standalone Azure Functions on Flex Consumption), so don't bump past 22 without first migrating off SWA-managed Functions.
 
 ## Architecture
 
