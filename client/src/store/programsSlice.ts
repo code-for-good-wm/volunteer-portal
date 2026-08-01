@@ -23,7 +23,10 @@ export const programsSlice = createSlice({
   name: 'programs',
   initialState,
   reducers: {
-    programsReceived: (draftState, action: PayloadAction<{ programs: Program[] }>) => {
+    programsReceived: (
+      draftState,
+      action: PayloadAction<{ programs: Program[] }>,
+    ) => {
       draftState.programs = action.payload.programs;
     },
     updateProgram: (draftState, action: PayloadAction<ProgramUpdate>) => {
@@ -59,8 +62,10 @@ export const programsSlice = createSlice({
   },
 });
 
-export const { programsReceived, updateProgram, updateProgramEvent } = programsSlice.actions;
+export const { programsReceived, updateProgram, updateProgramEvent } =
+  programsSlice.actions;
 
-export const selectAllPrograms = (state: RootState): Program[] => state.programs.programs ?? [];
+export const selectAllPrograms = (state: RootState): Program[] =>
+  state.programs.programs ?? [];
 
 export default programsSlice.reducer;

@@ -1,7 +1,10 @@
 import { ChipProps } from '@mui/material/Chip';
 import { Status } from '../types/event';
 
-export const statusChipProps: Record<Status, { label: string, color: ChipProps['color'] }> = {
+export const statusChipProps: Record<
+  Status,
+  { label: string; color: ChipProps['color'] }
+> = {
   draft: { label: 'Draft', color: 'warning' },
   upcoming: { label: 'Upcoming', color: 'success' },
   active: { label: 'Active', color: 'primary' },

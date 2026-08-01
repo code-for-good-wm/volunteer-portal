@@ -1,12 +1,12 @@
-import { Position, Project, Slot } from "../types/project";
-import { store } from "../store/store";
-import { projectsReceived, projectsUpserted } from "../store/projectsSlice";
-import { updateAlert } from "../store/alertSlice";
+import { Position, Project, Slot } from '../types/project';
+import { store } from '../store/store';
+import { projectsReceived, projectsUpserted } from '../store/projectsSlice';
+import { updateAlert } from '../store/alertSlice';
 import {
   getApiBaseUrl,
   getAuthToken,
   getDefaultRequestHeaders,
-} from "../helpers/functions";
+} from '../helpers/functions';
 
 export const loadProjects = async () => {
   try {
@@ -20,7 +20,7 @@ export const loadProjects = async () => {
       requestInit,
     );
     if (!projectsResponse.ok) {
-      throw new Error("Failed to load projects.");
+      throw new Error('Failed to load projects.');
     }
 
     const projectsData = (await projectsResponse.json()) as Project[];
@@ -34,8 +34,8 @@ export const loadProjects = async () => {
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "error",
-        content: "An error occurred while loading projects.",
+        theme: 'error',
+        content: 'An error occurred while loading projects.',
       }),
     );
   }
@@ -53,7 +53,7 @@ export const loadProjectsForNonprofit = async (nonprofitId: string) => {
       requestInit,
     );
     if (!projectsResponse.ok) {
-      throw new Error("Failed to load projects for this nonprofit.");
+      throw new Error('Failed to load projects for this nonprofit.');
     }
 
     const projectsData = (await projectsResponse.json()) as Project[];
@@ -67,7 +67,7 @@ export const loadProjectsForNonprofit = async (nonprofitId: string) => {
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "error",
+        theme: 'error',
         content:
           "An error occurred while loading this organization's projects.",
       }),
@@ -102,7 +102,7 @@ export const getEventSlotCounts = async (
       requestInit,
     );
     if (!projectsResponse.ok) {
-      throw new Error("Failed to load projects for event.");
+      throw new Error('Failed to load projects for event.');
     }
     const projects = (await projectsResponse.json()) as Project[];
 
@@ -113,7 +113,7 @@ export const getEventSlotCounts = async (
           requestInit,
         );
         if (!response.ok) {
-          throw new Error("Failed to load positions for project.");
+          throw new Error('Failed to load positions for project.');
         }
         return (await response.json()) as Position[];
       }),
@@ -127,7 +127,7 @@ export const getEventSlotCounts = async (
           requestInit,
         );
         if (!response.ok) {
-          throw new Error("Failed to load slots for position.");
+          throw new Error('Failed to load slots for position.');
         }
         return (await response.json()) as Slot[];
       }),
@@ -136,17 +136,17 @@ export const getEventSlotCounts = async (
 
     return {
       confirmed: slots.filter(
-        (s) => s.status === "confirmed" || s.status === "confirmed-partial",
+        (s) => s.status === 'confirmed' || s.status === 'confirmed-partial',
       ).length,
-      declined: slots.filter((s) => s.status === "declined").length,
+      declined: slots.filter((s) => s.status === 'declined').length,
     };
   } catch (error) {
     store.dispatch(
       updateAlert({
         visible: true,
-        theme: "error",
+        theme: 'error',
         content:
-          "An error occurred while loading project sign-up counts for this event.",
+          'An error occurred while loading project sign-up counts for this event.',
       }),
     );
 

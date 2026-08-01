@@ -1,4 +1,9 @@
-import { Event, EventAttendanceUpdate, EventCreate, EventUpdate } from'./event';
+import {
+  Event,
+  EventAttendanceUpdate,
+  EventCreate,
+  EventUpdate,
+} from './event';
 import { ProfileUpdate, Role, UserSkill } from './profile';
 import { UserUpdate } from './user';
 
@@ -54,19 +59,19 @@ export interface UpdateAdditionalSkillsParams extends ServiceParams {
 }
 
 export interface UpdateEventAttendanceParams extends ServiceParams {
-  eventId: string,
-  attendanceUpdate: EventAttendanceUpdate
+  eventId: string;
+  attendanceUpdate: EventAttendanceUpdate;
 }
 
 export interface CreateEventParams extends TypedServiceParams<Event> {
-  eventCreate: EventCreate
+  eventCreate: EventCreate;
 }
 
 export interface UpdateEventParams extends ServiceParams {
-  eventId: string,
-  eventUpdate: EventUpdate
+  eventId: string;
+  eventUpdate: EventUpdate;
 }
 
 export interface DeleteEventParams extends ServiceParams {
-  eventId: string
+  eventId: string;
 }

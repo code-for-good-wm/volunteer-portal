@@ -200,25 +200,27 @@ export const eventStore = {
   listByProgram: async (programId: mongoose.Types.ObjectId) => {
     return await EventModel.find({ program: programId });
   },
-  listAll: async() => {
+  listAll: async () => {
     return await EventModel.find().populate('program');
   },
   /** list events visible to volunteers: published (upcoming), or active and not yet ended */
-  upcoming: async() => {
+  upcoming: async () => {
     const now = new Date().toISOString();
     return await EventModel.find({
       $or: [
         { status: Status.UPCOMING },
-        { status: Status.ACTIVE, endDate: { $gt: now } }
-      ]
+        { status: Status.ACTIVE, endDate: { $gt: now } },
+      ],
     }).populate('program');
   },
-  create: async(event: IEvent) => {
+  create: async (event: IEvent) => {
     const created = await EventModel.create(event);
     return await created.populate('program');
   },
-  update: async(_id: mongoose.Types.ObjectId, event: IEvent) => {
-    return await EventModel.findOneAndUpdate({_id}, event, {new: true}).populate('program');
+  update: async (_id: mongoose.Types.ObjectId, event: IEvent) => {
+    return await EventModel.findOneAndUpdate({ _id }, event, {
+      new: true,
+    }).populate('program');
   },
 };
 
