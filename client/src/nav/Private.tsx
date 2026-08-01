@@ -3,6 +3,10 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 // Import views
 import Dashboard from '../views/private/dashboard/Dashboard';
 import Account from '../views/private/account/Account';
+import EditEvent from '../views/private/events/EditEvent';
+import EventDetail from '../views/private/events/EventDetail';
+import Events from '../views/private/events/Events';
+import NewEvent from '../views/private/events/NewEvent';
 import AdditionalSkills from '../views/private/profile/additional-skills/AdditionalSkills';
 import ProfileComplete from '../views/private/profile/complete/Complete';
 import DesignSkills from '../views/private/profile/design-skills/DesignSkills';
@@ -27,6 +31,10 @@ const Private = () => {
         <Route path="*" element={<Navigate to="/profile" />} />
       </Route>
       <Route path="/users" element={<Users />} />
+      <Route path="/events" element={<Events />} />
+      <Route path="/events/new" element={<NewEvent />} />
+      <Route path="/events/:eventId/edit" element={<EditEvent />} />
+      <Route path="/events/:eventId" element={<EventDetail />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

@@ -11,6 +11,7 @@ import { IUserSkill, UserSkillModel } from './user-skill';
 // programs & events
 import { IProgram, ProgramModel } from './program';
 import { IEvent, EventModel } from './event';
+import { Status } from './enums/status.enum';
 import { IEventAttendance, EventAttendanceModel } from './event-attendance';
 import { create } from 'domain';
 
@@ -186,18 +187,24 @@ export const eventStore = {
     return await EventModel.find({program: programId});
   },
   listAll: async() => {
-    return await EventModel.find();
+    return await EventModel.find().populate('program');
   },
-  /** list upcoming & active events */
+  /** list events visible to volunteers: published (upcoming), or active and not yet ended */
   upcoming: async() => {
     const now = new Date().toISOString();
-    return await EventModel.find({endDate: {$gt: now}});
+    return await EventModel.find({
+      $or: [
+        { status: Status.UPCOMING },
+        { status: Status.ACTIVE, endDate: { $gt: now } }
+      ]
+    }).populate('program');
   },
   create: async(event: IEvent) => {
-    return await EventModel.create(event);
+    const created = await EventModel.create(event);
+    return await created.populate('program');
   },
   update: async(_id: mongoose.Types.ObjectId, event: IEvent) => {
-    return await EventModel.updateOne({_id}, event);
+    return await EventModel.findOneAndUpdate({_id}, event, {new: true}).populate('program');
   },
   delete: async(_id: mongoose.Types.ObjectId) => {
     return await EventModel.deleteOne({_id});

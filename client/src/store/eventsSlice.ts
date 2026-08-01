@@ -14,7 +14,8 @@ export const eventsSlice = createSlice({
   name: 'events',
   initialState,
   reducers: {
-    eventAdded: eventsAdapter.addOne,
+    eventAdded: eventsAdapter.upsertOne,
+    eventRemoved: eventsAdapter.removeOne,
     eventsReceived(state, action: PayloadAction<{ events: Event[] }>) {
       state.loading = false;
       eventsAdapter.setAll(state, action.payload.events);
@@ -22,7 +23,7 @@ export const eventsSlice = createSlice({
   },
 });
 
-export const { eventAdded, eventsReceived } = eventsSlice.actions;
+export const { eventAdded, eventRemoved, eventsReceived } = eventsSlice.actions;
 
 export const {
   selectAll: selectAllEvents,

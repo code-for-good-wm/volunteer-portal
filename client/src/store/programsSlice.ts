@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Event, Program } from '../types/event';
+import { RootState } from './store';
 
 interface ProgramsState {
   programs: Program[] | null;
@@ -22,6 +23,9 @@ export const programsSlice = createSlice({
   name: 'programs',
   initialState,
   reducers: {
+    programsReceived: (draftState, action: PayloadAction<{ programs: Program[] }>) => {
+      draftState.programs = action.payload.programs;
+    },
     updateProgram: (draftState, action: PayloadAction<ProgramUpdate>) => {
       if (action.payload.program !== undefined) {
         draftState.program = action.payload.program;
@@ -48,6 +52,8 @@ export const programsSlice = createSlice({
   },
 });
 
-export const { updateProgram, updateProgramEvent } = programsSlice.actions;
+export const { programsReceived, updateProgram, updateProgramEvent } = programsSlice.actions;
+
+export const selectAllPrograms = (state: RootState): Program[] => state.programs.programs ?? [];
 
 export default programsSlice.reducer;

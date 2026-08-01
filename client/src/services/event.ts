@@ -1,8 +1,8 @@
 import { store } from '../store/store';
 
 import { Event, EventAttendance } from '../types/event';
-import { UpdateEventAttendanceParams } from '../types/services';
-import { eventsReceived } from '../store/eventsSlice';
+import { CreateEventParams, DeleteEventParams, UpdateEventAttendanceParams, UpdateEventParams } from '../types/services';
+import { eventAdded, eventRemoved, eventsReceived } from '../store/eventsSlice';
 import { attendanceAdded, attendancesReceived } from '../store/eventAttendanceSlice';
 import { updateAlert } from '../store/alertSlice';
 import { getApiBaseUrl, getAuthToken, getDefaultRequestHeaders } from '../helpers/functions';
@@ -35,6 +35,186 @@ export const loadUpcomingEvents = async () => {
         content: 'An error occurred while loading upcoming events.',
       })
     );
+  }
+};
+
+export const loadAllEvents = async () => {
+  try {
+    // Acquire bearer token
+    const token = await getAuthToken();
+    const requestInit = { headers: getDefaultRequestHeaders(token) } as RequestInit;
+
+    // Load all events (admin/boardmember only, enforced server-side)
+    const eventsResponse = await fetch(`${getApiBaseUrl()}/events/all`, requestInit);
+    if (!eventsResponse.ok) {
+      throw new Error('Failed to load events.');
+    }
+
+    const eventsData = await eventsResponse.json() as Event[];
+
+    store.dispatch(
+      eventsReceived({
+        events: eventsData,
+      })
+    );
+  } catch (error) {
+    // Show alert
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: 'An error occurred while loading events.',
+      })
+    );
+  }
+};
+
+export const createEvent = async (params: CreateEventParams) => {
+  const { eventCreate, success, failure } = params;
+
+  try {
+    // Acquire bearer token
+    const token = await getAuthToken();
+
+    const eventResponse = await fetch(`${getApiBaseUrl()}/event`, {
+      method: 'POST',
+      headers: getDefaultRequestHeaders(token),
+      body: JSON.stringify(eventCreate),
+    });
+
+    if (!eventResponse.ok) {
+      throw new Error('Failed to create event.');
+    }
+
+    const newEvent = await eventResponse.json() as Event;
+
+    store.dispatch(eventAdded(newEvent));
+
+    if (success) {
+      success(newEvent);
+    }
+  } catch (error) {
+    const message = 'An error occurred while creating the event.';
+
+    // Show alert
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: message,
+      })
+    );
+
+    if (failure) {
+      failure(message);
+    }
+  }
+};
+
+export const loadEvent = async (eventId: string) => {
+  try {
+    // Acquire bearer token
+    const token = await getAuthToken();
+    const requestInit = { headers: getDefaultRequestHeaders(token) } as RequestInit;
+
+    const eventResponse = await fetch(`${getApiBaseUrl()}/event/${eventId}`, requestInit);
+    if (!eventResponse.ok) {
+      throw new Error('Failed to load event.');
+    }
+
+    const eventData = await eventResponse.json() as Event;
+
+    store.dispatch(eventAdded(eventData));
+  } catch (error) {
+    // Show alert
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: 'An error occurred while loading the event.',
+      })
+    );
+  }
+};
+
+export const updateEvent = async (params: UpdateEventParams) => {
+  const { eventId, eventUpdate, success, failure } = params;
+
+  try {
+    // Acquire bearer token
+    const token = await getAuthToken();
+
+    const eventResponse = await fetch(`${getApiBaseUrl()}/event/${eventId}`, {
+      method: 'PUT',
+      headers: getDefaultRequestHeaders(token),
+      body: JSON.stringify(eventUpdate),
+    });
+
+    if (!eventResponse.ok) {
+      throw new Error('Failed to update event.');
+    }
+
+    const updatedEvent = await eventResponse.json() as Event;
+
+    store.dispatch(eventAdded(updatedEvent));
+
+    if (success) {
+      success();
+    }
+  } catch (error) {
+    const message = 'An error occurred while updating the event.';
+
+    // Show alert
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: message,
+      })
+    );
+
+    if (failure) {
+      failure(message);
+    }
+  }
+};
+
+export const deleteEvent = async (params: DeleteEventParams) => {
+  const { eventId, success, failure } = params;
+
+  try {
+    // Acquire bearer token
+    const token = await getAuthToken();
+
+    const eventResponse = await fetch(`${getApiBaseUrl()}/event/${eventId}`, {
+      method: 'DELETE',
+      headers: getDefaultRequestHeaders(token),
+    });
+
+    if (!eventResponse.ok) {
+      throw new Error('Failed to delete event.');
+    }
+
+    store.dispatch(eventRemoved(eventId));
+
+    if (success) {
+      success();
+    }
+  } catch (error) {
+    const message = 'An error occurred while deleting the event.';
+
+    // Show alert
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: message,
+      })
+    );
+
+    if (failure) {
+      failure(message);
+    }
   }
 };
 
@@ -74,7 +254,7 @@ export const loadUpcomingEventsAndAttendance = async () => {
   }
 };
 
-export const loadAttendance = async (eventId: string) => {
+export const loadAttendance = async (eventId?: string) => {
   try {
     // Acquire bearer token
     const token = await getAuthToken();

@@ -9,6 +9,7 @@ import TransparentLogo from '../../assets/images/logo-transparent.png';
 import ExitToApp from '@mui/icons-material/ExitToApp';
 import Settings from '@mui/icons-material/Settings';
 import CalendarMonthOutlined from '@mui/icons-material/CalendarMonthOutlined';
+import EventOutlined from '@mui/icons-material/EventOutlined';
 import SupervisedUserCircleOutlined from '@mui/icons-material/SupervisedUserCircleOutlined';
 import { Button, Menu, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -17,6 +18,7 @@ const HeaderBar = () => {
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showUsersOption, setShowUsersOption] = useState(false);
   const [showProgramsOption, setShowProgramsOption] = useState(false);
+  const [showEventsOption, setShowEventsOption] = useState(false);
 
   const accountMenuAnchorElRef = useRef<HTMLButtonElement | null>(null);
 
@@ -28,6 +30,7 @@ const HeaderBar = () => {
     const isAdminOrBoardmember = ['boardmember', 'admin'].includes(currentUser?.userRole ?? 'volunteer');
     setShowUsersOption(isAdminOrBoardmember);
     setShowProgramsOption(isAdminOrBoardmember);
+    setShowEventsOption(isAdminOrBoardmember);
   }, [currentUser]);
 
   const navigate = useNavigate();
@@ -49,6 +52,11 @@ const HeaderBar = () => {
   const handleUsers = () => {
     toggleAccountMenu();
     navigate('/users');
+  };
+
+  const handleEvents = () => {
+    toggleAccountMenu();
+    navigate('/events');
   };
 
   const handleSignOut = () => {
@@ -87,6 +95,14 @@ const HeaderBar = () => {
           Settings
         </span>
       </MenuItem>
+
+      { showEventsOption &&
+      <MenuItem onClick={handleEvents} aria-label='Events'>
+        <EventOutlined />
+        <span className="menuOptionLabel">
+          Events
+        </span>
+      </MenuItem> }
 
       { showProgramsOption &&
       <MenuItem onClick={handlePrograms} aria-label='Programs'>
