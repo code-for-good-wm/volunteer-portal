@@ -11,6 +11,9 @@ import Profile from '../views/private/profile/Profile';
 import Roles from '../views/private/profile/roles/Roles';
 import TechnicalSkills from '../views/private/profile/technical-skills/TechnicalSkills';
 import Users from '../views/private/users/Users';
+import Nonprofits from '../views/private/nonprofits/Nonprofits';
+import NonprofitForm from '../views/private/nonprofits/NonprofitForm';
+import NonprofitDetail from '../views/private/nonprofits/NonprofitDetail';
 
 const Private = () => {
   return (
@@ -27,6 +30,10 @@ const Private = () => {
         <Route path="*" element={<Navigate to="/profile" />} />
       </Route>
       <Route path="/users" element={<Users />} />
+      <Route path="/nonprofits" element={<Nonprofits />} />
+      <Route path="/nonprofits/new" element={<NonprofitForm />} />
+      <Route path="/nonprofits/:nonprofitId" element={<NonprofitDetail />} />
+      <Route path="/nonprofits/:nonprofitId/edit" element={<NonprofitForm />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

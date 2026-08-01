@@ -38,6 +38,37 @@ export const loadUpcomingEvents = async () => {
   }
 };
 
+export const loadAllEvents = async () => {
+  try {
+    // Acquire bearer token
+    const token = await getAuthToken();
+    const requestInit = { headers: getDefaultRequestHeaders(token) } as RequestInit;
+
+    // Load all events, past and upcoming (board/admin only)
+    const eventsResponse = await fetch(`${getApiBaseUrl()}/events/all`, requestInit);
+    if (!eventsResponse.ok) {
+      throw new Error('Failed to load events.');
+    }
+
+    const eventsData = await eventsResponse.json() as Event[];
+
+    store.dispatch(
+      eventsReceived({
+        events: eventsData,
+      })
+    );
+  } catch (error) {
+    // Show alert
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: 'An error occurred while loading events.',
+      })
+    );
+  }
+};
+
 export const loadUpcomingEventsAndAttendance = async () => {
   loadUpcomingEvents(); // not awaiting, we don't need the results in this call
   

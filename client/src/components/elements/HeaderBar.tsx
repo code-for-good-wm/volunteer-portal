@@ -10,6 +10,7 @@ import ExitToApp from '@mui/icons-material/ExitToApp';
 import Settings from '@mui/icons-material/Settings';
 import CalendarMonthOutlined from '@mui/icons-material/CalendarMonthOutlined';
 import SupervisedUserCircleOutlined from '@mui/icons-material/SupervisedUserCircleOutlined';
+import VolunteerActivismOutlined from '@mui/icons-material/VolunteerActivismOutlined';
 import { Button, Menu, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,6 +18,7 @@ const HeaderBar = () => {
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showUsersOption, setShowUsersOption] = useState(false);
   const [showProgramsOption, setShowProgramsOption] = useState(false);
+  const [showNonprofitsOption, setShowNonprofitsOption] = useState(false);
 
   const accountMenuAnchorElRef = useRef<HTMLButtonElement | null>(null);
 
@@ -28,6 +30,7 @@ const HeaderBar = () => {
     const isAdminOrBoardmember = ['boardmember', 'admin'].includes(currentUser?.userRole ?? 'volunteer');
     setShowUsersOption(isAdminOrBoardmember);
     setShowProgramsOption(isAdminOrBoardmember);
+    setShowNonprofitsOption(isAdminOrBoardmember);
   }, [currentUser]);
 
   const navigate = useNavigate();
@@ -49,6 +52,11 @@ const HeaderBar = () => {
   const handleUsers = () => {
     toggleAccountMenu();
     navigate('/users');
+  };
+
+  const handleNonprofits = () => {
+    toggleAccountMenu();
+    navigate('/nonprofits');
   };
 
   const handleSignOut = () => {
@@ -101,6 +109,14 @@ const HeaderBar = () => {
         <SupervisedUserCircleOutlined />
         <span className="menuOptionLabel">
           Users
+        </span>
+      </MenuItem> }
+
+      { showNonprofitsOption &&
+      <MenuItem onClick={handleNonprofits} aria-label='Nonprofits'>
+        <VolunteerActivismOutlined />
+        <span className="menuOptionLabel">
+          Nonprofits
         </span>
       </MenuItem> }
 
