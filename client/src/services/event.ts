@@ -1,7 +1,12 @@
 import { store } from '../store/store';
 
 import { Event, EventAttendance } from '../types/event';
-import { CreateEventParams, DeleteEventParams, UpdateEventAttendanceParams, UpdateEventParams } from '../types/services';
+import {
+  CreateEventParams,
+  DeleteEventParams,
+  UpdateEventAttendanceParams,
+  UpdateEventParams,
+} from '../types/services';
 import { eventAdded, eventRemoved, eventsReceived } from '../store/eventsSlice';
 import {
   attendanceAdded,

@@ -7,5 +7,12 @@
     "rootDir": ".",
     "sourceMap": true,
     "strict": true
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "lib/test-utils",
+    "vitest.config.mts"
+  ]
 }
