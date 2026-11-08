@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { styled } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
 import Paper from '@mui/material/Paper';
@@ -23,7 +25,6 @@ import { DietaryRestriction, Profile, Role, ShirtSize } from '../../../types/pro
 import { getUsersData, getProfilesData, exportUsersAndProfilesData } from '../../../services/users';
 import { loadAttendance, loadUpcomingEvents } from '../../../services/event';
 import PageLayout from '../../../layouts/PageLayout';
-import StandardButton from '../../../components/buttons/StandardButton';
 import { parsePhone, toTitleCase } from '../../../helpers/functions';
 import { Attendance } from '../../../types/event';
 import { selectAllAttendances } from '../../../store/eventAttendanceSlice';
@@ -41,19 +42,19 @@ interface Column {
 
 const columns: Column[] = [
   { id: 'userRole', label: 'Type', minWidth: 100, format: (value: string) => toTitleCase(value) },
-  { id: 'firstName', label: 'First Name', minWidth: 170 },
-  { id: 'lastName', label: 'Last Name', minWidth: 170 },
+  { id: 'firstName', label: 'First name', minWidth: 170 },
+  { id: 'lastName', label: 'Last name', minWidth: 170 },
   { id: 'email', label: 'Email', minWidth: 170 },
-  { id: 'phone', label: 'Phone #', minWidth: 170, format: (value: string) => value ? parsePhone(value).formatted : '' },
+  { id: 'phone', label: 'Phone', minWidth: 170, format: (value: string) => value ? parsePhone(value).formatted : '' },
   { id: 'roles', label: 'Roles', minWidth: 100, format: (value: Role[]) => toTitleCase(value.join(', ')) },
-  { id: 'previousVolunteer', label: 'Previous Volunteer', minWidth: 100, format: (value: boolean) => value ? 'Yes' : 'No' },
-  { id: 'teamLeadCandidate', label: 'Team Lead', minWidth: 100, format: (value: boolean) => value ? 'Yes' : 'No' },
-  { id: 'shirtSize', label: 'Shirt Size', minWidth: 100 },
-  { id: 'dietaryRestrictions', label: 'Dietary Restrictions', minWidth: 100, format: (value: DietaryRestriction[]) => toTitleCase(value.join(', ')) },
-  { id: 'additionalDietaryRestrictions', label: 'Addl. Dietary Restrictions', minWidth: 170 },
-  { id: 'accessibilityRequirements', label: 'Accessibility Requirements', minWidth: 170 },
-  { id: 'photoRelease', label: 'Photo Release', minWidth: 100, format: (value: boolean) => value ? 'Yes' : 'No' },
-  { id: 'hasSkills', label: 'Entered Skills', minWidth: 100, format: (value: boolean) => value ? 'Yes' : 'No' },
+  { id: 'previousVolunteer', label: 'Previous volunteer', minWidth: 100, format: (value: boolean) => value ? 'Yes' : 'No' },
+  { id: 'teamLeadCandidate', label: 'Team lead', minWidth: 100, format: (value: boolean) => value ? 'Yes' : 'No' },
+  { id: 'shirtSize', label: 'Shirt size', minWidth: 100 },
+  { id: 'dietaryRestrictions', label: 'Dietary restrictions', minWidth: 100, format: (value: DietaryRestriction[]) => toTitleCase(value.join(', ')) },
+  { id: 'additionalDietaryRestrictions', label: 'Addl. dietary restrictions', minWidth: 170 },
+  { id: 'accessibilityRequirements', label: 'Accessibility requirements', minWidth: 170 },
+  { id: 'photoRelease', label: 'Photo release', minWidth: 100, format: (value: boolean) => value ? 'Yes' : 'No' },
+  { id: 'hasSkills', label: 'Entered skills', minWidth: 100, format: (value: boolean) => value ? 'Yes' : 'No' },
   { id: 'attendance', label: 'Attending WfG 2025', minWidth: 200, format: (value: Attendance) => toTitleCase(value ? value.replace('-', ' ') : '') },
 ];
 
@@ -222,21 +223,12 @@ const Users = () => {
     <PageLayout>
       <div className="fullViewContainer">
         <div className="gutters">
-          <h1>
+          <h1 className="pageTitle">
             Users
           </h1>
 
-          <Grid container spacing={2} sx={{marginBottom: '1rem'}} alignItems="center">
-            <Grid item xs={2} md={4}></Grid>
-            <Grid item xs={8} md={6}>
-              <StandardButton
-                label="Download all users"
-                handler={handleButton}
-                disabled={processing} />
-            </Grid>
-            <Grid item xs={2} md={4}></Grid>
-            <Grid item xs={2} md={4}></Grid>
-            <Grid item xs={8} md={6}>
+          <Grid container spacing={2} sx={{ marginBottom: '1rem' }} alignItems="center">
+            <Grid item xs={12} md={6}>
               <TextField
                 label="Search by name or email"
                 id="searchFilter"
@@ -248,7 +240,17 @@ const Users = () => {
                 onChange={(e) => setFilter(e.target.value)}
               />
             </Grid>
-            <Grid item xs={2} md={4}></Grid>
+            <Grid item xs={12} md={6} sx={{ textAlign: { md: 'right' } }}>
+              <Button
+                variant="outlined"
+                color="primary"
+                startIcon={<FileDownloadOutlinedIcon />}
+                onClick={handleButton}
+                disabled={processing}
+              >
+                {processing ? 'Preparing download…' : 'Download all users'}
+              </Button>
+            </Grid>
           </Grid>
 
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -290,7 +292,7 @@ const Users = () => {
               </Table>
             </TableContainer>
             <TablePagination
-              rowsPerPageOptions={[25, 50, 100]}
+              rowsPerPageOptions={[10, 25, 50]}
               component="div"
               count={rows.length}
               rowsPerPage={rowsPerPage}

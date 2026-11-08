@@ -26,6 +26,7 @@ import { loadNonprofits } from '../../../services/nonprofit';
 import { loadProjects } from '../../../services/project';
 import { NonprofitStatus } from '../../../types/nonprofit';
 import PageLayout from '../../../layouts/PageLayout';
+import RowActionButton from '../../../components/buttons/RowActionButton';
 import StatusChip, { StatusChipTheme } from '../../../components/elements/StatusChip';
 import { colors } from '../../../material/colors';
 
@@ -145,7 +146,7 @@ const Nonprofits = () => {
     <PageLayout>
       <div className="fullViewContainer">
         <div className="gutters">
-          <h1 style={{ textAlign: 'center', color: colors.teal.main }}>
+          <h1 className="pageTitle">
             Nonprofits
           </h1>
 
@@ -221,17 +222,12 @@ const Nonprofits = () => {
                             <StatusChip label={label} theme={theme} />
                           </TableCell>
                           <TableCell align="right">
-                            <Button
-                              variant={isNew ? 'contained' : 'outlined'}
-                              size="small"
-                              sx={isNew
-                                ? { backgroundColor: colors.primary.dark }
-                                : { borderColor: colors.primary.dark, color: colors.primary.dark }
-                              }
+                            <RowActionButton
+                              label={isNew ? 'Review' : 'Open'}
+                              emphasis={isNew}
+                              aria-label={`${isNew ? 'Review' : 'Open'} ${row.organization}`}
                               onClick={() => navigate(`/nonprofits/${row.id}`)}
-                            >
-                              {isNew ? 'Review' : 'Open'}
-                            </Button>
+                            />
                           </TableCell>
                         </TableRow>
                       );

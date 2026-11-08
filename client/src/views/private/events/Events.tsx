@@ -16,6 +16,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 
 import { useAppSelector } from '../../../store/hooks';
 import { selectAllEvents } from '../../../store/eventsSlice';
@@ -23,7 +24,7 @@ import { selectAllAttendances } from '../../../store/eventAttendanceSlice';
 import { Status } from '../../../types/event';
 import { loadAllEvents, loadAttendance } from '../../../services/event';
 import PageLayout from '../../../layouts/PageLayout';
-import StandardButton from '../../../components/buttons/StandardButton';
+import RowActionButton from '../../../components/buttons/RowActionButton';
 import { statusChipProps } from '../../../helpers/eventStatus';
 
 type Data = {
@@ -98,7 +99,7 @@ const Events = () => {
   const navigate = useNavigate();
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [filter, setFilter] = useState('');
   const [sortBy, setSortBy] = useState<SortKey>('startDate');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
@@ -181,8 +182,8 @@ const Events = () => {
     <PageLayout>
       <div className="fullViewContainer">
         <div className="gutters">
-          <h1>
-            events
+          <h1 className="pageTitle">
+            Events
           </h1>
 
           <Grid container spacing={2} sx={{ marginBottom: '1rem' }} alignItems="center" justifyContent="space-between">
@@ -198,8 +199,10 @@ const Events = () => {
                 onChange={(e) => setFilter(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} md={3}>
-              <StandardButton label="+ New Event" handler={() => navigate('/events/new')} />
+            <Grid item xs={12} md={3} sx={{ textAlign: { md: 'right' } }}>
+              <Button variant="outlined" color="primary" onClick={() => navigate('/events/new')}>
+                + Add Event
+              </Button>
             </Grid>
           </Grid>
 
@@ -243,16 +246,11 @@ const Events = () => {
                           />
                         </TableCell>
                         <TableCell align="right">
-                          <span
-                            className="link"
-                            style={{ cursor: 'pointer' }}
-                            role="button"
-                            tabIndex={0}
+                          <RowActionButton
+                            label="Open"
+                            aria-label={`Open ${row.name}`}
                             onClick={() => navigate(`/events/${row.id}`)}
-                            onKeyDown={(e) => { if (e.key === 'Enter') { navigate(`/events/${row.id}`); } }}
-                          >
-                            View
-                          </span>
+                          />
                         </TableCell>
                       </TableRow>
                     ))}
@@ -260,7 +258,7 @@ const Events = () => {
               </Table>
             </TableContainer>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
+              rowsPerPageOptions={[10, 25, 50]}
               component="div"
               count={filteredRows.length}
               rowsPerPage={rowsPerPage}

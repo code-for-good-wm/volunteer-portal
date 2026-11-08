@@ -97,8 +97,8 @@ const EventDetail = () => {
             </Link>
           </div>
 
-          <h1>
-            Event: {event?.name}
+          <h1 className="pageTitle">
+            Event
           </h1>
 
           <div className="contentCard">

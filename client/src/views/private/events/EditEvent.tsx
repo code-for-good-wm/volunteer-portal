@@ -141,8 +141,8 @@ const EditEvent = () => {
             </Link>
           </div>
 
-          <h1>
-            edit
+          <h1 className="pageTitle">
+            Edit Event
           </h1>
 
           <div className="contentCard">

@@ -184,7 +184,7 @@ const NonprofitForm = () => {
             ← Back
           </a>
 
-          <h1 style={{ textAlign: 'center', color: colors.teal.main }}>
+          <h1 className="pageTitle">
             {isEdit ? 'Edit Nonprofit' : 'Add a Nonprofit'}
           </h1>
 

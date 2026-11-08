@@ -147,7 +147,7 @@ const NonprofitDetail = () => {
             ← Back to nonprofits
           </a>
 
-          <h1 style={{ textAlign: 'center', color: colors.teal.main }}>
+          <h1 className="pageTitle">
             Nonprofit
           </h1>
 

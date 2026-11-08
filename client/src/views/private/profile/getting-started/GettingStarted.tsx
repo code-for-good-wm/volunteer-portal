@@ -484,7 +484,7 @@ const GettingStarted = () => {
                   id="firstName"
                   name="firstName"
                   type="text"
-                  label={<TextFieldLabel label="First Name" required />}
+                  label={<TextFieldLabel label="First name" required />}
                   value={basicInfoForm.firstName}
                   onChange={handleFirstName}
                   InputProps={{
@@ -503,7 +503,7 @@ const GettingStarted = () => {
                   id="lastName"
                   name="lastName"
                   type="text"
-                  label={<TextFieldLabel label="Last Name" required />}
+                  label={<TextFieldLabel label="Last name" required />}
                   value={basicInfoForm.lastName}
                   onChange={handleLastName}
                   InputProps={{
@@ -524,7 +524,7 @@ const GettingStarted = () => {
                   id="preferredName"
                   name="preferredName"
                   type="text"
-                  label={<TextFieldLabel label="Preferred Name" />}
+                  label={<TextFieldLabel label="Preferred name" />}
                   value={basicInfoForm.preferredName}
                   onChange={handlePreferredName}
                   InputProps={{
@@ -548,7 +548,7 @@ const GettingStarted = () => {
                   id="phone"
                   name="phone"
                   type="phone"
-                  label={<TextFieldLabel label="Phone Number" required />}
+                  label={<TextFieldLabel label="Phone number" required />}
                   value={basicInfoForm.phone}
                   onChange={handlePhone}
                   InputProps={{
@@ -618,7 +618,7 @@ const GettingStarted = () => {
                   id="websiteUrl"
                   name="websiteUrl"
                   type="text"
-                  label={<TextFieldLabel label="Website Link" />}
+                  label={<TextFieldLabel label="Website link" />}
                   value={contactInfoForm.websiteUrl}
                   onChange={handleWebsiteUrl}
                   InputProps={{
@@ -639,7 +639,7 @@ const GettingStarted = () => {
                   id="portfolioUrl"
                   name="portfolioUrl"
                   type="text"
-                  label={<TextFieldLabel label="Portfolio Link" />}
+                  label={<TextFieldLabel label="Portfolio link" />}
                   value={contactInfoForm.portfolioUrl}
                   onChange={handlePortfolioUrl}
                   InputProps={{
@@ -663,7 +663,7 @@ const GettingStarted = () => {
                   id="currentEmployer"
                   name="currentEmployer"
                   type="text"
-                  label={<TextFieldLabel label="Current Employer" />}
+                  label={<TextFieldLabel label="Current employer" />}
                   value={contactInfoForm.currentEmployer}
                   onChange={handleCurrentEmployer}
                   InputProps={{
