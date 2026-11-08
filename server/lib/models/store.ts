@@ -12,6 +12,7 @@ import { IUserSkill, UserSkillModel } from './user-skill';
 import { IProgram, ProgramModel } from './program';
 import { IEvent, EventModel } from './event';
 import { Status } from './enums/status.enum';
+import { Attendance } from './enums/attendance.enum';
 import { IEventAttendance, EventAttendanceModel } from './event-attendance';
 import { create } from 'domain';
 
@@ -231,6 +232,13 @@ export const eventAttendanceStore = {
   list: async (eventId: mongoose.Types.ObjectId) => {
     return await EventAttendanceModel.find({ event: eventId });
   },
+  /** attendees who may still be available for an event, with user details */
+  listAttendeesByEvent: async (eventId: mongoose.Types.ObjectId) => {
+    return await EventAttendanceModel.find({
+      event: eventId,
+      attendance: { $ne: Attendance.NOT_ATTENDING },
+    }).populate('user', 'firstName lastName email');
+  },
   listByUser: async (
     userId: mongoose.Types.ObjectId,
     events: mongoose.Types.ObjectId[],
@@ -447,6 +455,17 @@ export const slotStore = {
   },
   listByUser: async (userId: mongoose.Types.ObjectId) => {
     return await SlotModel.find({ user: userId });
+  },
+  /** every slot (assigned or not) on the project's positions, with position and user */
+  listByProject: async (projectId: mongoose.Types.ObjectId) => {
+    const positions = await PositionModel.find({ project: projectId }).select(
+      '_id',
+    );
+    return await SlotModel.find({
+      position: { $in: positions.map((p) => p._id) },
+    })
+      .populate('position')
+      .populate('user', 'firstName lastName email');
   },
   update: async (_id: mongoose.Types.ObjectId, slot: ISlot) => {
     return await SlotModel.updateOne({ _id }, slot);

@@ -27,3 +27,5 @@ export const EDIT_ALL_PROJECTS = [UserRole.BOARDMEMBER, UserRole.ADMIN];
 export const EDIT_ALL_POSITIONS = [UserRole.BOARDMEMBER, UserRole.ADMIN];
 
 export const EDIT_ALL_SLOTS = [UserRole.BOARDMEMBER, UserRole.ADMIN];
+
+export const READ_TEAM_SELECTION = [UserRole.BOARDMEMBER, UserRole.ADMIN];
