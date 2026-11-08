@@ -15,6 +15,7 @@ The preferred way to develop locally is against the shared **dev database** (the
 
   ```bash
   brew tap azure/functions
+  brew trust azure/functions
   brew install azure-functions-core-tools@4
   func --version
   ```
