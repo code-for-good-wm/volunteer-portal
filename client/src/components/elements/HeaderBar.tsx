@@ -35,10 +35,12 @@ const HeaderBar = () => {
       currentUser?.userRole ?? 'volunteer',
     );
     setShowUsersOption(isAdminOrBoardmember);
-    setShowProgramsOption(isAdminOrBoardmember);
     setShowEventsOption(isAdminOrBoardmember);
     setShowNonprofitsOption(isAdminOrBoardmember);
     setShowProjectsOption(isAdminOrBoardmember);
+
+    // TODO: Revisit this when we want to think about programs again
+    setShowProgramsOption(false);
   }, [currentUser]);
 
   const navigate = useNavigate();
