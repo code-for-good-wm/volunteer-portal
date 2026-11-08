@@ -125,9 +125,6 @@ export default function NumberSpinner({
                       (other.min?.toString() || '').length,
                       state.inputValue.length || 1,
                     ) + 1,
-                  // sx: {
-                  //   textAlign: 'center',
-                  // },
                 },
               }}
               sx={{ pr: 0, borderRadius: 0, flex: 1 }}
