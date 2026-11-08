@@ -5,8 +5,8 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": ["get", "put"],
-      "route": "team-selection/{projectId}/slots/{slotId?}"
+      "methods": ["get"],
+      "route": "team-selection/{projectId}/slots"
     },
     {
       "type": "http",
