@@ -374,3 +374,186 @@ describe('slotStore.hasConfirmedSlotForEvent', () => {
     expect(result).toBe(false);
   });
 });
+
+describe('slotStore.assign', () => {
+  async function buildSlot() {
+    const project = await buildProject();
+    const position = await positionStore.create({
+      project: project._id,
+      role: Role.DEVELOPER,
+      slotCount: 1,
+    } as IPosition);
+    const [slot] = await slotStore.listByPosition(
+      position._id as Types.ObjectId,
+    );
+    return slot;
+  }
+
+  it('assigns the user and status and returns the populated slot', async () => {
+    const user = await userStore.create(buildUser());
+    const slot = await buildSlot();
+    const invitedAt = new Date();
+
+    const result = await slotStore.assign(
+      slot._id as Types.ObjectId,
+      { user: user._id, status: SlotStatus.INVITED, invitedAt },
+      true,
+    );
+
+    expect(result?.status).toBe(SlotStatus.INVITED);
+    expect((result?.user as unknown as IUser).email).toBe('ada@example.com');
+    expect((result?.position as unknown as IPosition).role).toBe(
+      Role.DEVELOPER,
+    );
+    expect(result?.invitedAt).toEqual(invitedAt);
+    expect(result?.respondedAt).toBeUndefined();
+  });
+
+  it("clears the previous volunteer's response details only when asked", async () => {
+    const user = await userStore.create(buildUser());
+    const slot = await buildSlot();
+    const id = slot._id as Types.ObjectId;
+    await slotStore.update(id, {
+      position: slot.position,
+      user: user._id,
+      status: SlotStatus.DECLINED,
+      respondedAt: new Date(),
+      declineReason: 'Busy',
+    } as ISlot);
+
+    const kept = await slotStore.assign(
+      id,
+      { user: user._id, status: SlotStatus.INVITED, invitedAt: new Date() },
+      false,
+    );
+    expect(kept?.declineReason).toBe('Busy');
+    expect(kept?.respondedAt).toBeUndefined();
+
+    const cleared = await slotStore.assign(
+      id,
+      { user: user._id, status: SlotStatus.INVITED, invitedAt: new Date() },
+      true,
+    );
+    expect(cleared?.declineReason).toBeUndefined();
+  });
+});
+
+describe('slotStore.unassign and listWithDetails', () => {
+  it('returns an assigned slot to open and clears its volunteer and response details', async () => {
+    const user = await userStore.create(buildUser());
+    const project = await buildProject();
+    const position = await positionStore.create({
+      project: project._id,
+      role: Role.DEVELOPER,
+      slotCount: 1,
+    } as IPosition);
+    const [slot] = await slotStore.listByPosition(
+      position._id as Types.ObjectId,
+    );
+    const id = slot._id as Types.ObjectId;
+    await slotStore.update(id, {
+      position: slot.position,
+      user: user._id,
+      status: SlotStatus.DECLINED,
+      invitedAt: new Date(),
+      respondedAt: new Date(),
+      declineReason: 'Busy',
+    } as ISlot);
+
+    const result = await slotStore.unassign(id);
+
+    expect(result?.status).toBe(SlotStatus.OPEN);
+    expect(result?.user).toBeUndefined();
+    expect(result?.invitedAt).toBeUndefined();
+    expect(result?.respondedAt).toBeUndefined();
+    expect(result?.declineReason).toBeUndefined();
+    expect((result?.position as unknown as IPosition).role).toBe(
+      Role.DEVELOPER,
+    );
+  });
+
+  it('listWithDetails returns the slot with its position populated', async () => {
+    const project = await buildProject();
+    const position = await positionStore.create({
+      project: project._id,
+      role: Role.DESIGNER,
+      slotCount: 1,
+    } as IPosition);
+    const [slot] = await slotStore.listByPosition(
+      position._id as Types.ObjectId,
+    );
+
+    const result = await slotStore.listWithDetails(slot._id as Types.ObjectId);
+
+    expect((result?.position as unknown as IPosition).role).toBe(Role.DESIGNER);
+  });
+});
+
+describe('slotStore.listAssignedUsersByEvent', () => {
+  async function slotFor(eventId: Types.ObjectId) {
+    const project = await buildProject(eventId);
+    const position = await positionStore.create({
+      project: project._id,
+      role: Role.DEVELOPER,
+      slotCount: 1,
+    } as IPosition);
+    const [slot] = await slotStore.listByPosition(
+      position._id as Types.ObjectId,
+    );
+    return slot;
+  }
+
+  async function give(
+    slot: ISlot,
+    user: IUser | undefined,
+    status: SlotStatus,
+  ) {
+    await slotStore.update(
+      slot._id as Types.ObjectId,
+      {
+        position: slot.position,
+        user: user?._id,
+        status,
+      } as ISlot,
+    );
+  }
+
+  it('includes invited and confirmed holders on any project for the event, but not declined, open or other-event slots', async () => {
+    const event = await buildEvent();
+    const otherEvent = await buildEvent();
+    const invited = await userStore.create(buildUser({ ident: 'i' }));
+    const confirmed = await userStore.create(buildUser({ ident: 'c' }));
+    const declined = await userStore.create(buildUser({ ident: 'd' }));
+    const elsewhere = await userStore.create(buildUser({ ident: 'e' }));
+
+    await give(
+      await slotFor(event._id as Types.ObjectId),
+      invited,
+      SlotStatus.INVITED,
+    );
+    await give(
+      await slotFor(event._id as Types.ObjectId),
+      confirmed,
+      SlotStatus.CONFIRMED,
+    );
+    await give(
+      await slotFor(event._id as Types.ObjectId),
+      declined,
+      SlotStatus.DECLINED,
+    );
+    await slotFor(event._id as Types.ObjectId); // open, unassigned
+    await give(
+      await slotFor(otherEvent._id as Types.ObjectId),
+      elsewhere,
+      SlotStatus.CONFIRMED,
+    );
+
+    const ids = await slotStore.listAssignedUsersByEvent(
+      event._id as Types.ObjectId,
+    );
+
+    expect(ids.map(String).sort()).toEqual(
+      [String(invited._id), String(confirmed._id)].sort(),
+    );
+  });
+});

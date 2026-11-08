@@ -12,6 +12,7 @@ import { IUserSkill, UserSkillModel } from './user-skill';
 import { IProgram, ProgramModel } from './program';
 import { IEvent, EventModel } from './event';
 import { Status } from './enums/status.enum';
+import { Attendance } from './enums/attendance.enum';
 import { IEventAttendance, EventAttendanceModel } from './event-attendance';
 import { create } from 'domain';
 
@@ -93,6 +94,9 @@ export const skillOptionsStore = {
 export const userStore = {
   list: async (ident: string) => {
     return await UserModel.findOne({ ident });
+  },
+  listById: async (_id: mongoose.Types.ObjectId) => {
+    return await UserModel.findOne({ _id });
   },
   listAll: async () => {
     return await UserModel.find();
@@ -230,6 +234,15 @@ export const eventStore = {
 export const eventAttendanceStore = {
   list: async (eventId: mongoose.Types.ObjectId) => {
     return await EventAttendanceModel.find({ event: eventId });
+  },
+  /** attendees who may still be available for an event, with user details */
+  listAttendeesByEvent: async (eventId: mongoose.Types.ObjectId) => {
+    return await EventAttendanceModel.find({
+      event: eventId,
+      attendance: { $ne: Attendance.NOT_ATTENDING },
+    })
+      .populate('user', 'firstName lastName email')
+      .lean();
   },
   listByUser: async (
     userId: mongoose.Types.ObjectId,
@@ -448,8 +461,93 @@ export const slotStore = {
   listByUser: async (userId: mongoose.Types.ObjectId) => {
     return await SlotModel.find({ user: userId });
   },
+  /** every slot (assigned or not) on the project's positions, with position and user */
+  listByProject: async (projectId: mongoose.Types.ObjectId) => {
+    const positions = await PositionModel.find({ project: projectId }).select(
+      '_id',
+    );
+    return await SlotModel.find({
+      position: { $in: positions.map((p) => p._id) },
+    })
+      .populate('position')
+      .populate('user', 'firstName lastName email');
+  },
   update: async (_id: mongoose.Types.ObjectId, slot: ISlot) => {
     return await SlotModel.updateOne({ _id }, slot);
+  },
+  /**
+   * Ids of the volunteers holding a slot (invited, confirmed or partially
+   * confirmed; declined slots don't count) on any project tied to the event.
+   */
+  listAssignedUsersByEvent: async (eventId: mongoose.Types.ObjectId) => {
+    const projects = await ProjectModel.find({ event: eventId }).select('_id');
+    const positions = await PositionModel.find({
+      project: { $in: projects.map((p) => p._id) },
+    }).select('_id');
+    return (await SlotModel.distinct('user', {
+      position: { $in: positions.map((p) => p._id) },
+      user: { $exists: true },
+      status: { $nin: [SlotStatus.OPEN, SlotStatus.DECLINED] },
+    })) as mongoose.Types.ObjectId[];
+  },
+  /** one slot, populated the same way as listByProject */
+  listWithDetails: async (_id: mongoose.Types.ObjectId) => {
+    return await SlotModel.findOne({ _id })
+      .populate('position')
+      .populate('user', 'firstName lastName email');
+  },
+  /** Returns a slot to open: removes its volunteer and any response details. */
+  unassign: async (_id: mongoose.Types.ObjectId) => {
+    return await SlotModel.findOneAndUpdate(
+      { _id },
+      {
+        $set: { status: SlotStatus.OPEN },
+        $unset: {
+          user: 1,
+          invitedAt: 1,
+          respondedAt: 1,
+          partialDetail: 1,
+          declineReason: 1,
+        },
+      },
+      { new: true },
+    )
+      .populate('position')
+      .populate('user', 'firstName lastName email');
+  },
+  /**
+   * Assigns a volunteer to a slot and returns the updated slot, populated the
+   * same way as listByProject. When the slot changes hands, the previous
+   * volunteer's response details are cleared.
+   */
+  assign: async (
+    _id: mongoose.Types.ObjectId,
+    assignment: Pick<ISlot, 'user' | 'status' | 'invitedAt' | 'respondedAt'>,
+    clearResponse: boolean,
+  ) => {
+    const $set: Partial<ISlot> = {
+      user: assignment.user,
+      status: assignment.status,
+    };
+    const $unset: Record<string, 1> = {};
+    for (const key of ['invitedAt', 'respondedAt'] as const) {
+      if (assignment[key]) {
+        $set[key] = assignment[key];
+      } else {
+        $unset[key] = 1;
+      }
+    }
+    if (clearResponse) {
+      $unset.partialDetail = 1;
+      $unset.declineReason = 1;
+    }
+    return await SlotModel.findOneAndUpdate(
+      { _id },
+      { $set, $unset },
+      { new: true },
+    )
+      .populate('position')
+      .populate('user', 'firstName lastName email');
   },
   delete: async (_id: mongoose.Types.ObjectId) => {
     return await SlotModel.deleteOne({ _id });
