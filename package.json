@@ -7,6 +7,9 @@
     "dev:install": "npm run client:build && npm run server:build",
     "client:build": "cd client && npm install --no-audit && npm run build && cp ../staticwebapp.config.json ./build",
     "server:build": "cd server && npm install --no-audit && npm run build && func init --language typescript --worker-runtime node",
+    "test": "npm run client:test && npm run server:test",
+    "client:test": "cd client && npm test",
+    "server:test": "cd server && npm test",
     "format": "prettier --write \"**/*.{ts,js,json,md}\""
   },
   "devDependencies": {

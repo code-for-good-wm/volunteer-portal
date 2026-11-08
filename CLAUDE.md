@@ -15,6 +15,7 @@ Full local dev (from repo root):
 ```bash
 npm run dev:install   # builds client and server
 npm run dev           # serves both via Azure Static Web Apps CLI on port 3000
+npm test              # runs the client tests, then the server tests
 ```
 
 Client only (`cd client`):
