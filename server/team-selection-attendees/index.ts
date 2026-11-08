@@ -43,7 +43,8 @@ const httpTrigger: AzureFunction = async function (
  * by the roles they signed up for. An attendee with several roles appears
  * under each of them. The optional `role` query param limits the result to
  * that one role. Each attendee carries `assignedToSlot`: whether they already
- * hold a slot on any project for the event.
+ * hold a slot on any project for the event. The grouped attendees are returned
+ * as `results`, alongside the `filter` they were produced with.
  */
 async function getAttendeesByRole(
   context: Context,
@@ -103,7 +104,18 @@ async function getAttendeesByRole(
     }
   }
 
-  return createSuccessResult(200, attendeesByRole, context);
+  return createSuccessResult(
+    200,
+    {
+      results: attendeesByRole,
+      filter: {
+        projectId,
+        eventId: project.event,
+        ...(roleFilter && { role: roleFilter }),
+      },
+    },
+    context,
+  );
 }
 
 export default httpTrigger;

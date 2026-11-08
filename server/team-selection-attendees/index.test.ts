@@ -85,8 +85,11 @@ describe('team-selection-attendees httpTrigger GET', () => {
     expect(context.res?.status).toBe(200);
     const bothOut = { ...both, assignedToSlot: false };
     expect(context.res?.body).toEqual({
-      developer: [bothOut, { ...devOnly, assignedToSlot: false }],
-      designer: [bothOut],
+      results: {
+        developer: [bothOut, { ...devOnly, assignedToSlot: false }],
+        designer: [bothOut],
+      },
+      filter: { projectId: 'p1', eventId: 'e1' },
     });
   });
 
@@ -113,14 +116,17 @@ describe('team-selection-attendees httpTrigger GET', () => {
 
     expect(context.res?.status).toBe(200);
     expect(context.res?.body).toEqual({
-      designer: [
-        { ...both, assignedToSlot: false },
-        { ...designerOnly, assignedToSlot: false },
-      ],
+      results: {
+        designer: [
+          { ...both, assignedToSlot: false },
+          { ...designerOnly, assignedToSlot: false },
+        ],
+      },
+      filter: { projectId: 'p1', eventId: 'e1', role: 'designer' },
     });
   });
 
-  it('returns an empty object when nobody matches the requested role', async () => {
+  it('returns empty results when nobody matches the requested role', async () => {
     mockUserList.mockResolvedValue({ userRole: UserRole.ADMIN } as never);
     mockProjectList.mockResolvedValue({ _id: 'p1', event: 'e1' } as never);
     mockListAttendees.mockResolvedValue([
@@ -134,7 +140,10 @@ describe('team-selection-attendees httpTrigger GET', () => {
     );
 
     expect(context.res?.status).toBe(200);
-    expect(context.res?.body).toEqual({});
+    expect(context.res?.body).toEqual({
+      results: {},
+      filter: { projectId: 'p1', eventId: 'e1', role: 'support' },
+    });
   });
 
   it('returns 400 for an unknown role', async () => {
@@ -168,11 +177,14 @@ describe('team-selection-attendees httpTrigger GET', () => {
 
     expect(mockAssignedUsers).toHaveBeenCalledWith('e1');
     expect(context.res?.body).toEqual({
-      developer: [
-        { ...assigned, assignedToSlot: true },
-        { ...free, assignedToSlot: false },
-      ],
-      designer: [{ ...assigned, assignedToSlot: true }],
+      results: {
+        developer: [
+          { ...assigned, assignedToSlot: true },
+          { ...free, assignedToSlot: false },
+        ],
+        designer: [{ ...assigned, assignedToSlot: true }],
+      },
+      filter: { projectId: 'p1', eventId: 'e1' },
     });
   });
 });
