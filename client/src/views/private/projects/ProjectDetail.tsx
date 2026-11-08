@@ -156,7 +156,7 @@ const ProjectDetail = () => {
             ← Back to projects
           </a>
 
-          <h1 style={{ textAlign: 'center', color: colors.teal.main }}>
+          <h1 className="pageTitle">
             Project
           </h1>
 

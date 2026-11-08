@@ -41,6 +41,14 @@ h3 {
   color: $primaryMain;
 }
 
+/* Page title for admin/list/detail pages, e.g. <h1 className="pageTitle">Projects</h1>.
+   The designs show these in lowercase, bold teal (e.g. "add a nonprofit"). */
+.pageTitle {
+  @include AvenirHeavy;
+  color: $primaryMain;
+  text-transform: lowercase;
+}
+
 .center {
   text-align: center;
 }

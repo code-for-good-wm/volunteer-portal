@@ -222,7 +222,7 @@ const Users = () => {
     <PageLayout>
       <div className="fullViewContainer">
         <div className="gutters">
-          <h1>
+          <h1 className="pageTitle">
             Users
           </h1>
 

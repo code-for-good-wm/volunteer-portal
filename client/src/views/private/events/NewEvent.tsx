@@ -81,8 +81,8 @@ const NewEvent = () => {
             </Link>
           </div>
 
-          <h1>
-            new event
+          <h1 className="pageTitle">
+            Add an Event
           </h1>
 
           <div className="contentCard">

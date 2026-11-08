@@ -181,8 +181,8 @@ const Events = () => {
     <PageLayout>
       <div className="fullViewContainer">
         <div className="gutters">
-          <h1>
-            events
+          <h1 className="pageTitle">
+            Events
           </h1>
 
           <Grid container spacing={2} sx={{ marginBottom: '1rem' }} alignItems="center" justifyContent="space-between">

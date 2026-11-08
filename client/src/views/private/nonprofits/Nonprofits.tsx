@@ -145,7 +145,7 @@ const Nonprofits = () => {
     <PageLayout>
       <div className="fullViewContainer">
         <div className="gutters">
-          <h1 style={{ textAlign: 'center', color: colors.teal.main }}>
+          <h1 className="pageTitle">
             Nonprofits
           </h1>
 
