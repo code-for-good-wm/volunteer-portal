@@ -23,6 +23,7 @@ Client only (`cd client`):
 - `npm run build` — `tsc && vite build`
 - `npm run serve` — preview a production build
 - `npm run lint` — ESLint
+- `npm test` — Vitest suite (`npm run test:watch`, `npm run test:coverage`)
 
 Server only (`cd server`):
 
@@ -32,7 +33,7 @@ Server only (`cd server`):
 - `npm test` — Vitest suite
 - No `lint` script is defined; run `eslint` directly if needed.
 
-Tests: `cd server && npm test` runs the server's Vitest suite (`*.test.ts`), using `mongodb-memory-server` for an in-memory MongoDB (helpers in `server/lib/test-utils/`). `npm run test:watch` and `npm run test:coverage` are also available. The client has no test runner configured yet — it has `@testing-library/*`/`@types/jest` installed but no test script or spec files. When adding new functionality, add tests for it, and set up a runner for the client if you're adding client tests. GitHub Actions (`.github/workflows/pr-checks.yml`) builds the client and builds and tests the server on PRs to `dev` and `main`.
+Tests: `cd server && npm test` runs the server's Vitest suite (`*.test.ts`), using `mongodb-memory-server` for an in-memory MongoDB (helpers in `server/lib/test-utils/`). `npm run test:watch` and `npm run test:coverage` are also available. `cd client && npm test` runs the client's Vitest suite (`src/**/*.test.{ts,tsx}`) in jsdom with React Testing Library and jest-dom matchers (setup in `client/src/setupTests.ts`, config in `client/vitest.config.mts`, which pins the time zone to America/Detroit and the locale to en-US so date assertions are stable). Both packages use Vitest with globals off, so import `describe`/`it`/`expect` from `vitest`. When adding new functionality, add tests for it. GitHub Actions (`.github/workflows/pr-checks.yml`) builds and tests both the client and the server on PRs to `dev` and `main`.
 
 ### Local environment setup
 
