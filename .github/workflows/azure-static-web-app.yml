@@ -1,0 +1,86 @@
+name: Build and deploy to Azure Static Web Apps
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - dev
+      - main
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy:
+    # Skip the build when a PR is closed (handled by close_pull_request below)
+    if: github.event_name == 'push' || github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    name: Build and deploy
+    # Selects the GitHub Environment, which supplies its own vars and secrets.
+    # Create two environments in repo settings: "prod" and "dev".
+    environment: ${{ (github.ref_name == 'main' || github.base_ref == 'main') && 'prod' || 'dev' }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: npm install and build
+        working-directory: client
+        run: |
+          npm install --no-audit
+          # npm audit --omit=dev --audit-level=high
+          npm run build
+          mv build ../app_dist
+          cp ../staticwebapp.config.azure.json ../app_dist/staticwebapp.config.json
+        env:
+          # Non-secret values -> Environment *variables* (vars.*)
+          VITE_MSAL_CLIENT_ID: ${{ vars.MSAL_CLIENT_ID }}
+          VITE_MSAL_AUTHORITY: ${{ vars.MSAL_AUTHORITY }}
+          VITE_SIGN_IN_REDIRECT: ${{ vars.APP_REDIRECT_URL }}
+          VITE_SIGN_OUT_REDIRECT: ${{ vars.APP_REDIRECT_URL }}
+          VITE_FB_API_KEY: ${{ secrets.FB_API_KEY }}
+          VITE_FB_AUTH_DOMAIN: ${{ vars.FB_AUTH_DOMAIN }}
+          VITE_FB_PROJECT_ID: ${{ vars.FB_PROJECT_ID }}
+          VITE_FB_STORAGE_BUCKET: ${{ vars.FB_STORAGE_BUCKET }}
+          VITE_FB_MESSAGING_SENDER_ID: ${{ vars.FB_MSG_SENDER_ID }}
+          VITE_FB_APP_ID: ${{ vars.FB_APP_ID }}
+          VITE_AZURE_CLOUD_FUNCTION_BASE_URL: ${{ vars.APP_ROOT_URL }}
+          VITE_REGISTRATION_CONFIRMATION_EMAIL_TEMPLATE_ID: ${{ vars.SG_REGISTRATION_TEMPLATE }}
+
+      # Firebase service-account JSON, stored as a base64 secret (FB_CREDS_BASE64).
+      # The Static Web App's GOOGLE_APPLICATION_CREDENTIALS setting must be "fb-credentials.json".
+      - name: Apply firebase credentials
+        env:
+          FB_CREDS_BASE64: ${{ secrets.FB_CREDS_BASE64 }}
+        run: echo "$FB_CREDS_BASE64" | base64 -d > server/fb-credentials.json
+
+      - name: Deploy to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.SWA_DEPLOY_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # enables PR comments / preview URLs
+          action: upload
+          production_branch: main # other branches get preview environments
+          app_location: app_dist
+          api_location: server
+          skip_api_build: false
+          skip_app_build: true
+          output_location: ''
+
+  close_pull_request:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close pull request environment
+    environment: ${{ github.base_ref == 'main' && 'prod' || 'dev' }}
+    steps:
+      - uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.SWA_DEPLOY_TOKEN }}
+          action: close
