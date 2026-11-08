@@ -5,7 +5,11 @@ import {
   IHttpResult,
 } from '../lib/core';
 import { eventAttendanceStore } from '../lib/models/store';
-import { checkAuthAndConnect, checkBindingDataUserId } from '../lib/helpers';
+import {
+  checkAuthAndConnect,
+  checkBindingDataUserId,
+  checkCanReadBindingUser,
+} from '../lib/helpers';
 
 const httpTrigger: AzureFunction = async function (
   context: Context,
@@ -43,8 +47,8 @@ async function getEventAttendance(
   context: Context,
   userIdent: string,
 ): Promise<IHttpResult> {
-  // check that a user is accessing their own data
-  const checkResult = await checkBindingDataUserId(context, userIdent);
+  // users read their own attendance; board members and admins can read anyone's
+  const checkResult = await checkCanReadBindingUser(context, userIdent);
   if (checkResult.body.error) {
     return checkResult;
   }
