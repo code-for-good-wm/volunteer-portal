@@ -488,3 +488,72 @@ describe('slotStore.unassign and listWithDetails', () => {
     expect((result?.position as unknown as IPosition).role).toBe(Role.DESIGNER);
   });
 });
+
+describe('slotStore.listAssignedUsersByEvent', () => {
+  async function slotFor(eventId: Types.ObjectId) {
+    const project = await buildProject(eventId);
+    const position = await positionStore.create({
+      project: project._id,
+      role: Role.DEVELOPER,
+      slotCount: 1,
+    } as IPosition);
+    const [slot] = await slotStore.listByPosition(
+      position._id as Types.ObjectId,
+    );
+    return slot;
+  }
+
+  async function give(
+    slot: ISlot,
+    user: IUser | undefined,
+    status: SlotStatus,
+  ) {
+    await slotStore.update(
+      slot._id as Types.ObjectId,
+      {
+        position: slot.position,
+        user: user?._id,
+        status,
+      } as ISlot,
+    );
+  }
+
+  it('includes invited and confirmed holders on any project for the event, but not declined, open or other-event slots', async () => {
+    const event = await buildEvent();
+    const otherEvent = await buildEvent();
+    const invited = await userStore.create(buildUser({ ident: 'i' }));
+    const confirmed = await userStore.create(buildUser({ ident: 'c' }));
+    const declined = await userStore.create(buildUser({ ident: 'd' }));
+    const elsewhere = await userStore.create(buildUser({ ident: 'e' }));
+
+    await give(
+      await slotFor(event._id as Types.ObjectId),
+      invited,
+      SlotStatus.INVITED,
+    );
+    await give(
+      await slotFor(event._id as Types.ObjectId),
+      confirmed,
+      SlotStatus.CONFIRMED,
+    );
+    await give(
+      await slotFor(event._id as Types.ObjectId),
+      declined,
+      SlotStatus.DECLINED,
+    );
+    await slotFor(event._id as Types.ObjectId); // open, unassigned
+    await give(
+      await slotFor(otherEvent._id as Types.ObjectId),
+      elsewhere,
+      SlotStatus.CONFIRMED,
+    );
+
+    const ids = await slotStore.listAssignedUsersByEvent(
+      event._id as Types.ObjectId,
+    );
+
+    expect(ids.map(String).sort()).toEqual(
+      [String(invited._id), String(confirmed._id)].sort(),
+    );
+  });
+});

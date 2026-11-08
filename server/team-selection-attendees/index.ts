@@ -7,11 +7,13 @@ import {
 import {
   eventAttendanceStore,
   projectStore,
+  slotStore,
   userStore,
 } from '../lib/models/store';
 import { checkAuthAndConnect } from '../lib/helpers';
 import { READ_TEAM_SELECTION } from '../lib/models/enums/user-role.enum';
 import { Role } from '../lib/models/enums/role.enum';
+import { IUser } from '../lib/models/user';
 
 const httpTrigger: AzureFunction = async function (
   context: Context,
@@ -40,7 +42,8 @@ const httpTrigger: AzureFunction = async function (
  * Attendees of the project's event (anyone not marked not-attending), grouped
  * by the roles they signed up for. An attendee with several roles appears
  * under each of them. The optional `role` query param limits the result to
- * that one role.
+ * that one role. Each attendee carries `assignedToSlot`: whether they already
+ * hold a slot on any project for the event.
  */
 async function getAttendeesByRole(
   context: Context,
@@ -80,13 +83,23 @@ async function getAttendeesByRole(
     project.event,
   );
 
+  const assignedUserIds = new Set(
+    (await slotStore.listAssignedUsersByEvent(project.event)).map(String),
+  );
+
   const attendeesByRole: Record<string, unknown[]> = {};
   for (const attendance of attendances) {
+    const attendee = {
+      ...attendance,
+      assignedToSlot: assignedUserIds.has(
+        String((attendance.user as unknown as IUser)._id),
+      ),
+    };
     for (const role of attendance.roles) {
       if (roleFilter && role !== roleFilter) {
         continue;
       }
-      (attendeesByRole[role] ??= []).push(attendance);
+      (attendeesByRole[role] ??= []).push(attendee);
     }
   }
 

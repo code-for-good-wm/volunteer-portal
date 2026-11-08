@@ -240,7 +240,9 @@ export const eventAttendanceStore = {
     return await EventAttendanceModel.find({
       event: eventId,
       attendance: { $ne: Attendance.NOT_ATTENDING },
-    }).populate('user', 'firstName lastName email');
+    })
+      .populate('user', 'firstName lastName email')
+      .lean();
   },
   listByUser: async (
     userId: mongoose.Types.ObjectId,
@@ -472,6 +474,21 @@ export const slotStore = {
   },
   update: async (_id: mongoose.Types.ObjectId, slot: ISlot) => {
     return await SlotModel.updateOne({ _id }, slot);
+  },
+  /**
+   * Ids of the volunteers holding a slot (invited, confirmed or partially
+   * confirmed; declined slots don't count) on any project tied to the event.
+   */
+  listAssignedUsersByEvent: async (eventId: mongoose.Types.ObjectId) => {
+    const projects = await ProjectModel.find({ event: eventId }).select('_id');
+    const positions = await PositionModel.find({
+      project: { $in: projects.map((p) => p._id) },
+    }).select('_id');
+    return (await SlotModel.distinct('user', {
+      position: { $in: positions.map((p) => p._id) },
+      user: { $exists: true },
+      status: { $nin: [SlotStatus.OPEN, SlotStatus.DECLINED] },
+    })) as mongoose.Types.ObjectId[];
   },
   /** one slot, populated the same way as listByProject */
   listWithDetails: async (_id: mongoose.Types.ObjectId) => {
