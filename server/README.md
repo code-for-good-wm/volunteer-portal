@@ -8,7 +8,11 @@ We're using Node 22 for this project. [Learn how to use a Node Version Manager.]
 
 We're using ESLint. If you're using Visual Studio Code, be sure to install and enable the [ESLint extension for VS Code](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint).
 
-We're using [MongoDB](https://www.mongodb.com/). In order to run functions locally for testing, you'll need MondoDB running on your local machine. [This article](https://zellwk.com/blog/local-mongodb/) can help you install and start MongoDB. (You'll need MondoDB running on your machine in order to run the cloud functions locally.)
+We're using [MongoDB](https://www.mongodb.com/) through Azure Cosmos DB's MongoDB API. When running the functions locally, the preferred setup is to connect to the shared **dev database** (the `volunteer-portal-dev` Cosmos DB account). `local.settings.example.json` is already set up for it: put the account password in `DATABASE_PASS`, and it's substituted into the `__DB_PASS__` placeholder in `DATABASE_URI`. Get the password from the Azure Portal (Cosmos DB account `volunteer-portal-dev` → Connection strings) or from a team member. Keep in mind the dev database is shared, so local changes are visible to everyone using dev.
+
+If you need to work offline, you can run MongoDB locally instead ([this article](https://zellwk.com/blog/local-mongodb/) can help you install and start it) and set `DATABASE_URI` to `mongodb://localhost:27017`.
+
+Tests (`npm test`) use an in-memory MongoDB via `mongodb-memory-server`, so they don't need either database.
 
 We're bootstrapping user authorization via [Firebase](https://firebase.google.com/). There are two Firebase projects set up: one for the development environment, and one for production. We're using the [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) within our cloud functions, which must be initialized using the appropriate environment.
 
