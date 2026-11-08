@@ -49,7 +49,7 @@ Node version: root, `client`, and `server` all require Node >=22 (`engines` fiel
 
 ### Backend (`server/`)
 
-Azure Functions, one folder per resource (`event/`, `events/`, `profile/`, `profiles/`, `program/`, `programs/`, `user/`, `users/`, `settings/`, `skills/`, `skill-options/`, `event-attendance/`, `event-attendances/`, `email/`, `export/`). Each folder contains `function.json` (route/HTTP binding config) and `index.ts` (the handler, exported as the default `httpTrigger`). The folder name _is_ the route — there is no single server entry point; each resource folder is an independent entry point.
+Azure Functions, one folder per resource (`event/`, `events/`, `profile/`, `profiles/`, `program/`, `programs/`, `user/`, `users/`, `settings/`, `skills/`, `skill-options/`, `event-attendance/`, `event-attendances/`, `email/`, `export/`, `team-selection-slots/`, `team-selection-slot/`, `team-selection-attendees/`). Each folder contains `function.json` (route/HTTP binding config) and `index.ts` (the handler, exported as the default `httpTrigger`). The folder name _is_ the route — there is no single server entry point; each resource folder is an independent entry point.
 
 Shared backend code lives in `server/lib/`:
 
