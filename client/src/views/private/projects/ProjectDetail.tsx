@@ -652,6 +652,10 @@ const ProjectDetail = () => {
           },
         }}
       >
+        <span style={{ fontSize: 14, color: colors.text.secondary }}>
+          {project?.name} - {nonprofit?.name}
+        </span>
+        <hr />
         <div
           style={{
             display: 'grid',
