@@ -11,6 +11,7 @@ import {
 } from '../lib/models/store';
 import { checkAuthAndConnect } from '../lib/helpers';
 import { READ_TEAM_SELECTION } from '../lib/models/enums/user-role.enum';
+import { Role } from '../lib/models/enums/role.enum';
 
 const httpTrigger: AzureFunction = async function (
   context: Context,
@@ -28,7 +29,7 @@ const httpTrigger: AzureFunction = async function (
 
   switch (req.method) {
     case 'GET':
-      result = await getAttendeesByRole(context, uid);
+      result = await getAttendeesByRole(context, req, uid);
       break;
   }
 
@@ -38,10 +39,12 @@ const httpTrigger: AzureFunction = async function (
 /**
  * Attendees of the project's event (anyone not marked not-attending), grouped
  * by the roles they signed up for. An attendee with several roles appears
- * under each of them.
+ * under each of them. The optional `role` query param limits the result to
+ * that one role.
  */
 async function getAttendeesByRole(
   context: Context,
+  req: HttpRequest,
   userIdent: string,
 ): Promise<IHttpResult> {
   const user = await userStore.list(userIdent);
@@ -52,6 +55,11 @@ async function getAttendeesByRole(
   // only board / admins can run team selection
   if (!READ_TEAM_SELECTION.includes(user.userRole)) {
     return createErrorResult(403, 'Forbidden', context);
+  }
+
+  const roleFilter = req.query?.['role']; // Optional
+  if (roleFilter && !Object.values(Role).includes(roleFilter as Role)) {
+    return createErrorResult(400, `Invalid role: ${roleFilter}`, context);
   }
 
   const projectId = context.bindingData.projectId;
@@ -75,6 +83,9 @@ async function getAttendeesByRole(
   const attendeesByRole: Record<string, unknown[]> = {};
   for (const attendance of attendances) {
     for (const role of attendance.roles) {
+      if (roleFilter && role !== roleFilter) {
+        continue;
+      }
       (attendeesByRole[role] ??= []).push(attendance);
     }
   }

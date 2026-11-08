@@ -80,4 +80,52 @@ describe('team-selection-attendees httpTrigger GET', () => {
       designer: [both],
     });
   });
+
+  it('returns only the requested role when a role query param is given', async () => {
+    mockUserList.mockResolvedValue({ userRole: UserRole.ADMIN } as never);
+    mockProjectList.mockResolvedValue({ _id: 'p1', event: 'e1' } as never);
+    const both = { _id: 'a1', roles: ['developer', 'designer'] };
+    const designerOnly = { _id: 'a2', roles: ['designer'] };
+    mockListAttendees.mockResolvedValue([both, designerOnly] as never);
+    const context = createMockContext({ bindingData: { projectId: 'p1' } });
+
+    await httpTrigger(
+      context,
+      createMockRequest({ method: 'GET', query: { role: 'designer' } }),
+    );
+
+    expect(context.res?.status).toBe(200);
+    expect(context.res?.body).toEqual({ designer: [both, designerOnly] });
+  });
+
+  it('returns an empty object when nobody matches the requested role', async () => {
+    mockUserList.mockResolvedValue({ userRole: UserRole.ADMIN } as never);
+    mockProjectList.mockResolvedValue({ _id: 'p1', event: 'e1' } as never);
+    mockListAttendees.mockResolvedValue([
+      { _id: 'a1', roles: ['developer'] },
+    ] as never);
+    const context = createMockContext({ bindingData: { projectId: 'p1' } });
+
+    await httpTrigger(
+      context,
+      createMockRequest({ method: 'GET', query: { role: 'support' } }),
+    );
+
+    expect(context.res?.status).toBe(200);
+    expect(context.res?.body).toEqual({});
+  });
+
+  it('returns 400 for an unknown role', async () => {
+    mockUserList.mockResolvedValue({ userRole: UserRole.ADMIN } as never);
+    mockProjectList.mockResolvedValue({ _id: 'p1', event: 'e1' } as never);
+    const context = createMockContext({ bindingData: { projectId: 'p1' } });
+
+    await httpTrigger(
+      context,
+      createMockRequest({ method: 'GET', query: { role: 'wizard' } }),
+    );
+
+    expect(context.res?.status).toBe(400);
+    expect(mockListAttendees).not.toHaveBeenCalled();
+  });
 });
