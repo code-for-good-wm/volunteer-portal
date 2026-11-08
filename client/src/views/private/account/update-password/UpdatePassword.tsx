@@ -134,7 +134,7 @@ const UpdatePassword = () => {
           id="currentPassword"
           name="currentPassword"
           type="password"
-          label={<TextFieldLabel label="Current Password" />}
+          label={<TextFieldLabel label="Current password" />}
           value={form.password}
           onChange={handlePassword}
         />
@@ -146,7 +146,7 @@ const UpdatePassword = () => {
           id="newPassword"
           name="newPassword"
           type="password"
-          label={<TextFieldLabel label="New Password" />}
+          label={<TextFieldLabel label="New password" />}
           value={form.newPassword}
           onChange={handleNewPassword}
         />

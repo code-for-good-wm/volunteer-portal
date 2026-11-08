@@ -127,7 +127,7 @@ const DeleteAccount = () => {
             id="deleteAccountPassword"
             name="deleteAccountPassword"
             type="password"
-            label={<TextFieldLabel label="Current Password" />}
+            label={<TextFieldLabel label="Current password" />}
             value={form.password}
             onChange={handlePassword}
           />

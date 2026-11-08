@@ -141,7 +141,7 @@ const UpdateEmail = () => {
           id="email"
           name="email"
           type="email"
-          label={<TextFieldLabel label="New Email" />}
+          label={<TextFieldLabel label="New email" />}
           value={form.email}
           onChange={handleEmail}
         />
@@ -153,7 +153,7 @@ const UpdateEmail = () => {
           id="updateEmailPassword"
           name="updateEmailPassword"
           type="password"
-          label={<TextFieldLabel label="Current Password" />}
+          label={<TextFieldLabel label="Current password" />}
           value={form.password}
           onChange={handlePassword}
         />
