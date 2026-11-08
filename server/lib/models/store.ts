@@ -473,6 +473,31 @@ export const slotStore = {
   update: async (_id: mongoose.Types.ObjectId, slot: ISlot) => {
     return await SlotModel.updateOne({ _id }, slot);
   },
+  /** one slot, populated the same way as listByProject */
+  listWithDetails: async (_id: mongoose.Types.ObjectId) => {
+    return await SlotModel.findOne({ _id })
+      .populate('position')
+      .populate('user', 'firstName lastName email');
+  },
+  /** Returns a slot to open: removes its volunteer and any response details. */
+  unassign: async (_id: mongoose.Types.ObjectId) => {
+    return await SlotModel.findOneAndUpdate(
+      { _id },
+      {
+        $set: { status: SlotStatus.OPEN },
+        $unset: {
+          user: 1,
+          invitedAt: 1,
+          respondedAt: 1,
+          partialDetail: 1,
+          declineReason: 1,
+        },
+      },
+      { new: true },
+    )
+      .populate('position')
+      .populate('user', 'firstName lastName email');
+  },
   /**
    * Assigns a volunteer to a slot and returns the updated slot, populated the
    * same way as listByProject. When the slot changes hands, the previous

@@ -16,6 +16,8 @@ vi.mock('../lib/models/store', () => ({
     listByProject: vi.fn(),
     list: vi.fn(),
     assign: vi.fn(),
+    unassign: vi.fn(),
+    listWithDetails: vi.fn(),
     hasConfirmedSlotForEvent: vi.fn(),
   },
 }));
@@ -162,15 +164,46 @@ describe('team-selection-slots httpTrigger PUT', () => {
     expect(slotStore.assign).not.toHaveBeenCalled();
   });
 
-  it('requires a valid userId', async () => {
-    const missing = put({});
-    await missing.run();
-    const malformed = put({ userId: 'nope' });
-    await malformed.run();
+  it('rejects a malformed userId', async () => {
+    const { context, run } = put({ userId: 'nope' });
 
-    expect(missing.context.res?.status).toBe(400);
-    expect(malformed.context.res?.status).toBe(400);
+    await run();
+
+    expect(context.res?.status).toBe(400);
     expect(slotStore.assign).not.toHaveBeenCalled();
+    expect(slotStore.unassign).not.toHaveBeenCalled();
+  });
+
+  it('removes the volunteer when no userId is given and the slot has one', async () => {
+    vi.mocked(slotStore.list).mockResolvedValue({
+      _id: SLOT_ID,
+      position: 'pos1',
+      user: USER_ID,
+      status: 'invited',
+    } as never);
+    const opened = { _id: SLOT_ID, status: 'open' };
+    vi.mocked(slotStore.unassign).mockResolvedValue(opened as never);
+    const { context, run } = put({ status: 'confirmed' });
+
+    await run();
+
+    expect(slotStore.unassign).toHaveBeenCalledWith(SLOT_ID);
+    expect(slotStore.assign).not.toHaveBeenCalled();
+    expect(context.res?.status).toBe(200);
+    expect(context.res?.body).toBe(opened);
+  });
+
+  it('does nothing and returns the slot when no userId is given and the slot has no volunteer', async () => {
+    const current = { _id: SLOT_ID, status: 'open' };
+    vi.mocked(slotStore.listWithDetails).mockResolvedValue(current as never);
+    const { context, run } = put({});
+
+    await run();
+
+    expect(slotStore.unassign).not.toHaveBeenCalled();
+    expect(slotStore.assign).not.toHaveBeenCalled();
+    expect(context.res?.status).toBe(200);
+    expect(context.res?.body).toBe(current);
   });
 
   it('rejects an unknown status and the open status', async () => {

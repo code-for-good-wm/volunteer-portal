@@ -80,7 +80,8 @@ async function getSlotsByRole(context: Context): Promise<IHttpResult> {
 
 /**
  * Assigns a volunteer to a slot on the project: body `userId` populates the
- * slot's user, and `status` defaults to invited. Responds with the updated
+ * slot's user, and `status` defaults to invited. Without a `userId` the slot's
+ * current volunteer is removed (a no-op if it has none). Responds with the
  * slot, with its position and user populated.
  */
 async function assignSlot(context: Context): Promise<IHttpResult> {
@@ -89,8 +90,25 @@ async function assignSlot(context: Context): Promise<IHttpResult> {
     return createErrorResult(404, 'Slot not found', context);
   }
 
+  const slot = await slotStore.list(slotId);
+  const position = slot
+    ? await positionStore.list(slot.position as Types.ObjectId)
+    : null;
+  if (!slot || !position || String(position.project) !== String(projectId)) {
+    return createErrorResult(404, 'Slot not found', context);
+  }
+
   const { userId, status = SlotStatus.INVITED } = context.req?.body ?? {};
-  if (!userId || !Types.ObjectId.isValid(userId)) {
+
+  // no userId: remove the slot's volunteer, if it has one
+  if (!userId) {
+    const slotData = slot.user
+      ? await slotStore.unassign(slotId)
+      : await slotStore.listWithDetails(slotId);
+    return createSuccessResult(200, slotData, context);
+  }
+
+  if (!Types.ObjectId.isValid(userId)) {
     return createErrorResult(400, 'A valid userId is required', context);
   }
   if (!Object.values(SlotStatus).includes(status)) {
@@ -102,14 +120,6 @@ async function assignSlot(context: Context): Promise<IHttpResult> {
       'A slot with an assigned user cannot be open',
       context,
     );
-  }
-
-  const slot = await slotStore.list(slotId);
-  const position = slot
-    ? await positionStore.list(slot.position as Types.ObjectId)
-    : null;
-  if (!slot || !position || String(position.project) !== String(projectId)) {
-    return createErrorResult(404, 'Slot not found', context);
   }
 
   const assignee = await userStore.listById(userId);
