@@ -35,10 +35,12 @@ const HeaderBar = () => {
       currentUser?.userRole ?? 'volunteer',
     );
     setShowUsersOption(isAdminOrBoardmember);
-    setShowProgramsOption(isAdminOrBoardmember);
     setShowEventsOption(isAdminOrBoardmember);
     setShowNonprofitsOption(isAdminOrBoardmember);
     setShowProjectsOption(isAdminOrBoardmember);
+
+    // TODO: Revisit this when we want to think about programs again
+    setShowProgramsOption(false);
   }, [currentUser]);
 
   const navigate = useNavigate();
@@ -88,7 +90,7 @@ const HeaderBar = () => {
       ref={accountMenuAnchorElRef}
       variant="text"
       color="primary"
-      aria-controls={showAccountMenu ? 'account-menu' : undefined}
+      aria-controls={showAccountMenu ? 'accountMenu' : undefined}
       aria-haspopup="true"
       aria-expanded={showAccountMenu ? 'true' : undefined}
       onClick={toggleAccountMenu}

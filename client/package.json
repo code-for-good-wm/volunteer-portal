@@ -15,28 +15,24 @@
     "@mui/icons-material": "^5.8.2",
     "@mui/material": "^5.8.0",
     "@reduxjs/toolkit": "^1.8.1",
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.1.1",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.0",
-    "@types/node": "^22.0.0",
-    "@types/react": "^18.0.8",
-    "@types/react-dom": "^18.0.3",
     "firebase": "^9.8.3",
-    "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-redux": "^8.0.1",
     "react-router-dom": "^6.3.0",
+    "react": "^18.1.0",
     "redux": "^4.2.0",
     "sass": "^1.51.0",
-    "typescript": "^5.0.2",
+    "typescript": "^5.9.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "browserslist": {
     "production": [
@@ -51,15 +47,26 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^13.1.1",
+    "@testing-library/user-event": "^14.6.8",
+    "@types/jest": "^27.5.0",
+    "@types/node": "^22.0.0",
+    "@types/react-dom": "^18.0.3",
+    "@types/react": "^18.0.8",
     "@typescript-eslint/eslint-plugin": "^5.61.0",
     "@typescript-eslint/parser": "^5.61.0",
-    "@vitejs/plugin-react": "^4.0.1",
-    "eslint": "^8.44.0",
-    "eslint-plugin-react": "^7.29.4",
+    "@vitejs/plugin-react": "^5.2.0",
+    "@vitest/coverage-v8": "^4.1.12",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
-    "vite": "^4.3.9",
-    "vite-plugin-svgr": "^3.2.0",
-    "vite-tsconfig-paths": "^4.2.0"
+    "eslint-plugin-react": "^7.29.4",
+    "eslint": "^8.44.0",
+    "jsdom": "^26.1.0",
+    "vite-plugin-svgr": "^4.5.0",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vite": "^7.3.7",
+    "vitest": "^4.1.12"
   }
 }
