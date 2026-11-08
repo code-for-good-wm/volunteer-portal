@@ -39,12 +39,12 @@ const httpTrigger: AzureFunction = async function (
 };
 
 /**
- * Attendees of the project's event (anyone not marked not-attending), grouped
- * by the roles they signed up for. An attendee with several roles appears
- * under each of them. The optional `role` query param limits the result to
- * that one role. Each attendee carries `assignedToSlot`: whether they already
- * hold a slot on any project for the event. The grouped attendees are returned
- * as `results`, alongside the `filter` they were produced with.
+ * Attendees of the project's event (anyone not marked not-attending) as a flat
+ * list with one entry per attendance record, so an attendee with several roles
+ * appears once. The optional `role` query param limits it to attendees who
+ * signed up for that role. Each attendee carries `assignedToSlot`: whether they
+ * already hold a slot on any project for the event. The list is returned as
+ * `results`, alongside the `filter` it was produced with.
  */
 async function getAttendeesByRole(
   context: Context,
@@ -88,26 +88,23 @@ async function getAttendeesByRole(
     (await slotStore.listAssignedUsersByEvent(project.event)).map(String),
   );
 
-  const attendeesByRole: Record<string, unknown[]> = {};
-  for (const attendance of attendances) {
-    const attendee = {
+  // one entry per attendance record, however many roles it has
+  const results = attendances
+    .filter(
+      (attendance) =>
+        !roleFilter || attendance.roles.includes(roleFilter as Role),
+    )
+    .map((attendance) => ({
       ...attendance,
       assignedToSlot: assignedUserIds.has(
-        String((attendance.user as unknown as IUser)._id),
+        String((attendance.user as unknown as IUser | null)?._id),
       ),
-    };
-    for (const role of attendance.roles) {
-      if (roleFilter && role !== roleFilter) {
-        continue;
-      }
-      (attendeesByRole[role] ??= []).push(attendee);
-    }
-  }
+    }));
 
   return createSuccessResult(
     200,
     {
-      results: attendeesByRole,
+      results,
       filter: {
         projectId,
         eventId: project.event,
