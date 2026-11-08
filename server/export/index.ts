@@ -79,16 +79,16 @@ async function exportUsersAndProfiles(
 
   // getting the current WfG event
   // TODO: make this dynamic
+  // Without the event, still export everyone and leave the attendance columns blank.
   const event = (await eventStore.listAll()).find(
     (e) => e.description === 'Weekend for Good 2025',
   );
-  if (!event) {
-    return createErrorResult(404, 'Cannot find latest event', context);
-  }
-  const attendance = await eventAttendanceStore.list(event._id);
-  for (const eventAttendance of attendance) {
-    const userId = getUserId(eventAttendance.user);
-    attendanceDict[userId.toString()] = eventAttendance;
+  if (event) {
+    const attendance = await eventAttendanceStore.list(event._id);
+    for (const eventAttendance of attendance) {
+      const userId = getUserId(eventAttendance.user);
+      attendanceDict[userId.toString()] = eventAttendance;
+    }
   }
 
   const csvData: any[] = [];
@@ -137,7 +137,7 @@ async function exportUsersAndProfiles(
   try {
     return {
       headers: {
-        'Content-Type': 'test/csv',
+        'Content-Type': 'text/csv',
         'Content-Disposition': `attachment; filename=users-${new Date().toISOString().slice(0, 10)}.csv`,
         'Access-Control-Expose-Headers': 'Content-Disposition',
         'X-Invocation-ID': context.invocationId,

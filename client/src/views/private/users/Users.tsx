@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { styled } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
 import Paper from '@mui/material/Paper';
@@ -23,7 +25,6 @@ import { DietaryRestriction, Profile, Role, ShirtSize } from '../../../types/pro
 import { getUsersData, getProfilesData, exportUsersAndProfilesData } from '../../../services/users';
 import { loadAttendance, loadUpcomingEvents } from '../../../services/event';
 import PageLayout from '../../../layouts/PageLayout';
-import StandardButton from '../../../components/buttons/StandardButton';
 import { parsePhone, toTitleCase } from '../../../helpers/functions';
 import { Attendance } from '../../../types/event';
 import { selectAllAttendances } from '../../../store/eventAttendanceSlice';
@@ -226,17 +227,8 @@ const Users = () => {
             Users
           </h1>
 
-          <Grid container spacing={2} sx={{marginBottom: '1rem'}} alignItems="center">
-            <Grid item xs={2} md={4}></Grid>
-            <Grid item xs={8} md={6}>
-              <StandardButton
-                label="Download all users"
-                handler={handleButton}
-                disabled={processing} />
-            </Grid>
-            <Grid item xs={2} md={4}></Grid>
-            <Grid item xs={2} md={4}></Grid>
-            <Grid item xs={8} md={6}>
+          <Grid container spacing={2} sx={{ marginBottom: '1rem' }} alignItems="center">
+            <Grid item xs={12} md={6}>
               <TextField
                 label="Search by name or email"
                 id="searchFilter"
@@ -248,7 +240,17 @@ const Users = () => {
                 onChange={(e) => setFilter(e.target.value)}
               />
             </Grid>
-            <Grid item xs={2} md={4}></Grid>
+            <Grid item xs={12} md={6} sx={{ textAlign: { md: 'right' } }}>
+              <Button
+                variant="outlined"
+                color="primary"
+                startIcon={<FileDownloadOutlinedIcon />}
+                onClick={handleButton}
+                disabled={processing}
+              >
+                {processing ? 'Preparing download…' : 'Download all users'}
+              </Button>
+            </Grid>
           </Grid>
 
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -290,7 +292,7 @@ const Users = () => {
               </Table>
             </TableContainer>
             <TablePagination
-              rowsPerPageOptions={[25, 50, 100]}
+              rowsPerPageOptions={[10, 25, 50]}
               component="div"
               count={rows.length}
               rowsPerPage={rowsPerPage}

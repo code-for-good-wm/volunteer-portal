@@ -91,27 +91,39 @@ export const exportUsersAndProfilesData = async (
   fetch(exportUrl, {
     method: 'POST',
     headers: getDefaultRequestHeaders(await getBearerToken()),
-  }).then(
-    (response) => {
-      if (success) {
-        success(response);
+  })
+    .then(async (response) => {
+      // fetch only rejects on network errors, so an error response would
+      // otherwise be saved as the CSV file.
+      if (!response.ok) {
+        const body = await response.json().catch(() => null);
+        throw (
+          body?.error?.message ?? `${response.status} ${response.statusText}`
+        );
       }
-    },
-    (err) => {
-      const message = `Unable to export user data: ${err}`;
+      return response;
+    })
+    .then(
+      (response) => {
+        if (success) {
+          success(response);
+        }
+      },
+      (err) => {
+        const message = `Unable to export user data: ${err}`;
 
-      // Show alert
-      store.dispatch(
-        updateAlert({
-          visible: true,
-          theme: 'error',
-          content: message,
-        }),
-      );
+        // Show alert
+        store.dispatch(
+          updateAlert({
+            visible: true,
+            theme: 'error',
+            content: message,
+          }),
+        );
 
-      if (failure) {
-        failure(message);
-      }
-    },
-  );
+        if (failure) {
+          failure(message);
+        }
+      },
+    );
 };
