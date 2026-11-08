@@ -12,4 +12,3 @@ For more details check out the readme files in the `client` and `server` folders
 npm run dev:install
 npm run dev
 ```
-
