@@ -3,17 +3,20 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
+import Dialog from '@mui/material/Dialog';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
+import InputLabel from '@mui/material/InputLabel';
 import LinearProgress from '@mui/material/LinearProgress';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Tooltip from '@mui/material/Tooltip';
-import Dialog from '@mui/material/Dialog';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import FormHelperText from '@mui/material/FormHelperText';
 
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useAppSelector } from '../../../store/hooks';
 import { selectProjectById } from '../../../store/projectsSlice';
 import { selectNonprofitById } from '../../../store/nonprofitsSlice';
 import { selectEventById } from '../../../store/eventsSlice';
@@ -25,13 +28,13 @@ import { loadNonprofit } from '../../../services/nonprofit';
 import { loadAllEvents } from '../../../services/event';
 import { loadPositionsForProject } from '../../../services/position';
 import { loadSlotsForPosition } from '../../../services/slot';
-import { updateAlert } from '../../../store/alertSlice';
 import { ProjectStatus } from '../../../types/project';
 import PageLayout from '../../../layouts/PageLayout';
 import StatusChip, {
   StatusChipTheme,
 } from '../../../components/elements/StatusChip';
 import { colors } from '../../../material/colors';
+import NumberSpinner from '../../../components/elements/NumberSpinner';
 
 const statusDisplay: Record<
   ProjectStatus,
@@ -78,7 +81,7 @@ const detailLabelStyle = {
 const ProjectDetail = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
 
   const [changingState, setChangingState] = useState(false);
   const changeStateAnchorRef = useRef<HTMLButtonElement | null>(null);
@@ -153,13 +156,7 @@ const ProjectDetail = () => {
   };
 
   const handleManagePositions = () => {
-    dispatch(
-      updateAlert({
-        visible: true,
-        theme: 'info',
-        content: "Managing positions isn't available yet.",
-      }),
-    );
+    setPositionModalOpen(true);
   };
 
   const handleChangeState = (status: ProjectStatus) => {
@@ -178,6 +175,11 @@ const ProjectDetail = () => {
 
     setChangingState(true);
     updateProject(projectId, { status }, { success, failure });
+  };
+
+  const handleRoleChange = (event: SelectChangeEvent<{ value: unknown }>) => {
+    const selectedRole = event.target.value as string;
+    console.log('Selected role:', selectedRole);
   };
 
   if (!projectId) {
@@ -634,6 +636,137 @@ const ProjectDetail = () => {
           )}
         </div>
       </div>
+
+      <Dialog
+        onClose={() => setPositionModalOpen(false)}
+        open={positionModalOpen}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '12px',
+            border: `1px solid ${colors.border.default}`,
+            boxShadow: '0 8px 28px rgba(25, 27, 37, 0.12)',
+            p: 3,
+            overflow: 'visible',
+          },
+        }}
+      >
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'minmax(0, 2fr) minmax(220px, 1fr)',
+            gap: 32,
+            alignItems: 'start',
+          }}
+        >
+          <div>
+            <InputLabel
+              id="role-label"
+              sx={{
+                display: 'block',
+                mb: 1,
+                color: colors.text.primary,
+                fontSize: 15,
+                fontWeight: 500,
+                lineHeight: 1.5,
+                '& .required-mark': {
+                  color: '#D14343',
+                },
+              }}
+            >
+              Role <span className="required-mark">*</span>
+            </InputLabel>
+            <Select
+              labelId="role-label"
+              id="role"
+              onChange={handleRoleChange}
+              displayEmpty
+              value=""
+              required
+              sx={{
+                width: '100%',
+                minHeight: '52px',
+                borderRadius: '10px',
+                backgroundColor: colors.surface.card,
+                color: colors.text.primary,
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: colors.border.default,
+                  borderWidth: 1,
+                },
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: '#c4c7cf',
+                },
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: colors.primary.main,
+                  borderWidth: 1,
+                },
+                '& .MuiSelect-select': {
+                  padding: '14px 16px',
+                  fontSize: 15,
+                  lineHeight: 1.5,
+                  color: colors.text.primary,
+                },
+              }}
+            >
+              <MenuItem value="" disabled>
+                Select Role
+              </MenuItem>
+              <MenuItem value="designer">Designer</MenuItem>
+              <MenuItem value="developer">Developer</MenuItem>
+              <MenuItem value="support">Support</MenuItem>
+              <MenuItem value="lead">Lead</MenuItem>
+            </Select>
+          </div>
+
+          <div>
+            <InputLabel
+              id="slot-count-label"
+              sx={{
+                display: 'block',
+                mb: 1,
+                color: colors.text.primary,
+                fontSize: 15,
+                fontWeight: 500,
+                lineHeight: 1.5,
+              }}
+            >
+              How many people?
+            </InputLabel>
+            <NumberSpinner
+              id="slot-count"
+              name="slot-count"
+              min={1}
+              max={100}
+              defaultValue={0}
+              required
+              sx={{
+                width: '100%',
+                maxWidth: 220,
+                '& .MuiButton-root': {
+                  backgroundColor: '#F7F8FA',
+                  borderColor: colors.border.default,
+                },
+                '& .MuiOutlinedInput-root': {
+                  borderColor: colors.border.default,
+                  borderRadius: 0,
+                },
+              }}
+            />
+            <FormHelperText
+              sx={{
+                mt: 1.5,
+                ml: 0,
+                color: colors.text.secondary,
+                fontSize: 13,
+                lineHeight: 1.5,
+              }}
+            >
+              Creates this many open slots on the project.
+            </FormHelperText>
+          </div>
+        </div>
+      </Dialog>
     </PageLayout>
   );
 };
