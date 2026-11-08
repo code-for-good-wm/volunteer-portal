@@ -7,6 +7,8 @@ import {
 import { positionStore, projectStore, userStore } from '../lib/models/store';
 import { checkAuthAndConnect } from '../lib/helpers';
 import { EDIT_ALL_POSITIONS } from '../lib/models/enums/user-role.enum';
+import { Role } from '../lib/models/enums/role.enum';
+import { IPosition } from '../lib/models/position';
 
 const httpTrigger: AzureFunction = async function (
   context: Context,
@@ -84,13 +86,57 @@ async function createPosition(
     return createErrorResult(404, 'Project not found', context);
   }
 
-  const positionCreate = context.req?.body;
-  positionCreate.project = projectId;
+  const body = context.req?.body ?? {};
+  const validationError = validatePosition(body);
+  if (validationError) {
+    return createErrorResult(400, validationError, context);
+  }
 
-  const positionData = await positionStore.create(positionCreate);
+  if (await hasRoleConflict(projectId, body.role)) {
+    return createErrorResult(409, roleConflictMessage(body.role), context);
+  }
+
+  const positionData = await positionStore.create({
+    project: projectId,
+    role: body.role,
+    slotCount: body.slotCount,
+    notes: body.notes,
+  });
 
   return createSuccessResult(201, positionData, context);
 }
+
+const MAX_SLOT_COUNT = 100;
+
+// Returns an error message when the body can't become a position, or null if it's valid.
+function validatePosition(body: Partial<IPosition>): string | null {
+  if (!body.role || !Object.values(Role).includes(body.role)) {
+    return `role must be one of: ${Object.values(Role).join(', ')}`;
+  }
+  if (
+    !Number.isInteger(body.slotCount) ||
+    (body.slotCount as number) < 1 ||
+    (body.slotCount as number) > MAX_SLOT_COUNT
+  ) {
+    return `slotCount must be a whole number from 1 to ${MAX_SLOT_COUNT}`;
+  }
+  return null;
+}
+
+// A project has at most one position per role; change its count instead.
+async function hasRoleConflict(
+  projectId: Parameters<typeof positionStore.listByProject>[0],
+  role: Role,
+  ignorePositionId?: string,
+): Promise<boolean> {
+  const positions = await positionStore.listByProject(projectId);
+  return positions.some(
+    (p) => p.role === role && String(p._id) !== String(ignorePositionId),
+  );
+}
+
+const roleConflictMessage = (role: Role) =>
+  `This project already has a ${role} position. Edit that position to change how many people it needs.`;
 
 async function updatePosition(
   context: Context,
@@ -117,10 +163,37 @@ async function updatePosition(
     return createErrorResult(404, 'Position not found', context);
   }
 
-  const positionUpdate = context.req?.body;
-  positionUpdate.project = projectId;
+  const body = context.req?.body ?? {};
+  const validationError = validatePosition(body);
+  if (validationError) {
+    return createErrorResult(400, validationError, context);
+  }
 
-  const positionData = await positionStore.update(positionId, positionUpdate);
+  if (await hasRoleConflict(projectId, body.role, positionId)) {
+    return createErrorResult(409, roleConflictMessage(body.role), context);
+  }
+
+  // Only open slots can be removed, so a position can't shrink below the
+  // number of slots that are invited or filled.
+  const removeCount = position.slotCount - body.slotCount;
+  if (removeCount > 0) {
+    const removable = await positionStore.countRemovableSlots(positionId);
+    if (removable < removeCount) {
+      const minimum = position.slotCount - removable;
+      return createErrorResult(
+        400,
+        `This position has people invited or confirmed, so it needs at least ${minimum} ${minimum === 1 ? 'slot' : 'slots'}.`,
+        context,
+      );
+    }
+  }
+
+  const positionData = await positionStore.update(positionId, {
+    project: projectId,
+    role: body.role,
+    slotCount: body.slotCount,
+    notes: body.notes,
+  });
 
   return createSuccessResult(200, positionData, context);
 }
@@ -148,6 +221,16 @@ async function deletePosition(
   const position = await positionStore.list(positionId);
   if (!position || String(position.project) !== String(projectId)) {
     return createErrorResult(404, 'Position not found', context);
+  }
+
+  // Same rule as shrinking a position: never remove slots people are in.
+  const locked = await positionStore.countLockedSlots(positionId);
+  if (locked > 0) {
+    return createErrorResult(
+      409,
+      `This position has ${locked} ${locked === 1 ? 'person' : 'people'} invited or confirmed, so it can't be deleted.`,
+      context,
+    );
   }
 
   await positionStore.delete(positionId);

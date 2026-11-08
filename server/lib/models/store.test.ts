@@ -24,7 +24,7 @@ import { IProject } from './project';
 import { ProjectStatus } from './enums/project-status.enum';
 import { IPosition } from './position';
 import { Role } from './enums/role.enum';
-import { ISlot } from './slot';
+import { ISlot, SlotModel } from './slot';
 import { SlotStatus } from './enums/slot-status.enum';
 
 useMongoMemoryServer();
@@ -178,6 +178,75 @@ describe('positionStore', () => {
 
     expect(slots).toHaveLength(3);
     expect(slots.every((slot) => slot.status === SlotStatus.OPEN)).toBe(true);
+  });
+
+  it('adds open Slots when an update raises slotCount', async () => {
+    const project = await buildProject();
+    const position = await positionStore.create({
+      project: project._id,
+      role: Role.DEVELOPER,
+      slotCount: 1,
+    } as IPosition);
+    const id = position._id as Types.ObjectId;
+
+    const updated = await positionStore.update(id, {
+      project: project._id,
+      role: Role.DESIGNER,
+      slotCount: 3,
+    } as IPosition);
+
+    expect(updated?.role).toBe(Role.DESIGNER);
+    expect(updated?.slotCount).toBe(3);
+    expect(await slotStore.listByPosition(id)).toHaveLength(3);
+  });
+
+  it('removes only open Slots when an update lowers slotCount', async () => {
+    const project = await buildProject();
+    const position = await positionStore.create({
+      project: project._id,
+      role: Role.DEVELOPER,
+      slotCount: 3,
+    } as IPosition);
+    const id = position._id as Types.ObjectId;
+    const [first] = await slotStore.listByPosition(id);
+    await SlotModel.updateOne(
+      { _id: first._id },
+      { status: SlotStatus.CONFIRMED, user: new Types.ObjectId() },
+    );
+    expect(await positionStore.countRemovableSlots(id)).toBe(2);
+
+    await positionStore.update(id, {
+      project: project._id,
+      role: Role.DEVELOPER,
+      slotCount: 1,
+    } as IPosition);
+
+    const remaining = await slotStore.listByPosition(id);
+    expect(remaining).toHaveLength(1);
+    expect(remaining[0].status).toBe(SlotStatus.CONFIRMED);
+  });
+
+  it('counts slots that are invited, assigned or confirmed as locked', async () => {
+    const project = await buildProject();
+    const position = await positionStore.create({
+      project: project._id,
+      role: Role.DEVELOPER,
+      slotCount: 3,
+    } as IPosition);
+    const id = position._id as Types.ObjectId;
+    expect(await positionStore.countLockedSlots(id)).toBe(0);
+
+    const [first, second] = await slotStore.listByPosition(id);
+    await SlotModel.updateOne(
+      { _id: first._id },
+      { status: SlotStatus.INVITED, user: new Types.ObjectId() },
+    );
+    await SlotModel.updateOne(
+      { _id: second._id },
+      { status: SlotStatus.CONFIRMED },
+    );
+
+    expect(await positionStore.countLockedSlots(id)).toBe(2);
   });
 
   it('cascades deletion of Slots and PositionSkills when a Position is deleted', async () => {

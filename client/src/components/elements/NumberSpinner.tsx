@@ -16,12 +16,15 @@ export default function NumberSpinner({
   error,
   size = 'medium',
   sx,
+  'aria-describedby': describedBy,
   ...other
 }: BaseNumberField.Root.Props & {
   label?: React.ReactNode;
   size?: 'small' | 'medium';
   error?: boolean;
   sx?: SxProps<Theme>;
+  /** Id of help text that describes the input, for screen readers. */
+  'aria-describedby'?: string;
 }) {
   let id = React.useId();
   if (idProp) {
@@ -56,36 +59,39 @@ export default function NumberSpinner({
         </FormControl>
       )}
     >
-      <BaseNumberField.ScrubArea
-        render={
-          <Box
-            component="span"
-            sx={{ userSelect: 'none', width: 'max-content' }}
-          />
-        }
-      >
-        <FormLabel
-          htmlFor={id}
-          sx={{
-            display: 'inline-block',
-            cursor: 'ew-resize',
-            fontSize: '0.875rem',
-            color: 'text.primary',
-            fontWeight: 500,
-            lineHeight: 1.5,
-            mb: 0.5,
-          }}
+      {label && (
+        <BaseNumberField.ScrubArea
+          render={
+            <Box
+              component="span"
+              sx={{ userSelect: 'none', width: 'max-content' }}
+            />
+          }
         >
-          {label}
-        </FormLabel>
-        <BaseNumberField.ScrubAreaCursor>
-          <OpenInFullIcon
-            fontSize="small"
-            sx={{ transform: 'translateY(12.5%) rotate(45deg)' }}
-          />
-        </BaseNumberField.ScrubAreaCursor>
-      </BaseNumberField.ScrubArea>
-      <Box sx={{ display: 'flex' }}>
+          <FormLabel
+            htmlFor={id}
+            sx={{
+              display: 'inline-block',
+              cursor: 'ew-resize',
+              fontSize: '0.875rem',
+              color: 'text.primary',
+              fontWeight: 500,
+              lineHeight: 1.5,
+              mb: 0.5,
+            }}
+          >
+            {label}
+          </FormLabel>
+          <BaseNumberField.ScrubAreaCursor>
+            <OpenInFullIcon
+              fontSize="small"
+              sx={{ transform: 'translateY(12.5%) rotate(45deg)' }}
+            />
+          </BaseNumberField.ScrubAreaCursor>
+        </BaseNumberField.ScrubArea>
+      )}
+      {/* Buttons stretch to the input's height so the three parts line up. */}
+      <Box sx={{ display: 'flex', alignItems: 'stretch' }}>
         <BaseNumberField.Decrement
           render={
             <Button
@@ -120,6 +126,7 @@ export default function NumberSpinner({
               slotProps={{
                 input: {
                   ...props,
+                  'aria-describedby': describedBy,
                   size:
                     Math.max(
                       (other.min?.toString() || '').length,
@@ -127,7 +134,12 @@ export default function NumberSpinner({
                     ) + 1,
                 },
               }}
-              sx={{ pr: 0, borderRadius: 0, flex: 1 }}
+              sx={{
+                pr: 0,
+                borderRadius: 0,
+                flex: 1,
+                '& input': { textAlign: 'center' },
+              }}
             />
           )}
         />

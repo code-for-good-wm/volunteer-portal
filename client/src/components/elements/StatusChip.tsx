@@ -1,7 +1,7 @@
 import Chip from '@mui/material/Chip';
 import { colors } from '../../material/colors';
 
-export type StatusChipTheme = 'teal' | 'success' | 'neutral' | 'error';
+export type StatusChipTheme = 'teal' | 'success' | 'neutral' | 'error' | 'warning';
 
 type StatusChipProps = {
   label: string;
@@ -13,6 +13,7 @@ const themeStyles: Record<StatusChipTheme, { backgroundColor: string, color: str
   success: { backgroundColor: colors.status.successSurface, color: colors.status.success },
   neutral: { backgroundColor: colors.status.neutralSurface, color: colors.status.neutral },
   error: { backgroundColor: colors.status.errorSurface, color: colors.status.error },
+  warning: { backgroundColor: colors.status.warningSurface, color: colors.status.warning },
 };
 
 /** A small pill used to display record status (e.g. project/nonprofit review state) */
