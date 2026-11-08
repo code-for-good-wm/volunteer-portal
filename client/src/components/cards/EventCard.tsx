@@ -72,7 +72,7 @@ const getEventDateTime = (event: Event | undefined) => {
   // same day, include time
   if (sameDay && sameMonth && sameYear) {
     const timeSpan = `${startDate.toLocaleTimeString()} - ${endDate.toLocaleTimeString()}`;
-    return `${timeSpan} ${months[startDate.getDate()]} ${startDate.getDate()}, ${startDate.getFullYear()}`;
+    return `${timeSpan} ${months[startDate.getMonth()]} ${startDate.getDate()}, ${startDate.getFullYear()}`;
   }
 
   const startMonth = startDate.getMonth();
