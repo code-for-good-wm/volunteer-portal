@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
@@ -25,6 +26,7 @@ import { DietaryRestriction, Profile, Role, ShirtSize } from '../../../types/pro
 import { getUsersData, getProfilesData, exportUsersAndProfilesData } from '../../../services/users';
 import { loadAttendance, loadUpcomingEvents } from '../../../services/event';
 import PageLayout from '../../../layouts/PageLayout';
+import RowActionButton from '../../../components/buttons/RowActionButton';
 import { parsePhone, toTitleCase } from '../../../helpers/functions';
 import { Attendance } from '../../../types/event';
 import { selectAllAttendances } from '../../../store/eventAttendanceSlice';
@@ -78,6 +80,7 @@ type Data = {
 };
 
 const Users = () => {
+  const navigate = useNavigate();
   const [rows, setRows] = useState<Data[]>([]);
   const [processing, setProcessing] = useState(false);
   const [page, setPage] = useState(0);
@@ -267,6 +270,7 @@ const Users = () => {
                         {column.label}
                       </StyledTableCell>
                     ))}
+                    <StyledTableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -285,6 +289,13 @@ const Users = () => {
                               </TableCell>
                             );
                           })}
+                          <TableCell align="right">
+                            <RowActionButton
+                              label="Open"
+                              aria-label={`Open ${[row.firstName, row.lastName].filter(Boolean).join(' ') || row.email}`}
+                              onClick={() => navigate(`/users/${row.id}`)}
+                            />
+                          </TableCell>
                         </TableRow>
                       );
                     })}

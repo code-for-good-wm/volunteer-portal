@@ -9,6 +9,10 @@ export const colors = {
     main: '#36858B',
     deep: '#256065',
   },
+  purple: {
+    tint: '#EEE9F8',
+    deep: '#5B3E8C',
+  },
   text: {
     primary: '#191B25',
     secondary: '#676C7E',
