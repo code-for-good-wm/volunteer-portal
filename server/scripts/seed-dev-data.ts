@@ -685,7 +685,7 @@ const buildEvents = (wfgProgramId: Id, workshopsProgramId: Id) => ({
     startDate: iso('2027-03-12T22:00:00Z'),
     endDate: iso('2027-03-13T03:00:00Z'),
     rsvpDeadline: iso('2027-03-05T04:00:00Z'),
-    location: '45 Example St SE, Grand Rapids, MI 49503 and online',
+    location: '45 Example St SE, Grand Rapids, MI 49503',
     allowSignUps: true,
     allowPartialAttendance: false,
     allocationRequired: true,

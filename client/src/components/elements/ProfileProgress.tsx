@@ -1,4 +1,4 @@
-import { currentSection } from '../../store/profileSlice';
+import { currentSection, profile } from '../../store/profileSlice';
 import { useAppSelector } from '../../store/hooks';
 
 import Completed from '../../assets/icons/section-complete.png';
@@ -12,9 +12,10 @@ const ProfileProgress = () => {
     return primarySection.id === currentProfileSection;
   }); // -1 if not found; 0 or above if found
 
-  // Pull roles from the current user data,
-  // then dynamically update the UI based on the user roles
-  const displayedSections = getDisplayedProfileSections();
+  // Pull roles from the current user data (subscribing so the list updates
+  // when the profile loads or roles change), then show the matching sections
+  const roles = useAppSelector(profile)?.roles;
+  const displayedSections = getDisplayedProfileSections(roles);
 
   // Build UI
   const content = profileStructure.map((primarySection, index) => {

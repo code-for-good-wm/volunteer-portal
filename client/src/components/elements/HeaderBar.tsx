@@ -90,7 +90,7 @@ const HeaderBar = () => {
       ref={accountMenuAnchorElRef}
       variant="text"
       color="primary"
-      aria-controls={showAccountMenu ? 'account-menu' : undefined}
+      aria-controls={showAccountMenu ? 'accountMenu' : undefined}
       aria-haspopup="true"
       aria-expanded={showAccountMenu ? 'true' : undefined}
       onClick={toggleAccountMenu}
