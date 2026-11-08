@@ -21,6 +21,7 @@ import NonprofitDetail from '../views/private/nonprofits/NonprofitDetail';
 import ProjectDetail from '../views/private/projects/ProjectDetail';
 import ProjectForm from '../views/private/projects/ProjectForm';
 import Projects from '../views/private/projects/Projects';
+import TeamSelection from '../views/private/team-selection/TeamSelection';
 
 const Private = () => {
   return (
@@ -49,6 +50,10 @@ const Private = () => {
       <Route path="/projects/new" element={<ProjectForm />} />
       <Route path="/projects/:projectId" element={<ProjectDetail />} />
       <Route path="/projects/:projectId/edit" element={<ProjectForm />} />
+      <Route
+        path="/projects/:projectId/team-selection"
+        element={<TeamSelection />}
+      />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

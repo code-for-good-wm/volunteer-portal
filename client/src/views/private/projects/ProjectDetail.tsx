@@ -937,7 +937,11 @@ const ProjectDetail = () => {
                                       </div>
                                       <Button
                                         variant="contained"
-                                        onClick={() => navigate('/users')}
+                                        onClick={() =>
+                                          navigate(
+                                            `/projects/${projectId}/team-selection`,
+                                          )
+                                        }
                                         sx={{
                                           backgroundColor: colors.primary.dark,
                                           color: '#FFFFFF',
