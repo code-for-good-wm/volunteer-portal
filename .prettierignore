@@ -1,0 +1,4 @@
+# Build output and generated files (Prettier also reads the root .gitignore)
+client/build
+server/dist
+**/coverage

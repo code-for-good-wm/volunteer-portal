@@ -10,7 +10,8 @@
     "test": "npm run client:test && npm run server:test",
     "client:test": "cd client && npm test",
     "server:test": "cd server && npm test",
-    "format": "prettier --write \"**/*.{ts,js,json,md}\""
+    "format": "prettier --write \"**/*.{ts,js,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,json,md}\""
   },
   "devDependencies": {
     "@azure/static-web-apps-cli": "^2.0.10",
