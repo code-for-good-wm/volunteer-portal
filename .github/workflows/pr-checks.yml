@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   client:
-    name: Client build
+    name: Client build & test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,6 +28,10 @@ jobs:
       - name: Build
         working-directory: client
         run: npm run build
+
+      - name: Test
+        working-directory: client
+        run: npm test
 
   server:
     name: Server build & test

@@ -26,6 +26,15 @@ In the root `client` folder, follow these instructions:
 - This application uses [environment variables](https://vitejs.dev/guide/env-and-mode.html) stored in `.env` files. These variables are non-secret settings which are environment specific. For local development, copy the settings from `.env.example` into a `.env.local` file. React will use settings from `.env.local` as a default if present.
 - With packages installed and environment variables in place, spin up a local development server using `npm run serve`. Changes to files should be immediately implemented upon save.
 
+## Testing
+
+Tests use [Vitest](https://vitest.dev/) (the same runner as the server) with [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) and [jest-dom](https://github.com/testing-library/jest-dom) matchers, running in jsdom.
+
+- `npm test` runs the suite once, `npm run test:watch` re-runs on save, and `npm run test:coverage` adds a coverage report.
+- Put tests next to the code they cover as `*.test.ts` or `*.test.tsx` under `src/`.
+- Import `describe`, `it` and `expect` from `vitest` (globals are off).
+- The time zone is pinned to America/Detroit and the locale to en-US (see `vitest.config.mts`), so date and time assertions give the same result on every machine.
+
 ## Deployment
 
 Our repo is hosted on [Azure DevOps](https://azure.microsoft.com/en-us/services/devops/); the application is automatically built and deployed using scripts once code is pushed to the `dev` and `main` branches.
