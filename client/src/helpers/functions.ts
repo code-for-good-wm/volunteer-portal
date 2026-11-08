@@ -7,6 +7,7 @@ import { updateProfile } from '../store/profileSlice';
 import { store } from '../store/store';
 import {
   PrimaryProfileSectionId,
+  Role,
   UserSkill,
   UserSkillData,
 } from '../types/profile';
@@ -105,12 +106,13 @@ export const resetAppState = () => {
 
 /**
  * Determine profile sections to display based on user roles
+ * @param {Role[]} [roles] - defaults to the roles in the current profile. Components should
+ * pass roles from useAppSelector so they re-render when the roles change.
  * @returns {PrimaryProfileSectionId[]} - e.g. ['getting-started', 'technical-skills', 'additional-skills'];
  */
-export const getDisplayedProfileSections = () => {
-  const appState = store.getState();
-
-  const roles = appState.profile.data?.roles;
+export const getDisplayedProfileSections = (
+  roles: Role[] | undefined = store.getState().profile.data?.roles,
+) => {
   const sectionsToDisplay: PrimaryProfileSectionId[] = ['getting-started'];
 
   if (roles) {

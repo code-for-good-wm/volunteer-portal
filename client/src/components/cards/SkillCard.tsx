@@ -46,6 +46,7 @@ const SkillCard = (props: SkillCardProps) => {
       </span>
       <div className="skillCard">
         <RadioGroup
+          aria-labelledby={labelId}
           name={skillCode}
           row
           value={skillLevel}

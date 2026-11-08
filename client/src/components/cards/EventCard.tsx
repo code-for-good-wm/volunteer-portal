@@ -11,7 +11,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import StandardButton from '../buttons/StandardButton';
 import { Event, EventAttendance, EventAttendanceUpdate } from '../../types/event';
-import type { Attendance } from '../../types/event';
+import type { Attendance, EventType } from '../../types/event';
 
 type EventCardProps = {
   processing: boolean,
@@ -57,6 +57,12 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => {
   };
 });
 
+const eventTypeLabels: Record<EventType, string> = {
+  'in-person': 'In person',
+  online: 'Online',
+  hybrid: 'Hybrid',
+};
+
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 const getEventDateTime = (event: Event | undefined) => {
@@ -71,7 +77,9 @@ const getEventDateTime = (event: Event | undefined) => {
 
   // same day, include time
   if (sameDay && sameMonth && sameYear) {
-    const timeSpan = `${startDate.toLocaleTimeString()} - ${endDate.toLocaleTimeString()}`;
+    // hours and minutes only (e.g. "5:00 PM"); seconds aren't useful for event times
+    const timeFormat: Intl.DateTimeFormatOptions = { hour: 'numeric', minute: '2-digit' };
+    const timeSpan = `${startDate.toLocaleTimeString([], timeFormat)} - ${endDate.toLocaleTimeString([], timeFormat)}`;
     return `${timeSpan} ${months[startDate.getMonth()]} ${startDate.getDate()}, ${startDate.getFullYear()}`;
   }
 
@@ -83,8 +91,8 @@ const getEventDateTime = (event: Event | undefined) => {
     return `${months[startMonth]} ${startDate.getDate()} - ${endDate.getDate()}, ${startDate.getFullYear()}`;
   }
 
-  // crosses a month boundary
-  if (!sameDay && !sameMonth && sameYear) {
+  // crosses a month boundary (the day numbers may match, e.g. October 6 - November 6)
+  if (!sameMonth && sameYear) {
     return `${months[startMonth]} ${startDate.getDate()} - ${months[endMonth]} ${endDate.getDate()}, ${startDate.getFullYear()}`;
   }
 
@@ -128,7 +136,7 @@ const EventCard = (props: EventCardProps) => {
 
   const eventDateAndTime = getEventDateTime(event);
   const eventDuration = getEventDuration(event);
-  const eventType = event?.eventType === 'in-person' ? 'In person' : 'Online';
+  const eventType = event ? eventTypeLabels[event.eventType] : '';
   const eventAttendanceType = event?.allocationRequired ? 'interested in volunteering for' : 'able to attend';
   
   const handleCard = handler ? handler : () => console.log('Attendance saved.');
@@ -173,7 +181,8 @@ const EventCard = (props: EventCardProps) => {
     }
     handleCard(event?._id, {
       attendance: attendanceValue,
-      attendanceDetail: attendanceDetailValue,
+      // details only apply to partial attendance; don't keep stale text for a full yes/no
+      attendanceDetail: attendanceValue === 'partial-attending' ? attendanceDetailValue : '',
       roles: [] // not supporting role selection currently - use the profile
     });
     setHasChanges(false);

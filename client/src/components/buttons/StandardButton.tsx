@@ -7,10 +7,11 @@ type StandardButtonProps = {
   label?: string,
   handler?: () => void,
   link?: string,
+  'aria-label'?: string,
 };
 
 const StandardButton = (props: StandardButtonProps) => {
-  const { type, theme, disabled, label, handler, link } = props;
+  const { type, theme, disabled, label, handler, link, 'aria-label': ariaLabel } = props;
 
   const buttonType = type || 'button';
   const buttonTheme = theme || 'primary';
@@ -31,6 +32,7 @@ const StandardButton = (props: StandardButtonProps) => {
       disabled={disabled}
       onClick={(buttonType === 'submit' || link) ? undefined : handleButton}
       href={link}
+      aria-label={ariaLabel}
     >
       <span className={buttonTextStyle}>
         {buttonLabel}
