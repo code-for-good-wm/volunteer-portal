@@ -184,8 +184,8 @@ const Users = () => {
           </Grid>
 
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-            <TableContainer sx={{ maxHeight: 600 }}>
-              <Table stickyHeader aria-label="sticky table">
+            <TableContainer>
+              <Table aria-label="users table">
                 <TableHead>
                   <TableRow>
                     {columns.map((column) => (

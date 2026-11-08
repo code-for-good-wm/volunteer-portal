@@ -267,8 +267,8 @@ const Projects = () => {
           </Grid>
 
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-            <TableContainer sx={{ maxHeight: 600 }}>
-              <Table stickyHeader aria-label="projects table">
+            <TableContainer>
+              <Table aria-label="projects table">
                 <TableHead>
                   <TableRow>
                     <StyledTableCell>Project · Nonprofit</StyledTableCell>

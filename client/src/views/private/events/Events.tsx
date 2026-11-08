@@ -207,8 +207,8 @@ const Events = () => {
           </Grid>
 
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-            <TableContainer sx={{ maxHeight: 600 }}>
-              <Table stickyHeader aria-label="events table">
+            <TableContainer>
+              <Table aria-label="events table">
                 <TableHead>
                   <TableRow>
                     {sortableColumns.map((column) => (
