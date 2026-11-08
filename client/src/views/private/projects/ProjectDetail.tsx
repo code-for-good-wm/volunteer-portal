@@ -179,7 +179,6 @@ const ProjectDetail = () => {
 
   const handleRoleChange = (event: SelectChangeEvent<{ value: unknown }>) => {
     const selectedRole = event.target.value as string;
-    console.log('Selected role:', selectedRole);
   };
 
   if (!projectId) {
