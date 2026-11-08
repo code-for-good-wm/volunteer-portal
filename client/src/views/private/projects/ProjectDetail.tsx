@@ -3,18 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
-import Dialog from '@mui/material/Dialog';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
-import InputLabel from '@mui/material/InputLabel';
-import LinearProgress from '@mui/material/LinearProgress';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Tooltip from '@mui/material/Tooltip';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import FormHelperText from '@mui/material/FormHelperText';
 
 import { useAppSelector } from '../../../store/hooks';
 import { selectProjectById } from '../../../store/projectsSlice';
@@ -29,12 +24,15 @@ import { loadAllEvents } from '../../../services/event';
 import { loadPositionsForProject } from '../../../services/position';
 import { loadSlotsForPosition } from '../../../services/slot';
 import { ProjectStatus } from '../../../types/project';
+import { Position } from '../../../types/position';
 import PageLayout from '../../../layouts/PageLayout';
 import StatusChip, {
   StatusChipTheme,
 } from '../../../components/elements/StatusChip';
 import { colors } from '../../../material/colors';
-import NumberSpinner from '../../../components/elements/NumberSpinner';
+import PositionDialog from './PositionDialog';
+import PositionsList from './PositionsList';
+import ProjectTeamCard from './ProjectTeamCard';
 
 const statusDisplay: Record<
   ProjectStatus,
@@ -106,6 +104,8 @@ const ProjectDetail = () => {
   const [activeTab, setActiveTab] = useState('overview');
 
   const [positionModalOpen, setPositionModalOpen] = useState(false);
+  // The position being edited in the dialog; undefined when adding one.
+  const [editingPosition, setEditingPosition] = useState<Position>();
 
   useEffect(() => {
     if (!projectId) {
@@ -136,9 +136,13 @@ const ProjectDetail = () => {
     });
   }, [positions]);
 
-  const { totalSlots, filledSlots, invitationsSent } = useMemo(() => {
+  const positionSlots = useMemo(() => {
     const positionIds = new Set(positions.map((p) => p._id));
-    const slots = allSlots.filter((s) => positionIds.has(s.position));
+    return allSlots.filter((s) => positionIds.has(s.position));
+  }, [positions, allSlots]);
+
+  const { totalSlots, filledSlots, invitationsSent } = useMemo(() => {
+    const slots = positionSlots;
     return {
       totalSlots: positions.reduce((sum, p) => sum + p.slotCount, 0),
       filledSlots: slots.filter(
@@ -146,7 +150,7 @@ const ProjectDetail = () => {
       ).length,
       invitationsSent: slots.filter((s) => !!s.invitedAt).length,
     };
-  }, [positions, allSlots]);
+  }, [positions, positionSlots]);
 
   const handleEdit = () => {
     if (!projectId) {
@@ -155,7 +159,22 @@ const ProjectDetail = () => {
     navigate(`/projects/${projectId}/edit`);
   };
 
-  const handleManagePositions = () => {
+  // Slots of the position being edited that someone is invited to or in.
+  const editingLockedSlots = editingPosition
+    ? positionSlots.filter(
+        (slot) =>
+          slot.position === editingPosition._id &&
+          (slot.status !== 'open' || !!slot.user),
+      ).length
+    : 0;
+
+  const handleAddPosition = () => {
+    setEditingPosition(undefined);
+    setPositionModalOpen(true);
+  };
+
+  const handleEditPosition = (position: Position) => {
+    setEditingPosition(position);
     setPositionModalOpen(true);
   };
 
@@ -175,10 +194,6 @@ const ProjectDetail = () => {
 
     setChangingState(true);
     updateProject(projectId, { status }, { success, failure });
-  };
-
-  const handleRoleChange = (event: SelectChangeEvent<{ value: unknown }>) => {
-    const selectedRole = event.target.value as string;
   };
 
   if (!projectId) {
@@ -468,57 +483,11 @@ const ProjectDetail = () => {
                       )}
                     </div>
 
-                    <div
-                      style={{
-                        backgroundColor: colors.surface.card,
-                        borderRadius: 5,
-                        padding: '28px 32px',
-                        boxShadow:
-                          '0px 1px 10px 0px rgba(0,0,0,0.06), 0px 3px 5px 0px rgba(0,0,0,0.1)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <h2 style={{ color: colors.text.primary, margin: 0 }}>
-                          Project team
-                        </h2>
-                        <a
-                          onClick={
-                            isDeclined ? undefined : handleManagePositions
-                          }
-                          style={{
-                            cursor: isDeclined ? 'default' : 'pointer',
-                            color: isDeclined
-                              ? colors.text.placeholder
-                              : colors.teal.deep,
-                          }}
-                        >
-                          Manage positions →
-                        </a>
-                      </div>
-                      <p style={{ color: colors.text.secondary }}>
-                        {totalSlots > 0
-                          ? `${filledSlots} of ${totalSlots} slots filled across ${positions.length} position${positions.length === 1 ? '' : 's'}`
-                          : 'No positions have been added yet.'}
-                      </p>
-                      {totalSlots > 0 && (
-                        <LinearProgress
-                          variant="determinate"
-                          value={(filledSlots / totalSlots) * 100}
-                          sx={{
-                            backgroundColor: colors.status.neutralSurface,
-                            '& .MuiLinearProgress-bar': {
-                              backgroundColor: colors.status.success,
-                            },
-                          }}
-                        />
-                      )}
-                    </div>
+                    <ProjectTeamCard
+                      positions={positions}
+                      slots={positionSlots}
+                      onManagePositions={() => setActiveTab('positions')}
+                    />
                   </Grid>
                 </Grid>
               )}
@@ -614,7 +583,7 @@ const ProjectDetail = () => {
 
                         <Button
                           variant="contained"
-                          onClick={handleManagePositions}
+                          onClick={handleAddPosition}
                           sx={{
                             borderColor: colors.primary.dark,
                             whiteSpace: 'nowrap',
@@ -627,7 +596,12 @@ const ProjectDetail = () => {
                       </div>
                     </div>
                   ) : (
-                    <div>Positions list goes here.</div>
+                    <PositionsList
+                      positions={positions}
+                      slots={positionSlots}
+                      onAddPosition={handleAddPosition}
+                      onEditPosition={handleEditPosition}
+                    />
                   )}
                 </div>
               )}
@@ -636,140 +610,16 @@ const ProjectDetail = () => {
         </div>
       </div>
 
-      <Dialog
-        onClose={() => setPositionModalOpen(false)}
+      <PositionDialog
         open={positionModalOpen}
-        maxWidth="md"
-        fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: '12px',
-            border: `1px solid ${colors.border.default}`,
-            boxShadow: '0 8px 28px rgba(25, 27, 37, 0.12)',
-            p: 3,
-            overflow: 'visible',
-          },
-        }}
-      >
-        <span style={{ fontSize: 14, color: colors.text.secondary }}>
-          {project?.name} - {nonprofit?.name}
-        </span>
-        <hr />
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'minmax(0, 2fr) minmax(220px, 1fr)',
-            gap: 32,
-            alignItems: 'start',
-          }}
-        >
-          <div>
-            <InputLabel
-              id="role-label"
-              sx={{
-                display: 'block',
-                mb: 1,
-                color: colors.text.primary,
-                fontSize: 15,
-                fontWeight: 500,
-                lineHeight: 1.5,
-                '& .required-mark': {
-                  color: '#D14343',
-                },
-              }}
-            >
-              Role <span className="required-mark">*</span>
-            </InputLabel>
-            <Select
-              labelId="role-label"
-              id="role"
-              onChange={handleRoleChange}
-              displayEmpty
-              value=""
-              required
-              sx={{
-                width: '100%',
-                minHeight: '52px',
-                borderRadius: '10px',
-                backgroundColor: colors.surface.card,
-                color: colors.text.primary,
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: colors.border.default,
-                  borderWidth: 1,
-                },
-                '&:hover .MuiOutlinedInput-notchedOutline': {
-                  borderColor: '#c4c7cf',
-                },
-                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                  borderColor: colors.primary.main,
-                  borderWidth: 1,
-                },
-                '& .MuiSelect-select': {
-                  padding: '14px 16px',
-                  fontSize: 15,
-                  lineHeight: 1.5,
-                  color: colors.text.primary,
-                },
-              }}
-            >
-              <MenuItem value="" disabled>
-                Select Role
-              </MenuItem>
-              <MenuItem value="designer">Designer</MenuItem>
-              <MenuItem value="developer">Developer</MenuItem>
-              <MenuItem value="support">Support</MenuItem>
-              <MenuItem value="lead">Lead</MenuItem>
-            </Select>
-          </div>
-
-          <div>
-            <InputLabel
-              id="slot-count-label"
-              sx={{
-                display: 'block',
-                mb: 1,
-                color: colors.text.primary,
-                fontSize: 15,
-                fontWeight: 500,
-                lineHeight: 1.5,
-              }}
-            >
-              How many people?
-            </InputLabel>
-            <NumberSpinner
-              id="slot-count"
-              name="slot-count"
-              min={1}
-              max={100}
-              defaultValue={0}
-              required
-              sx={{
-                width: '100%',
-                maxWidth: 220,
-                '& .MuiButton-root': {
-                  backgroundColor: '#F7F8FA',
-                  borderColor: colors.border.default,
-                },
-                '& .MuiOutlinedInput-root': {
-                  borderColor: colors.border.default,
-                  borderRadius: 0,
-                },
-              }}
-            />
-            <FormHelperText
-              sx={{
-                mt: 1.5,
-                ml: 0,
-                color: colors.text.secondary,
-                fontSize: 13,
-                lineHeight: 1.5,
-              }}
-            >
-              Creates this many open slots on the project.
-            </FormHelperText>
-          </div>
-        </div>
-      </Dialog>
+        onClose={() => setPositionModalOpen(false)}
+        position={editingPosition}
+        existingPositions={positions}
+        lockedSlotCount={editingLockedSlots}
+        projectId={projectId}
+        projectName={project?.name}
+        nonprofitName={nonprofit?.name}
+      />
     </PageLayout>
   );
 };

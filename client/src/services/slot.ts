@@ -1,6 +1,6 @@
 import { Slot } from '../types/slot';
 import { store } from '../store/store';
-import { slotsUpserted } from '../store/slotsSlice';
+import { positionSlotsLoaded } from '../store/slotsSlice';
 import { updateAlert } from '../store/alertSlice';
 import {
   getApiBaseUrl,
@@ -25,11 +25,7 @@ export const loadSlotsForPosition = async (positionId: string) => {
 
     const slotsData = (await slotsResponse.json()) as Slot[];
 
-    store.dispatch(
-      slotsUpserted({
-        slots: slotsData,
-      }),
-    );
+    store.dispatch(positionSlotsLoaded({ positionId, slots: slotsData }));
 
     return slotsData;
   } catch (error) {

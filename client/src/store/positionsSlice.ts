@@ -19,6 +19,7 @@ export const positionsSlice = createSlice({
   initialState,
   reducers: {
     positionAdded: positionsAdapter.upsertOne,
+    positionRemoved: positionsAdapter.removeOne,
     positionsUpserted(state, action: PayloadAction<{ positions: Position[] }>) {
       state.loading = false;
       positionsAdapter.upsertMany(state, action.payload.positions);
@@ -26,7 +27,8 @@ export const positionsSlice = createSlice({
   },
 });
 
-export const { positionAdded, positionsUpserted } = positionsSlice.actions;
+export const { positionAdded, positionRemoved, positionsUpserted } =
+  positionsSlice.actions;
 
 export const {
   selectAll: selectAllPositions,

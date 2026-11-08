@@ -339,8 +339,53 @@ export const positionStore = {
     await SlotModel.create(openSlots);
     return created;
   },
+  // Slots that can't be removed: someone is invited, assigned or has responded.
+  countLockedSlots: async (_id: mongoose.Types.ObjectId) => {
+    return await SlotModel.countDocuments({
+      position: _id,
+      $or: [{ status: { $ne: SlotStatus.OPEN } }, { user: { $exists: true } }],
+    });
+  },
+  // Slots that can be removed when a position shrinks: open and not assigned.
+  countRemovableSlots: async (_id: mongoose.Types.ObjectId) => {
+    return await SlotModel.countDocuments({
+      position: _id,
+      status: SlotStatus.OPEN,
+      user: { $exists: false },
+    });
+  },
+  // Updates the position and keeps its Slots in step with slotCount: adds open
+  // Slots when it grows and removes open ones when it shrinks. Callers check
+  // countRemovableSlots first, since filled or invited Slots are never removed.
   update: async (_id: mongoose.Types.ObjectId, position: IPosition) => {
-    return await PositionModel.updateOne({ _id }, position);
+    const existing = await PositionModel.findOne({ _id });
+    if (!existing) {
+      return null;
+    }
+
+    const change = position.slotCount - existing.slotCount;
+    if (change > 0) {
+      const openSlots = Array.from({ length: change }, () => ({
+        position: _id,
+        status: SlotStatus.OPEN,
+      })) as ISlot[];
+      await SlotModel.create(openSlots);
+    } else if (change < 0) {
+      const removable = await SlotModel.find({
+        position: _id,
+        status: SlotStatus.OPEN,
+        user: { $exists: false },
+      })
+        .limit(-change)
+        .select('_id');
+      await SlotModel.deleteMany({
+        _id: { $in: removable.map((slot) => slot._id) },
+      });
+    }
+
+    return await PositionModel.findOneAndUpdate({ _id }, position, {
+      new: true,
+    });
   },
   delete: async (_id: mongoose.Types.ObjectId) => {
     await SlotModel.deleteMany({ position: _id });
