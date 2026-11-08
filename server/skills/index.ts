@@ -5,7 +5,11 @@ import {
   createSuccessResult,
   IHttpResult,
 } from '../lib/core';
-import { checkBindingDataUserId, checkAuthAndConnect } from '../lib/helpers';
+import {
+  checkBindingDataUserId,
+  checkAuthAndConnect,
+  checkCanReadBindingUser,
+} from '../lib/helpers';
 import { skillStore } from '../lib/models/store';
 import { IUserSkill } from '../lib/models/user-skill';
 
@@ -47,8 +51,8 @@ async function getUserSkills(
   context: Context,
   userIdent: string,
 ): Promise<IHttpResult> {
-  // For MVP we're allowing users to access only their own data
-  const checkResult = await checkBindingDataUserId(context, userIdent);
+  // Users can read their own skills; board members and admins can read anyone's
+  const checkResult = await checkCanReadBindingUser(context, userIdent);
   if (checkResult.body.error) {
     return checkResult;
   }

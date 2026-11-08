@@ -12,7 +12,7 @@ import { connect, userStore } from './models/store';
 import fetch from 'node-fetch';
 import { IUser } from './models/user';
 import { Types } from 'mongoose';
-import { UserRole } from './models/enums/user-role.enum';
+import { READ_ALL_USERS, UserRole } from './models/enums/user-role.enum';
 
 type CheckRequestAuth = (
   authorization: string | undefined,
@@ -102,6 +102,40 @@ export const checkBindingDataUserId: CheckBindingDataUserId = async (
   }
 
   return createSuccessResult(200, user, context);
+};
+
+/**
+ * Like checkBindingDataUserId, but for reads: users can read their own data,
+ * and board members / admins (READ_ALL_USERS) can read anyone's.
+ * Returns a Result whose body has the binding user's `_id`, or an error.
+ * @param {Context} context - Azure function context
+ * @param {string} userIdent - the caller's identifier from the app's auth system
+ * @returns {Promise<IHttpResult>}
+ */
+export const checkCanReadBindingUser: CheckBindingDataUserId = async (
+  context: Context,
+  userIdent: string,
+) => {
+  const caller = await userStore.list(userIdent);
+  if (!caller) {
+    return createErrorResult(404, 'User not found', context);
+  }
+
+  const userId = context.bindingData.userId;
+  if (!userId) {
+    return createErrorResult(400, 'Missing required parameter', context);
+  }
+
+  // IMPORTANT: We're ignoring type here; the _id field is technically an object
+  if (userId == caller._id) {
+    return createSuccessResult(200, caller, context);
+  }
+
+  if (!READ_ALL_USERS.includes(caller.userRole)) {
+    return createErrorResult(403, 'Forbidden', context);
+  }
+
+  return createSuccessResult(200, { _id: userId }, context);
 };
 
 /**

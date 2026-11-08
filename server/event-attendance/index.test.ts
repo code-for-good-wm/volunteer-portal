@@ -7,6 +7,7 @@ import {
 vi.mock('../lib/helpers', () => ({
   checkAuthAndConnect: vi.fn(),
   checkBindingDataUserId: vi.fn(),
+  checkCanReadBindingUser: vi.fn(),
 }));
 vi.mock('../lib/models/store', () => ({
   eventAttendanceStore: {
@@ -18,12 +19,21 @@ vi.mock('../lib/models/store', () => ({
   },
 }));
 
-import { checkAuthAndConnect, checkBindingDataUserId } from '../lib/helpers';
+import {
+  checkAuthAndConnect,
+  checkBindingDataUserId,
+  checkCanReadBindingUser,
+} from '../lib/helpers';
 import { eventAttendanceStore } from '../lib/models/store';
 import httpTrigger from './index';
 
 const mockCheckAuthAndConnect = vi.mocked(checkAuthAndConnect);
 const mockCheckBindingDataUserId = vi.mocked(checkBindingDataUserId);
+// GET uses the read check (which also lets admins in); these tests drive both
+// checks through one mock.
+vi.mocked(checkCanReadBindingUser).mockImplementation((...args) =>
+  mockCheckBindingDataUserId(...args),
+);
 const mockListByUser = vi.mocked(eventAttendanceStore.listByUser);
 const mockListByUserAndEvent = vi.mocked(
   eventAttendanceStore.listByUserAndEvent,

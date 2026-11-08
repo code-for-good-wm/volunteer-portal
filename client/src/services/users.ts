@@ -1,4 +1,5 @@
-import { Profile } from '../types/profile';
+import { Profile, UserSkill } from '../types/profile';
+import { EventAttendance } from '../types/event';
 import { User } from '../types/user';
 
 import { store } from '../store/store';
@@ -127,3 +128,44 @@ export const exportUsersAndProfilesData = async (
       },
     );
 };
+
+/**
+ * Fetch one user's data from a `user/{userId}/...` endpoint. Board members and
+ * admins can read anyone's; returns null (and shows an alert) on failure.
+ */
+const fetchUserData = async <T>(
+  userId: string,
+  path: string,
+  what: string,
+): Promise<T | null> => {
+  try {
+    const response = await fetch(`${getApiBaseUrl()}/user/${userId}/${path}`, {
+      headers: getDefaultRequestHeaders(await getBearerToken()),
+    });
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+    return (await response.json()) as T;
+  } catch (error) {
+    store.dispatch(
+      updateAlert({
+        visible: true,
+        theme: 'error',
+        content: `Unable to load this user's ${what}.`,
+      }),
+    );
+    return null;
+  }
+};
+
+/** A user's skill ratings (code and level). */
+export const loadUserSkills = (userId: string) =>
+  fetchUserData<UserSkill[]>(userId, 'skills', 'skills');
+
+/** A user's attendance responses across events. */
+export const loadUserAttendance = (userId: string) =>
+  fetchUserData<EventAttendance[]>(
+    userId,
+    'event-attendance',
+    'event attendance',
+  );

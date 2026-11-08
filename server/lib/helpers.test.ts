@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Types } from 'mongoose';
 
 // helpers.ts imports fbApp from ./firebase/init at module load time, which
@@ -6,8 +6,21 @@ import { Types } from 'mongoose';
 // import so this file (and anything that transitively imports helpers.ts)
 // never touches real Firebase or Mongo.
 vi.mock('./firebase/init', () => ({ fbApp: {} }));
+vi.mock('./models/store', () => ({
+  connect: vi.fn(),
+  userStore: { list: vi.fn() },
+}));
 
-import { compareUser, getUserId, groupBy, tryParseDateToISO } from './helpers';
+import {
+  checkCanReadBindingUser,
+  compareUser,
+  getUserId,
+  groupBy,
+  tryParseDateToISO,
+} from './helpers';
+import { userStore } from './models/store';
+import { UserRole } from './models/enums/user-role.enum';
+import { createMockContext } from './test-utils/mockContext';
 import { IUser } from './models/user';
 
 describe('groupBy', () => {
@@ -88,5 +101,60 @@ describe('compareUser', () => {
 
   it('returns false for different ids', () => {
     expect(compareUser(new Types.ObjectId(), new Types.ObjectId())).toBe(false);
+  });
+});
+
+describe('checkCanReadBindingUser', () => {
+  const contextFor = (userId?: string) =>
+    createMockContext({ bindingData: { userId } as never });
+
+  beforeEach(() => {
+    vi.mocked(userStore.list).mockReset();
+  });
+
+  it('lets a user read their own data', async () => {
+    vi.mocked(userStore.list).mockResolvedValue({
+      _id: 'me',
+      userRole: UserRole.VOLUNTEER,
+    } as never);
+
+    const result = await checkCanReadBindingUser(contextFor('me'), 'uid');
+
+    expect(result.status).toBe(200);
+    expect(result.body._id).toBe('me');
+  });
+
+  it("forbids a volunteer from reading someone else's data", async () => {
+    vi.mocked(userStore.list).mockResolvedValue({
+      _id: 'me',
+      userRole: UserRole.VOLUNTEER,
+    } as never);
+
+    const result = await checkCanReadBindingUser(contextFor('other'), 'uid');
+
+    expect(result.status).toBe(403);
+  });
+
+  it.each([UserRole.ADMIN, UserRole.BOARDMEMBER])(
+    "lets a %s read someone else's data",
+    async (userRole) => {
+      vi.mocked(userStore.list).mockResolvedValue({
+        _id: 'me',
+        userRole,
+      } as never);
+
+      const result = await checkCanReadBindingUser(contextFor('other'), 'uid');
+
+      expect(result.status).toBe(200);
+      expect(result.body._id).toBe('other');
+    },
+  );
+
+  it('returns 404 when the caller has no user record', async () => {
+    vi.mocked(userStore.list).mockResolvedValue(null);
+
+    const result = await checkCanReadBindingUser(contextFor('other'), 'uid');
+
+    expect(result.status).toBe(404);
   });
 });

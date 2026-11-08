@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
@@ -18,144 +19,73 @@ import TextField from '@mui/material/TextField';
 
 import { useAppSelector } from '../../../store/hooks';
 import { users, profiles } from '../../../store/usersSlice';
-import { selectAllEvents } from '../../../store/eventsSlice';
 import { UserRole } from '../../../types/user';
-import { Event } from '../../../types/event';
-import { DietaryRestriction, Profile, Role, ShirtSize } from '../../../types/profile';
+import { Role } from '../../../types/profile';
 import { getUsersData, getProfilesData, exportUsersAndProfilesData } from '../../../services/users';
-import { loadAttendance, loadUpcomingEvents } from '../../../services/event';
 import PageLayout from '../../../layouts/PageLayout';
+import RowActionButton from '../../../components/buttons/RowActionButton';
 import { parsePhone, toTitleCase } from '../../../helpers/functions';
-import { Attendance } from '../../../types/event';
-import { selectAllAttendances } from '../../../store/eventAttendanceSlice';
+import { roleLabels } from '../../../helpers/roles';
 
 interface Column {
-  id: 'userRole' | 'firstName' | 'lastName' | 'email' | 'phone' | 'roles' | 'previousVolunteer' | 'teamLeadCandidate'
-    | 'shirtSize' | 'dietaryRestrictions' | 'additionalDietaryRestrictions' | 'accessibilityRequirements'
-    | 'photoRelease' | 'hasSkills' | 'attendance';
+  id: 'name' | 'email' | 'phone' | 'userRole' | 'roles';
   label: string;
   minWidth?: number;
-  align?: 'right';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   format?: (value: any) => string;
 }
 
+// Everything else about a user lives on their detail page (and in the export).
 const columns: Column[] = [
-  { id: 'userRole', label: 'Type', minWidth: 100, format: (value: string) => toTitleCase(value) },
-  { id: 'firstName', label: 'First name', minWidth: 170 },
-  { id: 'lastName', label: 'Last name', minWidth: 170 },
+  { id: 'name', label: 'Name', minWidth: 170 },
   { id: 'email', label: 'Email', minWidth: 170 },
-  { id: 'phone', label: 'Phone', minWidth: 170, format: (value: string) => value ? parsePhone(value).formatted : '' },
-  { id: 'roles', label: 'Roles', minWidth: 100, format: (value: Role[]) => toTitleCase(value.join(', ')) },
-  { id: 'previousVolunteer', label: 'Previous volunteer', minWidth: 100, format: (value: boolean) => value ? 'Yes' : 'No' },
-  { id: 'teamLeadCandidate', label: 'Team lead', minWidth: 100, format: (value: boolean) => value ? 'Yes' : 'No' },
-  { id: 'shirtSize', label: 'Shirt size', minWidth: 100 },
-  { id: 'dietaryRestrictions', label: 'Dietary restrictions', minWidth: 100, format: (value: DietaryRestriction[]) => toTitleCase(value.join(', ')) },
-  { id: 'additionalDietaryRestrictions', label: 'Addl. dietary restrictions', minWidth: 170 },
-  { id: 'accessibilityRequirements', label: 'Accessibility requirements', minWidth: 170 },
-  { id: 'photoRelease', label: 'Photo release', minWidth: 100, format: (value: boolean) => value ? 'Yes' : 'No' },
-  { id: 'hasSkills', label: 'Entered skills', minWidth: 100, format: (value: boolean) => value ? 'Yes' : 'No' },
-  { id: 'attendance', label: 'Attending WfG 2025', minWidth: 200, format: (value: Attendance) => toTitleCase(value ? value.replace('-', ' ') : '') },
+  { id: 'phone', label: 'Phone', minWidth: 140, format: (value: string) => value ? parsePhone(value).formatted : '' },
+  { id: 'userRole', label: 'Type', minWidth: 100, format: (value: string) => toTitleCase(value) },
+  { id: 'roles', label: 'Roles', minWidth: 140, format: (value: Role[]) => value.map(role => roleLabels[role] ?? role).join(', ') },
 ];
 
 type Data = {
   id: string;
-  userRole: UserRole;
+  name: string;
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
+  userRole: UserRole;
   roles: Role[];
-  previousVolunteer: boolean;
-  teamLeadCandidate: boolean;
-  shirtSize: ShirtSize;
-  dietaryRestrictions: DietaryRestriction[];
-  additionalDietaryRestrictions: string;
-  accessibilityRequirements: string;
-  photoRelease: boolean;
-  hasSkills: boolean;
-  attendance: Attendance
 };
 
 const Users = () => {
-  const [rows, setRows] = useState<Data[]>([]);
+  const navigate = useNavigate();
   const [processing, setProcessing] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [event, setEvent] = useState<Event>();
   const [filter, setFilter] = useState('');
 
   const usersData = useAppSelector(users);
   const profilesData = useAppSelector(profiles);
-  const eventsData = useAppSelector(selectAllEvents);
-  const attendanceData = useAppSelector(selectAllAttendances);
 
   // load data on first visit
-  // there's probably a better way to do all of this
   useEffect(() => {
     getUsersData();
     getProfilesData();
-    loadUpcomingEvents();
   }, []);
 
-  useEffect(() => {
-    // locate the WfG 2025 event
-    // TODO: make this selectable
-    eventsData
-      .filter(e => e.description === 'Weekend for Good 2025')
-      .map(e => {
-        loadAttendance(e._id);
-        setEvent(e);
-      });
-  }, [eventsData]);
+  const rows = useMemo<Data[]>(() => {
+    if (!usersData) { return []; }
+    const rolesByUser = new Map((profilesData ?? []).map(profile => [profile.user, profile.roles ?? []]));
 
-  // create rows from userProfile
-  useEffect(() => {
-    if (!usersData) { return; }
-    let rowData: Data[] = [];
-    const profilesDict: {[key: string]: Profile} = {};
-
-    if (profilesData) {
-      for (const profile of profilesData) {
-        profilesDict[profile.user] = profile;
-      }
-    }
-
-    for (const user of usersData) {
-      const profile = profilesDict[user._id];
-      const row = {
-        id: user._id,
-        userRole: user.userRole,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phone: user.phone,
-        roles: profile?.roles ?? [],
-        previousVolunteer: profile?.previousVolunteer ?? false,
-        teamLeadCandidate: profile?.teamLeadCandidate ?? false,
-        shirtSize: profile?.shirtSize ?? '',
-        dietaryRestrictions: profile?.dietaryRestrictions ?? [],
-        additionalDietaryRestrictions: profile?.additionalDietaryRestrictions ?? '',
-        accessibilityRequirements: profile?.accessibilityRequirements ?? '',
-        photoRelease: profile?.agreements?.photoRelease ?? false,
-        hasSkills: !!(profile?.completionDate ?? profile?.skills?.length ?? false)
-      } as Data;
-
-      rowData.push(row);
-    }
-
-    if (event) {
-      rowData = rowData.map(r => {
-        const attd = attendanceData.find(a => a.event === event?._id && a.user === r.id);
-        return {
-          ...r,
-          attendance: attd?.attendance
-        } as Data;
-      });
-    }
-
-    setRows(rowData);
-  }, [usersData, profilesData, attendanceData, event]);
+    return usersData.map(user => ({
+      id: user._id,
+      name: [user.firstName, user.lastName].filter(Boolean).join(' '),
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      userRole: user.userRole,
+      roles: rolesByUser.get(user._id) ?? [],
+    }));
+  }, [usersData, profilesData]);
 
   const filteredRows = useMemo(() => {
     if (!filter || rows.length == 0) {
@@ -254,19 +184,19 @@ const Users = () => {
           </Grid>
 
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-            <TableContainer sx={{ maxHeight: 600 }}>
-              <Table stickyHeader aria-label="sticky table">
+            <TableContainer>
+              <Table aria-label="users table">
                 <TableHead>
                   <TableRow>
                     {columns.map((column) => (
                       <StyledTableCell
                         key={column.id}
-                        align={column.align}
                         style={{ minWidth: column.minWidth }}
                       >
                         {column.label}
                       </StyledTableCell>
                     ))}
+                    <StyledTableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -278,13 +208,20 @@ const Users = () => {
                           {columns.map((column) => {
                             const value = row[column.id];
                             return (
-                              <TableCell key={column.id} align={column.align}>
+                              <TableCell key={column.id}>
                                 {column.format
                                   ? column.format(value)
                                   : value}
                               </TableCell>
                             );
                           })}
+                          <TableCell align="right">
+                            <RowActionButton
+                              label="Open"
+                              aria-label={`Open ${row.name || row.email}`}
+                              onClick={() => navigate(`/users/${row.id}`)}
+                            />
+                          </TableCell>
                         </TableRow>
                       );
                     })}
@@ -294,7 +231,7 @@ const Users = () => {
             <TablePagination
               rowsPerPageOptions={[10, 25, 50]}
               component="div"
-              count={rows.length}
+              count={filteredRows.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
