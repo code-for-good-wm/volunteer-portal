@@ -71,6 +71,16 @@ const formatDateRange = (startIso?: string, endIso?: string) => {
     : `${startMonth} ${start.getDate()} – ${endMonth} ${end.getDate()}, ${year}`;
 };
 
+const formatRosterDate = (isoDate?: string) => {
+  if (!isoDate) {
+    return null;
+  }
+  return new Date(isoDate).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
 const detailLabelStyle = {
   color: colors.text.secondary,
   fontSize: 12,
@@ -136,17 +146,40 @@ const ProjectDetail = () => {
     });
   }, [positions]);
 
-  const { totalSlots, filledSlots, invitationsSent } = useMemo(() => {
+  const {
+    totalSlots,
+    filledSlots,
+    invitationsSent,
+    awaitingReplySlots,
+    openSlots,
+  } = useMemo(() => {
     const positionIds = new Set(positions.map((p) => p._id));
     const slots = allSlots.filter((s) => positionIds.has(s.position));
+    const totalSlots = positions.reduce((sum, p) => sum + p.slotCount, 0);
+    const filledSlots = slots.filter(
+      (s) => s.status === 'confirmed' || s.status === 'confirmed-partial',
+    ).length;
+    const awaitingReplySlots = slots.filter(
+      (s) => s.status === 'invited',
+    ).length;
     return {
-      totalSlots: positions.reduce((sum, p) => sum + p.slotCount, 0),
-      filledSlots: slots.filter(
-        (s) => s.status === 'confirmed' || s.status === 'confirmed-partial',
-      ).length,
+      totalSlots,
+      filledSlots,
       invitationsSent: slots.filter((s) => !!s.invitedAt).length,
+      awaitingReplySlots,
+      openSlots: Math.max(totalSlots - filledSlots - awaitingReplySlots, 0),
     };
   }, [positions, allSlots]);
+
+  const positionGroups = useMemo(() => {
+    const groups = new Map<string, typeof positions>();
+    positions.forEach((position) => {
+      const group = groups.get(position.role) ?? [];
+      group.push(position);
+      groups.set(position.role, group);
+    });
+    return [...groups.entries()];
+  }, [positions]);
 
   const handleEdit = () => {
     if (!projectId) {
@@ -324,7 +357,7 @@ const ProjectDetail = () => {
               >
                 <Tab value="overview" label="Overview" />
                 <Tab value="positions" label="Positions" />
-                <Tab value="team" label="Team" disabled />
+                <Tab value="team" label="Team" />
                 <Tab value="status" label="Status" disabled />
               </Tabs>
 
@@ -629,6 +662,304 @@ const ProjectDetail = () => {
                   ) : (
                     <div>Positions list goes here.</div>
                   )}
+                </div>
+              )}
+
+              {activeTab == 'team' && (
+                <div style={{ marginTop: 16 }}>
+                  <div
+                    style={{
+                      backgroundColor: colors.surface.card,
+                      borderRadius: 5,
+                      padding: '20px 24px',
+                      boxShadow:
+                        '0px 1px 10px 0px rgba(0,0,0,0.06), 0px 3px 5px 0px rgba(0,0,0,0.1)',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: 20,
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: 36,
+                        flexWrap: 'wrap',
+                      }}
+                    >
+                      {[
+                        ['Positions total', totalSlots],
+                        ['Confirmed', filledSlots],
+                        ['Awaiting reply', awaitingReplySlots],
+                        ['Still open', openSlots],
+                      ].map(([label, value]) => (
+                        <div key={label}>
+                          <div
+                            style={{
+                              color: colors.text.primary,
+                              fontSize: 20,
+                              fontWeight: 700,
+                              lineHeight: 1.2,
+                            }}
+                          >
+                            {value}
+                          </div>
+                          <div
+                            style={{
+                              color: colors.text.secondary,
+                              fontSize: 11,
+                              marginTop: 4,
+                            }}
+                          >
+                            {label}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <Button
+                      variant="contained"
+                      disabled
+                      sx={{
+                        backgroundColor: colors.status.neutralSurface,
+                        color: colors.text.secondary,
+                        fontSize: 10,
+                        letterSpacing: '0.05em',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      Complete team &amp; invite
+                    </Button>
+                  </div>
+
+                  <div
+                    style={{
+                      backgroundColor: colors.surface.card,
+                      borderRadius: 5,
+                      padding: '20px 24px',
+                      boxShadow:
+                        '0px 1px 10px 0px rgba(0,0,0,0.06), 0px 3px 5px 0px rgba(0,0,0,0.1)',
+                      marginTop: 16,
+                    }}
+                  >
+                    <h2
+                      style={{
+                        color: colors.text.primary,
+                        fontSize: 16,
+                        margin: '0 0 4px',
+                      }}
+                    >
+                      Roster
+                    </h2>
+                    <p
+                      style={{
+                        color: colors.text.secondary,
+                        fontSize: 11,
+                        margin: 0,
+                      }}
+                    >
+                      Grouped by position. Open slots link straight back to team
+                      selection. A volunteer who declines drops off this roster
+                      automatically.
+                    </p>
+
+                    {positionGroups.length === 0 ? (
+                      <p
+                        style={{
+                          color: colors.text.secondary,
+                          margin: '24px 0 4px',
+                        }}
+                      >
+                        No positions have been added to this project yet.
+                      </p>
+                    ) : (
+                      positionGroups.map(([role, rolePositions]) => {
+                        const rolePositionIds = new Set(
+                          rolePositions.map((position) => position._id),
+                        );
+                        const roleSlots = allSlots.filter((slot) =>
+                          rolePositionIds.has(slot.position),
+                        );
+                        const roleTotalSlots = rolePositions.reduce(
+                          (sum, position) => sum + position.slotCount,
+                          0,
+                        );
+                        const roleFilledSlots = roleSlots.filter(
+                          (slot) =>
+                            slot.status === 'confirmed' ||
+                            slot.status === 'confirmed-partial',
+                        ).length;
+
+                        return (
+                          <section
+                            key={role}
+                            aria-label={`${role} positions`}
+                            style={{ marginTop: 24 }}
+                          >
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 8,
+                                marginBottom: 8,
+                              }}
+                            >
+                              <span
+                                style={{
+                                  color: colors.text.secondary,
+                                  fontSize: 10,
+                                  letterSpacing: '0.08em',
+                                  fontWeight: 600,
+                                  textTransform: 'uppercase',
+                                }}
+                              >
+                                {role}
+                              </span>
+                              <Chip
+                                size="small"
+                                label={`${roleFilledSlots} of ${roleTotalSlots} filled`}
+                                sx={{
+                                  height: 18,
+                                  backgroundColor: '#FFF3D9',
+                                  color: '#946200',
+                                  fontSize: 9,
+                                }}
+                              />
+                            </div>
+
+                            {rolePositions.map((position) => {
+                              const positionSlots = allSlots.filter(
+                                (slot) => slot.position === position._id,
+                              );
+
+                              return Array.from(
+                                { length: position.slotCount },
+                                (_, slotIndex) => {
+                                  const slot = positionSlots[slotIndex];
+                                  const isConfirmed =
+                                    slot?.status === 'confirmed' ||
+                                    slot?.status === 'confirmed-partial';
+                                  const isAwaitingReply =
+                                    slot?.status === 'invited';
+                                  const isDeclined =
+                                    slot?.status === 'declined';
+                                  const respondedDate = formatRosterDate(
+                                    slot?.respondedAt,
+                                  );
+                                  const invitedDate = formatRosterDate(
+                                    slot?.invitedAt,
+                                  );
+                                  const description = isConfirmed
+                                    ? slot?.status === 'confirmed-partial' &&
+                                      slot.partialDetail
+                                      ? slot.partialDetail
+                                      : 'Volunteer confirmed.'
+                                    : isAwaitingReply
+                                      ? invitedDate
+                                        ? `Invitation sent on ${invitedDate}.`
+                                        : 'Invitation sent; awaiting reply.'
+                                      : isDeclined
+                                        ? respondedDate
+                                          ? `Volunteer declined on ${respondedDate}.`
+                                          : 'Volunteer declined.'
+                                        : 'Not yet assigned.';
+
+                                  return (
+                                    <div
+                                      key={`${position._id}-${slotIndex}`}
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 12,
+                                        padding: '8px 0',
+                                      }}
+                                    >
+                                      <div
+                                        aria-hidden="true"
+                                        style={{
+                                          width: 34,
+                                          height: 34,
+                                          flex: '0 0 34px',
+                                          borderRadius: '50%',
+                                          border: `1px dashed ${colors.border.default}`,
+                                        }}
+                                      />
+                                      <div style={{ flex: 1, minWidth: 0 }}>
+                                        <div
+                                          style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 8,
+                                            flexWrap: 'wrap',
+                                          }}
+                                        >
+                                          <span
+                                            style={{
+                                              color: colors.text.secondary,
+                                              fontSize: 12,
+                                              fontWeight: 600,
+                                            }}
+                                          >
+                                            Slot {slotIndex + 1} —{' '}
+                                            {isConfirmed
+                                              ? 'Filled'
+                                              : isAwaitingReply
+                                                ? 'Awaiting reply'
+                                                : 'Empty'}
+                                          </span>
+                                          <Chip
+                                            size="small"
+                                            label={
+                                              isConfirmed
+                                                ? 'Confirmed'
+                                                : isAwaitingReply
+                                                  ? 'Awaiting reply'
+                                                  : 'Open'
+                                            }
+                                            sx={{
+                                              height: 18,
+                                              backgroundColor:
+                                                colors.status.neutralSurface,
+                                              color: colors.text.secondary,
+                                              fontSize: 9,
+                                            }}
+                                          />
+                                        </div>
+                                        <div
+                                          style={{
+                                            color: colors.text.secondary,
+                                            fontSize: 10,
+                                            marginTop: 2,
+                                          }}
+                                        >
+                                          {description}
+                                        </div>
+                                      </div>
+                                      <Button
+                                        variant="contained"
+                                        onClick={() => navigate('/users')}
+                                        sx={{
+                                          backgroundColor: colors.primary.dark,
+                                          color: '#FFFFFF',
+                                          fontSize: 9,
+                                          letterSpacing: '0.04em',
+                                          minWidth: 0,
+                                          px: 1.5,
+                                          whiteSpace: 'nowrap',
+                                        }}
+                                      >
+                                        Find someone
+                                      </Button>
+                                    </div>
+                                  );
+                                },
+                              );
+                            })}
+                          </section>
+                        );
+                      })
+                    )}
+                  </div>
                 </div>
               )}
             </>
