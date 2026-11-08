@@ -29,6 +29,7 @@
     "@typescript-eslint/parser": "^5.25.0",
     "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^8.15.0",
+    "eslint-config-prettier": "^10.1.8",
     "mongodb-memory-server": "^11.2.0",
     "typescript": "^5.0.2",
     "vitest": "^4.1.10"
