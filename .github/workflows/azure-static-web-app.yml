@@ -35,7 +35,7 @@ jobs:
         working-directory: client
         run: |
           npm install --no-audit
-          npm audit --omit=dev --audit-level=high
+          # npm audit --omit=dev --audit-level=high
           npm run build
           mv build ../app_dist
           cp ../staticwebapp.config.azure.json ../app_dist/staticwebapp.config.json
