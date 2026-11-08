@@ -95,6 +95,9 @@ export const userStore = {
   list: async (ident: string) => {
     return await UserModel.findOne({ ident });
   },
+  listById: async (_id: mongoose.Types.ObjectId) => {
+    return await UserModel.findOne({ _id });
+  },
   listAll: async () => {
     return await UserModel.find();
   },
@@ -469,6 +472,40 @@ export const slotStore = {
   },
   update: async (_id: mongoose.Types.ObjectId, slot: ISlot) => {
     return await SlotModel.updateOne({ _id }, slot);
+  },
+  /**
+   * Assigns a volunteer to a slot and returns the updated slot, populated the
+   * same way as listByProject. When the slot changes hands, the previous
+   * volunteer's response details are cleared.
+   */
+  assign: async (
+    _id: mongoose.Types.ObjectId,
+    assignment: Pick<ISlot, 'user' | 'status' | 'invitedAt' | 'respondedAt'>,
+    clearResponse: boolean,
+  ) => {
+    const $set: Partial<ISlot> = {
+      user: assignment.user,
+      status: assignment.status,
+    };
+    const $unset: Record<string, 1> = {};
+    for (const key of ['invitedAt', 'respondedAt'] as const) {
+      if (assignment[key]) {
+        $set[key] = assignment[key];
+      } else {
+        $unset[key] = 1;
+      }
+    }
+    if (clearResponse) {
+      $unset.partialDetail = 1;
+      $unset.declineReason = 1;
+    }
+    return await SlotModel.findOneAndUpdate(
+      { _id },
+      { $set, $unset },
+      { new: true },
+    )
+      .populate('position')
+      .populate('user', 'firstName lastName email');
   },
   delete: async (_id: mongoose.Types.ObjectId) => {
     return await SlotModel.deleteOne({ _id });

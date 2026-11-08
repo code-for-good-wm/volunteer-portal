@@ -374,3 +374,66 @@ describe('slotStore.hasConfirmedSlotForEvent', () => {
     expect(result).toBe(false);
   });
 });
+
+describe('slotStore.assign', () => {
+  async function buildSlot() {
+    const project = await buildProject();
+    const position = await positionStore.create({
+      project: project._id,
+      role: Role.DEVELOPER,
+      slotCount: 1,
+    } as IPosition);
+    const [slot] = await slotStore.listByPosition(
+      position._id as Types.ObjectId,
+    );
+    return slot;
+  }
+
+  it('assigns the user and status and returns the populated slot', async () => {
+    const user = await userStore.create(buildUser());
+    const slot = await buildSlot();
+    const invitedAt = new Date();
+
+    const result = await slotStore.assign(
+      slot._id as Types.ObjectId,
+      { user: user._id, status: SlotStatus.INVITED, invitedAt },
+      true,
+    );
+
+    expect(result?.status).toBe(SlotStatus.INVITED);
+    expect((result?.user as unknown as IUser).email).toBe('ada@example.com');
+    expect((result?.position as unknown as IPosition).role).toBe(
+      Role.DEVELOPER,
+    );
+    expect(result?.invitedAt).toEqual(invitedAt);
+    expect(result?.respondedAt).toBeUndefined();
+  });
+
+  it("clears the previous volunteer's response details only when asked", async () => {
+    const user = await userStore.create(buildUser());
+    const slot = await buildSlot();
+    const id = slot._id as Types.ObjectId;
+    await slotStore.update(id, {
+      position: slot.position,
+      user: user._id,
+      status: SlotStatus.DECLINED,
+      respondedAt: new Date(),
+      declineReason: 'Busy',
+    } as ISlot);
+
+    const kept = await slotStore.assign(
+      id,
+      { user: user._id, status: SlotStatus.INVITED, invitedAt: new Date() },
+      false,
+    );
+    expect(kept?.declineReason).toBe('Busy');
+    expect(kept?.respondedAt).toBeUndefined();
+
+    const cleared = await slotStore.assign(
+      id,
+      { user: user._id, status: SlotStatus.INVITED, invitedAt: new Date() },
+      true,
+    );
+    expect(cleared?.declineReason).toBeUndefined();
+  });
+});
