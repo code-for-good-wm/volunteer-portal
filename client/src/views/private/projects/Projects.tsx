@@ -34,6 +34,7 @@ import { loadPositionsForProject } from '../../../services/position';
 import { loadSlotsForPosition } from '../../../services/slot';
 import { ProjectStatus } from '../../../types/project';
 import PageLayout from '../../../layouts/PageLayout';
+import RowActionButton from '../../../components/buttons/RowActionButton';
 import StatusChip, { StatusChipTheme } from '../../../components/elements/StatusChip';
 import { colors } from '../../../material/colors';
 
@@ -57,8 +58,8 @@ const statusDisplay: Record<ProjectStatus, { label: string, theme: StatusChipThe
 const actionLabel: Record<ProjectStatus, string> = {
   proposed: 'Review',
   accepted: 'Open',
-  rejected: 'View',
-  archived: 'View',
+  rejected: 'Open',
+  archived: 'Open',
 };
 
 type Row = {
@@ -315,19 +316,12 @@ const Projects = () => {
                             <StatusChip label={label} theme={theme} />
                           </TableCell>
                           <TableCell align="right">
-                            <Button
-                              variant={row.status === 'proposed' ? 'contained' : row.status === 'accepted' ? 'outlined' : 'text'}
-                              size="small"
-                              sx={row.status === 'proposed'
-                                ? { backgroundColor: colors.primary.dark }
-                                : row.status === 'accepted'
-                                  ? { borderColor: colors.primary.dark, color: colors.primary.dark }
-                                  : { color: colors.text.secondary }
-                              }
+                            <RowActionButton
+                              label={actionLabel[row.status]}
+                              emphasis={row.status === 'proposed'}
+                              aria-label={`${actionLabel[row.status]} ${row.projectName}`}
                               onClick={() => navigate(`/projects/${row.id}`)}
-                            >
-                              {actionLabel[row.status]}
-                            </Button>
+                            />
                           </TableCell>
                         </TableRow>
                       );

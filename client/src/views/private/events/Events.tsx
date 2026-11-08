@@ -23,6 +23,7 @@ import { selectAllAttendances } from '../../../store/eventAttendanceSlice';
 import { Status } from '../../../types/event';
 import { loadAllEvents, loadAttendance } from '../../../services/event';
 import PageLayout from '../../../layouts/PageLayout';
+import RowActionButton from '../../../components/buttons/RowActionButton';
 import StandardButton from '../../../components/buttons/StandardButton';
 import { statusChipProps } from '../../../helpers/eventStatus';
 
@@ -243,16 +244,11 @@ const Events = () => {
                           />
                         </TableCell>
                         <TableCell align="right">
-                          <span
-                            className="link"
-                            style={{ cursor: 'pointer' }}
-                            role="button"
-                            tabIndex={0}
+                          <RowActionButton
+                            label="Open"
+                            aria-label={`Open ${row.name}`}
                             onClick={() => navigate(`/events/${row.id}`)}
-                            onKeyDown={(e) => { if (e.key === 'Enter') { navigate(`/events/${row.id}`); } }}
-                          >
-                            View
-                          </span>
+                          />
                         </TableCell>
                       </TableRow>
                     ))}
